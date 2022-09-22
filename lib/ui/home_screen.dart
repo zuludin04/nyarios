@@ -7,6 +7,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff7f7f7),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.edit),
+      ),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -20,7 +24,7 @@ class HomeScreen extends StatelessWidget {
                       'Nyarios',
                       style: TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     Container(
@@ -69,8 +73,8 @@ class HomeScreen extends StatelessWidget {
           height: 60,
           margin: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: Colors.grey,
-            border: Border.all(color: Colors.blue),
+            color: Colors.lightBlue.shade100,
+            border: Border.all(color: Colors.blue, width: 2),
             shape: BoxShape.circle,
           ),
           child: const Icon(
@@ -78,6 +82,7 @@ class HomeScreen extends StatelessWidget {
             color: Colors.blue,
           ),
         ),
+        const SizedBox(height: 4),
         const Text('Add Story')
       ],
     );
@@ -86,8 +91,8 @@ class HomeScreen extends StatelessWidget {
   Widget _chatItem() {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             children: [
               Container(
