@@ -13,35 +13,15 @@ class HomeScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
           slivers: [
-            SliverToBoxAdapter(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Nyarios',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.search),
-                    ),
-                  ],
-                ),
-              ),
+            SliverPersistentHeader(
+              delegate: CustomStickyBar(),
+              pinned: true,
             ),
             SliverToBoxAdapter(
               child: Container(
-                height: 80,
+                height: 90,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: ListView.builder(
                   itemBuilder: (context, index) => _storyItem(),
@@ -51,7 +31,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SliverToBoxAdapter(
-              child: SizedBox(height: 20),
+              child: SizedBox(height: 10),
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -119,7 +99,7 @@ class HomeScreen extends StatelessWidget {
                     SizedBox(height: 4),
                     Text(
                       'Hallo',
-                      style: TextStyle(color: Colors.black87),
+                      style: TextStyle(color: Colors.black54),
                     ),
                   ],
                 ),
@@ -131,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                 children: const [
                   Text(
                     '22 Sep 2022',
-                    style: TextStyle(color: Colors.black87),
+                    style: TextStyle(color: Colors.black54),
                   ),
                   SizedBox(height: 4),
                   Icon(Icons.check, size: 16),
@@ -144,4 +124,49 @@ class HomeScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+class CustomStickyBar extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      color: const Color(0xfff7f7f7),
+      height: kToolbarHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Nyarios',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.search),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => kToolbarHeight;
+
+  @override
+  double get minExtent => kToolbarHeight;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }
