@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../chat/chatting_screen.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -35,7 +37,7 @@ class HomeScreen extends StatelessWidget {
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => _chatItem(),
+                (context, index) => _chatItem(context),
                 childCount: 15,
               ),
             )
@@ -68,60 +70,68 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _chatItem() {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: Row(
-            children: [
-              Container(
-                height: 40,
-                width: 40,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.orange,
+  Widget _chatItem(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ChattingScreen()),
+        );
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: Row(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.orange,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'Zulfikar Mauludin',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Hallo',
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: const [
                     Text(
-                      'Zulfikar Mauludin',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Hallo',
+                      '22 Sep 2022',
                       style: TextStyle(color: Colors.black54),
                     ),
+                    SizedBox(height: 4),
+                    Icon(Icons.check, size: 16),
                   ],
                 ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: const [
-                  Text(
-                    '22 Sep 2022',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                  SizedBox(height: 4),
-                  Icon(Icons.check, size: 16),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        const Divider(),
-      ],
+          const Divider(),
+        ],
+      ),
     );
   }
 }
