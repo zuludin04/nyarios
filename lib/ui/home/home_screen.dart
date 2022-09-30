@@ -156,13 +156,12 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
               fontWeight: FontWeight.w600,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.search),
+          Row(
+            children: [
+              ActionMenuItem(icon: Icons.search, onTap: () {}),
+              const SizedBox(width: 12),
+              ActionMenuItem(icon: Icons.settings, onTap: () {}),
+            ],
           ),
         ],
       ),
@@ -178,4 +177,30 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
       false;
+}
+
+class ActionMenuItem extends StatelessWidget {
+  final IconData icon;
+  final Function() onTap;
+
+  const ActionMenuItem({
+    super.key,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon),
+      ),
+    );
+  }
 }
