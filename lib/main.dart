@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nyarios/core/custom_theme.dart';
 
+import 'core/custom_theme.dart';
 import 'ui/home/home_screen.dart';
 
 void main() {
