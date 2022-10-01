@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nyarios/ui/settings/settings_screen.dart';
 
 import '../chat/chatting_screen.dart';
 
@@ -160,7 +161,16 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
             children: [
               ActionMenuItem(icon: Icons.search, onTap: () {}),
               const SizedBox(width: 12),
-              ActionMenuItem(icon: Icons.settings, onTap: () {}),
+              ActionMenuItem(
+                icon: Icons.settings,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingsScreen()),
+                  );
+                },
+              ),
             ],
           ),
         ],
