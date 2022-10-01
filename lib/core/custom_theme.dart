@@ -34,33 +34,36 @@ class CustomTheme {
     );
   }
 
-  // static ThemeData get darkTheme {
-  //   return ThemeData(
-  //     colorScheme: const ColorScheme(
-  //       primary: Color(0xff252526),
-  //       primaryContainer: Colors.black,
-  //       secondary: Color(0xffffa400),
-  //       secondaryContainer: Color(0xffc67500),
-  //       surface: Color(0xff252526),
-  //       background: Color(0xff252526),
-  //       error: Colors.redAccent,
-  //       onPrimary: Colors.white,
-  //       onSecondary: Colors.white,
-  //       onSurface: Colors.white,
-  //       onBackground: Colors.white,
-  //       onError: Colors.white,
-  //       brightness: Brightness.dark,
-  //     ),
-  //     fontFamily: 'NotoSans',
-  //     iconTheme: const IconThemeData(
-  //       color: Colors.black,
-  //     ),
-  //     elevatedButtonTheme: ElevatedButtonThemeData(
-  //       style: ButtonStyle(
-  //         backgroundColor:
-  //             MaterialStateProperty.all<Color>(const Color(0xffffa400)),
-  //       ),
-  //     ),
-  //   );
-  // }
+  static ThemeData get darkTheme {
+    return ThemeData(
+      backgroundColor: const Color(0xff252526),
+      colorScheme: const ColorScheme(
+        primary: Color(0xff252526),
+        primaryContainer: Colors.black,
+        secondary: Color(0xffffa400),
+        secondaryContainer: Color(0xffc67500),
+        surface: Color(0xff252526),
+        background: Color(0xff252526),
+        error: Colors.redAccent,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: Colors.white,
+        onBackground: Colors.white,
+        onError: Colors.white,
+        brightness: Brightness.dark,
+      ),
+      appBarTheme: const AppBarTheme(
+        color: Color(0xff252526),
+        elevation: 0.8,
+      ),
+      fontFamily: 'Nunito',
+      iconTheme: const IconThemeData(color: Colors.white),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor:
+              MaterialStateProperty.all<Color>(const Color(0xfffb7f6b)),
+        ),
+      ),
+    );
+  }
 }

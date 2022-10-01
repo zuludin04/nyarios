@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,7 +16,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool darkMode = false;
+  bool darkMode = StorageServices.to.darkMode;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 activeSwitchColor: const Color(0xfffb7f6b),
                 initialValue: darkMode,
                 onToggle: (value) {
+                  Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
+                  StorageServices.to.darkMode = value;
                   setState(() {
                     darkMode = value;
                   });
