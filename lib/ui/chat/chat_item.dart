@@ -20,7 +20,9 @@ class ChatItem extends StatelessWidget {
           right: chat.received! ? 75 : 16,
         ),
         decoration: BoxDecoration(
-          color: chat.received ?? false ? Colors.white : Colors.blue,
+          color: chat.received ?? false
+              ? Colors.white
+              : const Color.fromRGBO(251, 127, 107, 1),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(10),
             topRight: const Radius.circular(10),

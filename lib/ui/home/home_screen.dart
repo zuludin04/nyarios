@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/settings/settings_screen.dart';
 
 import '../chat/chatting_screen.dart';
@@ -22,14 +23,19 @@ class HomeScreen extends StatelessWidget {
               pinned: true,
             ),
             SliverToBoxAdapter(
-              child: Container(
-                height: 90,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: ListView.builder(
-                  itemBuilder: (context, index) => _storyItem(),
-                  itemCount: 1,
-                  scrollDirection: Axis.horizontal,
-                ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Container(
+                    height: 90,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: ListView.builder(
+                      itemBuilder: (context, index) => _storyItem(),
+                      itemCount: 1,
+                      scrollDirection: Axis.horizontal,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SliverToBoxAdapter(
@@ -97,18 +103,22 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         'Zulfikar Mauludin',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'Hallo',
-                        style: TextStyle(color: Colors.black54),
+                        style: TextStyle(
+                          color: StorageServices.to.darkMode
+                              ? Colors.white54
+                              : Colors.black54,
+                        ),
                       ),
                     ],
                   ),
@@ -117,13 +127,17 @@ class HomeScreen extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: const [
+                  children: [
                     Text(
                       '22 Sep 2022',
-                      style: TextStyle(color: Colors.black54),
+                      style: TextStyle(
+                        color: StorageServices.to.darkMode
+                            ? Colors.white54
+                            : Colors.black54,
+                      ),
                     ),
-                    SizedBox(height: 4),
-                    Icon(Icons.check, size: 16),
+                    const SizedBox(height: 4),
+                    const Icon(Icons.check, size: 16),
                   ],
                 ),
               ],
@@ -144,7 +158,7 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Container(
-      color: const Color(0xfff7f7f7),
+      color: Theme.of(context).backgroundColor,
       height: kToolbarHeight,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -206,7 +220,6 @@ class ActionMenuItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: const BoxDecoration(
-          color: Colors.white,
           shape: BoxShape.circle,
         ),
         child: Icon(icon),

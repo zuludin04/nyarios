@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/storage_services.dart';
+
 class Toolbar {
   static AppBar defaultToolbar(
     BuildContext context,
@@ -19,9 +21,11 @@ class Toolbar {
           if (subtitle != "")
             Text(
               subtitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Colors.black54,
+                color: StorageServices.to.darkMode
+                    ? Colors.white70
+                    : Colors.black54,
               ),
             ),
         ],

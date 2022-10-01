@@ -40,8 +40,8 @@ class CustomTheme {
       colorScheme: const ColorScheme(
         primary: Color(0xff252526),
         primaryContainer: Colors.black,
-        secondary: Color(0xffffa400),
-        secondaryContainer: Color(0xffc67500),
+        secondary: Color(0xfffb7f6b),
+        secondaryContainer: Color(0xfffb7f6b),
         surface: Color(0xff252526),
         background: Color(0xff252526),
         error: Colors.redAccent,
