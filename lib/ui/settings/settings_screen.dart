@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/toolbar.dart';
 
@@ -35,6 +38,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
                 title: const Text("Dark Mode"),
                 leading: const Icon(Icons.dark_mode),
+              ),
+              SettingsTile(
+                title: const Text('Language'),
+                leading: const Icon(Icons.language),
+                onPressed: (context) {},
+              ),
+            ],
+          ),
+          SettingsSection(
+            title: const Text('Other'),
+            tiles: [
+              SettingsTile(
+                title: const Text('Rating'),
+                leading: const Icon(Icons.star),
+                onPressed: (context) {
+                  try {
+                    launchUrl(Uri.parse(""));
+                  } on PlatformException catch (_) {
+                    launchUrl(Uri.parse(""));
+                  } finally {
+                    launchUrl(Uri.parse(""));
+                  }
+                },
+              ),
+              SettingsTile(
+                title: const Text('Share'),
+                leading: const Icon(Icons.share),
+                onPressed: (context) {
+                  Share.share("");
+                },
               ),
             ],
           )
