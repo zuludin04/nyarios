@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nyarios/core/toolbar.dart';
 
 import '../../core/constants.dart';
+import '../../core/toolbar.dart';
 import 'chat_item.dart';
 
 class ChattingScreen extends StatefulWidget {
