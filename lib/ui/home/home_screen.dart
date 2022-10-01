@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nyarios/services/storage_services.dart';
-import 'package:nyarios/ui/settings/settings_screen.dart';
 
+import '../../services/storage_services.dart';
 import '../chat/chatting_screen.dart';
+import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'core/custom_theme.dart';
+import 'core/utils/custom_theme.dart';
 import 'services/storage_services.dart';
 import 'ui/home/home_screen.dart';
 
