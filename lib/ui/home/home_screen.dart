@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../routes/app_pages.dart';
 import '../../services/language_service.dart';
 import '../../services/storage_services.dart';
-import '../chat/chatting_screen.dart';
-import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -91,12 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _chatItem(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ChattingScreen()),
-        );
-      },
+      onTap: () => Get.toNamed(AppRoutes.chatting),
       child: Column(
         children: [
           Container(
@@ -190,13 +184,7 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
               const SizedBox(width: 12),
               ActionMenuItem(
                 icon: Icons.settings,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingsScreen()),
-                  );
-                },
+                onTap: () => Get.toNamed(AppRoutes.settings),
               ),
             ],
           ),

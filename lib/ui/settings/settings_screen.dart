@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../../core/widgets/toolbar.dart';
+import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
-import '../language/language_setting_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -19,7 +19,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, "settings".tr),
+      appBar: Toolbar.defaultToolbar("settings".tr),
       body: SettingsList(
         physics: const BouncingScrollPhysics(),
         lightTheme: const SettingsThemeData(
@@ -45,13 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SettingsTile(
                 title: Text('language'.tr),
                 leading: const Icon(Icons.language),
-                onPressed: (context) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LanguageSettingScreen()),
-                  );
-                },
+                onPressed: (context) => Get.toNamed(AppRoutes.language),
               ),
             ],
           ),

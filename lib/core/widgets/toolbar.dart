@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../services/storage_services.dart';
 
 class Toolbar {
   static AppBar defaultToolbar(
-    BuildContext context,
     String title, {
     String subtitle = "",
     List<Widget> actions = const [],
   }) {
     return AppBar(
       leading: IconButton(
-        onPressed: () => Navigator.pop(context),
+        onPressed: Get.back,
         icon: const Icon(Icons.chevron_left),
       ),
       title: Column(

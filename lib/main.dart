@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'core/utils/custom_theme.dart';
+import 'routes/app_pages.dart';
 import 'services/language_service.dart';
 import 'services/storage_services.dart';
-import 'ui/home/home_screen.dart';
 
 void main() async {
   await GetStorage.init();
@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
       initialBinding: BindingsBuilder(() {
         Get.put(StorageServices());
       }),
-      home: const HomeScreen(),
+      getPages: AppPages.pages,
       translations: LanguageService(),
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en', 'US'),

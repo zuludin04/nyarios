@@ -17,7 +17,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
-        context,
         "Zulfikar Mauludin",
         subtitle: "Online",
         actions: [

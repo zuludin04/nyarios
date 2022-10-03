@@ -18,7 +18,7 @@ class _LanguageSettingScreenState extends State<LanguageSettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, 'Language'),
+      appBar: Toolbar.defaultToolbar('language'.tr),
       body: ListView.builder(
         itemBuilder: (context, index) {
           return LanguageItem(
