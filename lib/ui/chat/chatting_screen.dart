@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/constants.dart';
 import '../../core/widgets/toolbar.dart';
@@ -24,9 +25,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
             icon: const Icon(Icons.more_vert),
             itemBuilder: (context) {
               return [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 0,
-                  child: Text('View Contact'),
+                  child: Text('view_contact'.tr),
                 ),
               ];
             },

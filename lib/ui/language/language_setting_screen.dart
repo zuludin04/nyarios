@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/constants.dart';
 import '../../core/widgets/toolbar.dart';
@@ -26,6 +27,8 @@ class _LanguageSettingScreenState extends State<LanguageSettingScreen> {
             onTap: () {
               StorageServices.to.selectedLanguage =
                   index == 0 ? 'en_US' : 'id_ID';
+              Get.updateLocale(
+                  Locale(index == 0 ? "en" : "id", index == 0 ? "US" : "ID"));
               setState(() {
                 selectedLanguage = index;
               });

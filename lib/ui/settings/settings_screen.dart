@@ -22,7 +22,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, "Settings"),
+      appBar: Toolbar.defaultToolbar(context, "settings".tr),
       body: SettingsList(
         physics: const BouncingScrollPhysics(),
         lightTheme: const SettingsThemeData(
@@ -30,7 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         sections: [
           SettingsSection(
-            title: const Text("Common"),
+            title: Text("common".tr),
             tiles: [
               SettingsTile.switchTile(
                 activeSwitchColor: const Color(0xfffb7f6b),
@@ -42,11 +42,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     darkMode = value;
                   });
                 },
-                title: const Text("Dark Mode"),
+                title: Text("dark_mode".tr),
                 leading: const Icon(Icons.dark_mode),
               ),
               SettingsTile(
-                title: const Text('Language'),
+                title: Text('language'.tr),
                 leading: const Icon(Icons.language),
                 onPressed: (context) {
                   Navigator.push(
@@ -59,10 +59,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           SettingsSection(
-            title: const Text('Other'),
+            title: Text('other'.tr),
             tiles: [
               SettingsTile(
-                title: const Text('Rating'),
+                title: Text('rating'.tr),
                 leading: const Icon(Icons.star),
                 onPressed: (context) {
                   try {
@@ -75,7 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
               SettingsTile(
-                title: const Text('Share'),
+                title: Text('share'.tr),
                 leading: const Icon(Icons.share),
                 onPressed: (context) {
                   Share.share("");

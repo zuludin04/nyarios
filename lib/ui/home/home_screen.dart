@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../services/language_service.dart';
 import '../../services/storage_services.dart';
 import '../chat/chatting_screen.dart';
 import '../settings/settings_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    Get.updateLocale(LanguageService.deviceLocale);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +84,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        const Text('Add Story')
+        Text('add_status'.tr)
       ],
     );
   }
