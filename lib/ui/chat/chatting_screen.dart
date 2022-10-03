@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../core/constants.dart';
 import '../../core/widgets/toolbar.dart';
+import '../../data/chat.dart';
 import 'chat_item.dart';
 
 class ChattingScreen extends StatefulWidget {
@@ -13,6 +14,11 @@ class ChattingScreen extends StatefulWidget {
 }
 
 class _ChattingScreenState extends State<ChattingScreen> {
+  final TextEditingController _messageEditingController =
+      TextEditingController();
+
+  List<Chat> chats = chatDemo;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,8 +44,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
           Expanded(
             child: ListView.builder(
               physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) => ChatItem(chat: chatDemo[index]),
-              itemCount: chatDemo.length,
+              itemBuilder: (context, index) => ChatItem(chat: chats[index]),
+              itemCount: chats.length,
             ),
           ),
           Row(
@@ -63,6 +69,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     children: [
                       Expanded(
                         child: TextFormField(
+                          controller: _messageEditingController,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.all(16),
                             hintText: 'message'.tr,
@@ -89,7 +96,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  if (_messageEditingController.text.isNotEmpty) {
+                    var newMessage = Chat(
+                      message: _messageEditingController.text,
+                      time: '10:45',
+                      status: 1,
+                      received: false,
+                    );
+
+                    chats.add(newMessage);
+                    setState(() {});
+                    _messageEditingController.clear();
+                  }
+                },
                 borderRadius: BorderRadius.circular(100),
                 child: Container(
                   decoration: const BoxDecoration(
