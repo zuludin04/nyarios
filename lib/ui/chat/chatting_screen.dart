@@ -42,6 +42,67 @@ class _ChattingScreenState extends State<ChattingScreen> {
               itemCount: chatDemo.length,
             ),
           ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Get.theme.colorScheme.surface,
+                    boxShadow: const [
+                      BoxShadow(
+                        offset: Offset(0, 0),
+                        blurRadius: 1,
+                        spreadRadius: 1,
+                        color: Colors.black12,
+                      ),
+                    ],
+                  ),
+                  margin: const EdgeInsets.all(8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(16),
+                            hintText: 'message'.tr,
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
+                          cursorColor: const Color.fromRGBO(251, 127, 107, 1),
+                          textInputAction: TextInputAction.done,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.attach_file),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.camera_alt),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {},
+                borderRadius: BorderRadius.circular(100),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromRGBO(251, 127, 107, 1),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: const Icon(Icons.send),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
         ],
       ),
     );

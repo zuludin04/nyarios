@@ -7,7 +7,8 @@ const Map<String, String> idID = {
   "dark_mode": "Mode Gelap",
   "language": "Bahasa",
   "rating": "Rating",
-  "share": "Bagikan"
+  "share": "Bagikan",
+  "message": "Pesan",
 };
 
 const Map<String, String> enUS = {
@@ -19,5 +20,6 @@ const Map<String, String> enUS = {
   "dark_mode": "Dark Mode",
   "language": "Language",
   "rating": "Rating",
-  "share": "Share"
+  "share": "Share",
+  "message": "Message",
 };
