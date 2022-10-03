@@ -11,8 +11,8 @@ class StorageServices extends GetxService {
     _storage.write('DARK_MODE', value);
   }
 
-  // String get selectedLanguage => _storage.read('SELECTED_LANGUAGE') ?? 'en_US';
-  // set selectedLanguage(String value) {
-  //   _storage.write('SELECTED_LANGUAGE', value);
-  // }
+  String get selectedLanguage => _storage.read('SELECTED_LANGUAGE') ?? 'en_US';
+  set selectedLanguage(String value) {
+    _storage.write('SELECTED_LANGUAGE', value);
+  }
 }

@@ -36,3 +36,5 @@ var chatDemo = [
       status: 1,
       received: false),
 ];
+
+var languages = ["English", "Indonesia"];

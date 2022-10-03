@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../services/storage_services.dart';
+import '../language/language_setting_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -47,7 +48,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SettingsTile(
                 title: const Text('Language'),
                 leading: const Icon(Icons.language),
-                onPressed: (context) {},
+                onPressed: (context) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LanguageSettingScreen()),
+                  );
+                },
               ),
             ],
           ),
