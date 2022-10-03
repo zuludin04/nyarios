@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../services/storage_services.dart';
@@ -64,22 +61,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SettingsTile(
                 title: Text('rating'.tr),
                 leading: const Icon(Icons.star),
-                onPressed: (context) {
-                  try {
-                    launchUrl(Uri.parse(""));
-                  } on PlatformException catch (_) {
-                    launchUrl(Uri.parse(""));
-                  } finally {
-                    launchUrl(Uri.parse(""));
-                  }
-                },
+                onPressed: (context) {},
               ),
               SettingsTile(
                 title: Text('share'.tr),
                 leading: const Icon(Icons.share),
-                onPressed: (context) {
-                  Share.share("");
-                },
+                onPressed: (context) {},
               ),
             ],
           )
