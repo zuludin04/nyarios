@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "903393083090",
+    "project_id": "nyarios-b45ca",
+    "storage_bucket": "nyarios-b45ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903393083090:android:96eae22fd960a86947b70b",
+        "android_client_info": {
+          "package_name": "com.app.zuludin.nyarios"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903393083090-t8rc86s82t6l65naptr1cnfpdp1f3cth.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeIOjIVr0jRnon2Cz6igoP7K7E4-lJoAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903393083090-t8rc86s82t6l65naptr1cnfpdp1f3cth.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
