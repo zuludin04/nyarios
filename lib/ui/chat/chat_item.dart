@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/chat.dart';
 
@@ -41,11 +42,22 @@ class ChatItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              chat.message!,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 16,
+            GestureDetector(
+              onTap: () {
+                if (_isLink(chat.message!)) {
+                  launchUrl(Uri(path: chat.message!));
+                }
+              },
+              child: Text(
+                chat.message!,
+                style: TextStyle(
+                  color:
+                      _isLink(chat.message!) ? Colors.blueGrey : Colors.black54,
+                  fontSize: 16,
+                  decoration: _isLink(chat.message!)
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                ),
               ),
             ),
             Row(
@@ -83,5 +95,11 @@ class ChatItem extends StatelessWidget {
     } else {
       return Icons.av_timer;
     }
+  }
+
+  bool _isLink(String input) {
+    final matcher = RegExp(
+        r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)");
+    return matcher.hasMatch(input);
   }
 }

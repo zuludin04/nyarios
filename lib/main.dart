@@ -9,6 +9,8 @@ import 'services/language_service.dart';
 import 'services/storage_services.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
   await GetStorage.init();
 
