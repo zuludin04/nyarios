@@ -1,8 +1,8 @@
-import 'dart:io';
-
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../core/constants.dart';
 import '../../core/widgets/toolbar.dart';
@@ -87,7 +87,26 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showMaterialModalBottomSheet(
+                            expand: false,
+                            context: context,
+                            builder: (context) => Container(
+                              color: Colors.white,
+                              height: 100,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  _pickFileMenu('File', Icons.attach_file),
+                                  _pickFileMenu('Gallery', Icons.image),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                         icon: const Icon(Icons.attach_file),
                       ),
                       IconButton(
@@ -133,6 +152,30 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
+  Widget _pickFileMenu(String title, IconData icon) {
+    return InkWell(
+      onTap: () async {
+        Get.back();
+        if (title == 'Gallery') {
+          _pickImage(true);
+        } else {
+          _pickFile();
+        }
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 32,
+          ),
+          Text(title.toLowerCase().tr),
+        ],
+      ),
+    );
+  }
+
   void _pickImage(bool fromGallery) async {
     final file = await ImagePicker().pickImage(
       source: fromGallery ? ImageSource.gallery : ImageSource.camera,
@@ -146,6 +189,22 @@ class _ChattingScreenState extends State<ChattingScreen> {
         status: 1,
         received: false,
         type: 'image',
+      );
+      chats.add(newMessage);
+      setState(() {});
+    }
+  }
+
+  void _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      var newMessage = Chat(
+        message: result.files.single.name,
+        time: '10:45',
+        status: 1,
+        received: false,
+        type: 'file',
       );
       chats.add(newMessage);
       setState(() {});
