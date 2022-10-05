@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/constants.dart';
 import '../../core/widgets/toolbar.dart';
@@ -88,7 +91,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         icon: const Icon(Icons.attach_file),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _pickImage(false);
+                        },
                         icon: const Icon(Icons.camera_alt),
                       ),
                     ],
@@ -99,11 +104,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 onTap: () {
                   if (_messageEditingController.text.isNotEmpty) {
                     var newMessage = Chat(
-                      message: _messageEditingController.text,
-                      time: '10:45',
-                      status: 1,
-                      received: false,
-                    );
+                        message: _messageEditingController.text,
+                        time: '10:45',
+                        status: 1,
+                        received: false,
+                        type: 'text');
 
                     chats.add(newMessage);
                     setState(() {});
@@ -126,5 +131,24 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ],
       ),
     );
+  }
+
+  void _pickImage(bool fromGallery) async {
+    final file = await ImagePicker().pickImage(
+      source: fromGallery ? ImageSource.gallery : ImageSource.camera,
+      imageQuality: 50,
+    );
+
+    if (file != null) {
+      var newMessage = Chat(
+        message: file.path,
+        time: '10:45',
+        status: 1,
+        received: false,
+        type: 'image',
+      );
+      chats.add(newMessage);
+      setState(() {});
+    }
   }
 }

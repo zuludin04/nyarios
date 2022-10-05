@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,24 +44,7 @@ class ChatItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            GestureDetector(
-              onTap: () {
-                if (_isLink(chat.message!)) {
-                  launchUrl(Uri(path: chat.message!));
-                }
-              },
-              child: Text(
-                chat.message!,
-                style: TextStyle(
-                  color:
-                      _isLink(chat.message!) ? Colors.blueGrey : Colors.black54,
-                  fontSize: 16,
-                  decoration: _isLink(chat.message!)
-                      ? TextDecoration.underline
-                      : TextDecoration.none,
-                ),
-              ),
-            ),
+            _showChatType(chat.type!),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -85,6 +70,34 @@ class ChatItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _showChatType(String type) {
+    switch (type) {
+      case 'image':
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Image.file(File(chat.message!)),
+        );
+      default:
+        return GestureDetector(
+          onTap: () {
+            if (_isLink(chat.message!)) {
+              launchUrl(Uri(path: chat.message!));
+            }
+          },
+          child: Text(
+            chat.message!,
+            style: TextStyle(
+              color: _isLink(chat.message!) ? Colors.blueGrey : Colors.black54,
+              fontSize: 16,
+              decoration: _isLink(chat.message!)
+                  ? TextDecoration.underline
+                  : TextDecoration.none,
+            ),
+          ),
+        );
+    }
   }
 
   IconData _readStatusMessage(int status) {
