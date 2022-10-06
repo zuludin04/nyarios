@@ -15,4 +15,9 @@ class StorageServices extends GetxService {
   set selectedLanguage(String value) {
     _storage.write('SELECTED_LANGUAGE', value);
   }
+
+  bool get alreadyLogin => _storage.read('ALREADY_LOGIN') ?? false;
+  set alreadyLogin(bool value) {
+    _storage.write('ALREADY_LOGIN', value);
+  }
 }

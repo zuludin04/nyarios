@@ -2,22 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../routes/app_pages.dart';
-import '../../services/language_service.dart';
 import '../../services/storage_services.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    Get.updateLocale(LanguageService.deviceLocale);
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

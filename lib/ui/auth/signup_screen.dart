@@ -1,7 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/utils/helper.dart';
+import '../../routes/app_pages.dart';
+import '../../services/storage_services.dart';
 import 'auth_input_field.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -46,7 +49,10 @@ class SignUpScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.home);
+                      StorageServices.to.alreadyLogin = true;
+                    },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
@@ -76,7 +82,7 @@ class SignUpScreen extends StatelessWidget {
                             color: Color.fromRGBO(251, 127, 107, 1),
                             fontWeight: FontWeight.bold,
                           ),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
+                          recognizer: TapGestureRecognizer()..onTap = Get.back,
                         ),
                       ],
                     ),

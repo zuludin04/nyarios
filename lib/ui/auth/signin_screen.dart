@@ -1,8 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:nyarios/ui/auth/signup_screen.dart';
+import 'package:get/get.dart';
 
 import '../../core/utils/helper.dart';
+import '../../routes/app_pages.dart';
+import '../../services/storage_services.dart';
 import 'auth_input_field.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -52,7 +54,10 @@ class SignInScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.home);
+                      StorageServices.to.alreadyLogin = true;
+                    },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
@@ -83,13 +88,7 @@ class SignInScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignUpScreen()));
-                            },
+                            ..onTap = () => Get.toNamed(AppRoutes.signUp),
                         ),
                       ],
                     ),
