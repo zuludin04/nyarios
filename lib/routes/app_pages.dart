@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nyarios/ui/auth/signin_screen.dart';
 
 import '../ui/chat/chatting_screen.dart';
 import '../ui/home/home_screen.dart';
@@ -15,7 +16,7 @@ class AppPages {
   static final pages = [
     GetPage(
       name: AppRoutes.home,
-      page: () => const HomeScreen(),
+      page: () => const SignInScreen(),
     ),
     GetPage(
       name: AppRoutes.chatting,
