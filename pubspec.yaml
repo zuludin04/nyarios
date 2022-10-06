@@ -21,6 +21,7 @@ dependencies:
   image_picker: ^0.8.5+3
   modal_bottom_sheet: ^2.1.2
   file_picker: ^5.2.0+1
+  firebase_auth: ^3.11.1
 
 dev_dependencies:
   flutter_test:

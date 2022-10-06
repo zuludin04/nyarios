@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,8 +8,16 @@ import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 import 'auth_input_field.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +42,15 @@ class SignUpScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.black45),
                 ),
                 const SizedBox(height: 32),
-                const AuthInputField(
+                AuthInputField(
                   label: 'Email Address',
                   hint: 'Enter your email',
+                  controller: emailController,
                   validator: emailValidator,
                 ),
                 const SizedBox(height: 16),
-                const AuthInputField(
+                AuthInputField(
+                  controller: passwordController,
                   label: 'Password',
                   hint: 'Enter your password',
                   validator: passwordValidator,
@@ -49,10 +60,7 @@ class SignUpScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.home);
-                      StorageServices.to.alreadyLogin = true;
-                    },
+                    onPressed: registerUser,
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
@@ -94,5 +102,24 @@ class SignUpScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void registerUser() async {
+    try {
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      debugPrint('success login ${credential.user?.email}');
+
+      Get.toNamed(AppRoutes.home);
+      StorageServices.to.alreadyLogin = true;
+    } on FirebaseAuthException catch (e) {
+      debugPrint('error firebase login ${e.code}');
+    } catch (e) {
+      debugPrint('error ${e.toString()}');
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AuthInputField extends StatefulWidget {
   final String label;
+  final TextEditingController controller;
   final String hint;
   final String? Function(String?) validator;
   final TextInputType inputType;
@@ -11,6 +12,7 @@ class AuthInputField extends StatefulWidget {
     super.key,
     required this.label,
     required this.validator,
+    required this.controller,
     this.hint = "",
     this.inputType = TextInputType.text,
     this.obscure = false,
@@ -56,6 +58,7 @@ class _AuthInputFieldState extends State<AuthInputField> {
               Expanded(
                 flex: 1,
                 child: TextFormField(
+                  controller: widget.controller,
                   obscureText: obscure,
                   keyboardType: widget.inputType,
                   validator: widget.validator,

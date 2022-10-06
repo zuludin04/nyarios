@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,8 +8,16 @@ import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 import 'auth_input_field.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +42,16 @@ class SignInScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.black45),
                 ),
                 const SizedBox(height: 32),
-                const AuthInputField(
+                AuthInputField(
                   label: 'Email Address',
+                  controller: emailController,
                   hint: 'Enter your email',
                   validator: emailValidator,
                 ),
                 const SizedBox(height: 16),
-                const AuthInputField(
+                AuthInputField(
                   label: 'Password',
+                  controller: passwordController,
                   hint: 'Enter your password',
                   validator: passwordValidator,
                   obscure: true,
@@ -54,10 +65,7 @@ class SignInScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.home);
-                      StorageServices.to.alreadyLogin = true;
-                    },
+                    onPressed: loginUser,
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
@@ -100,5 +108,23 @@ class SignInScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void loginUser() async {
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      debugPrint('success login ${credential.user?.email}');
+
+      Get.toNamed(AppRoutes.home);
+      StorageServices.to.alreadyLogin = true;
+    } on FirebaseAuthException catch (e) {
+      debugPrint('error firebase login ${e.code}');
+    } catch (e) {
+      debugPrint('error ${e.toString()}');
+    }
   }
 }
