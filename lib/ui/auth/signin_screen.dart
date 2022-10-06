@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:nyarios/ui/auth/signup_screen.dart';
 
 import '../../core/utils/helper.dart';
 import 'auth_input_field.dart';
@@ -81,7 +82,14 @@ class SignInScreen extends StatelessWidget {
                             color: Color.fromRGBO(251, 127, 107, 1),
                             fontWeight: FontWeight.bold,
                           ),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignUpScreen()));
+                            },
                         ),
                       ],
                     ),
