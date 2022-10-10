@@ -1,41 +1,91 @@
 {
   "project_info": {
-    "project_number": "903393083090",
-    "project_id": "nyarios-b45ca",
-    "storage_bucket": "nyarios-b45ca.appspot.com"
+    "project_number": "112455049075",
+    "project_id": "during-1ee33",
+    "storage_bucket": "during-1ee33.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:903393083090:android:96eae22fd960a86947b70b",
+        "mobilesdk_app_id": "1:112455049075:android:eeeaa5f022ec7d71ffef06",
         "android_client_info": {
-          "package_name": "com.app.zuludin.nyarios"
+          "package_name": "com.app.zuludin.during.during"
         }
       },
       "oauth_client": [
         {
-          "client_id": "903393083090-o8reqebkbrsd38lkl8cv775h9l1cv5uv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.app.zuludin.nyarios",
-            "certificate_hash": "149d45789e84f62e07d2ddfc5bf606d6b2217821"
-          }
-        },
-        {
-          "client_id": "903393083090-t8rc86s82t6l65naptr1cnfpdp1f3cth.apps.googleusercontent.com",
+          "client_id": "112455049075-qf25dd4hop2p41cuumais567belbqdpf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAeIOjIVr0jRnon2Cz6igoP7K7E4-lJoAM"
+          "current_key": "AIzaSyCe_vzy95wsH0XzLL05z7-42XtrZKPVS_U"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "903393083090-t8rc86s82t6l65naptr1cnfpdp1f3cth.apps.googleusercontent.com",
+              "client_id": "112455049075-qf25dd4hop2p41cuumais567belbqdpf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112455049075:android:dab7334388631f6fffef06",
+        "android_client_info": {
+          "package_name": "com.app.zuludin.nyarios"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112455049075-qf25dd4hop2p41cuumais567belbqdpf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe_vzy95wsH0XzLL05z7-42XtrZKPVS_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112455049075-qf25dd4hop2p41cuumais567belbqdpf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112455049075:android:e44823d165140517ffef06",
+        "android_client_info": {
+          "package_name": "com.example.sharepayment"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112455049075-qf25dd4hop2p41cuumais567belbqdpf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe_vzy95wsH0XzLL05z7-42XtrZKPVS_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "112455049075-qf25dd4hop2p41cuumais567belbqdpf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
