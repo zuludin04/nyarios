@@ -5,6 +5,7 @@ import '../ui/auth/signup_screen.dart';
 import '../ui/chat/chatting_screen.dart';
 import '../ui/home/home_screen.dart';
 import '../ui/language/language_setting_screen.dart';
+import '../ui/profile/profile_screen.dart';
 import '../ui/settings/settings_screen.dart';
 import '../ui/splash/splash_screen.dart';
 
@@ -43,6 +44,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.language,
       page: () => const LanguageSettingScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => const ProfileScreen(),
     ),
   ];
 }

@@ -10,4 +10,5 @@ abstract class AppRoutes {
   static const chatting = '/chatting';
   static const language = '/language';
   static const settings = '/settings';
+  static const profile = '/profile';
 }
