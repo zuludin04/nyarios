@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/toolbar.dart';
+import '../../services/storage_services.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -11,7 +12,10 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: Toolbar.defaultToolbar('Profile'),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('profile').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('profile')
+            .where('id', isNotEqualTo: StorageServices.to.userId)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');

@@ -65,7 +65,10 @@ class _SignInScreenState extends State<SignInScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: loginUser,
+                    onPressed: () {
+                      Get.offAllNamed(AppRoutes.home);
+                      StorageServices.to.alreadyLogin = true;
+                    },
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(vertical: 12)),
@@ -119,7 +122,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
       debugPrint('success login ${credential.user?.email}');
 
-      Get.toNamed(AppRoutes.home);
+      Get.offAllNamed(AppRoutes.home);
       StorageServices.to.alreadyLogin = true;
     } on FirebaseAuthException catch (e) {
       debugPrint('error firebase login ${e.code}');
