@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -150,7 +153,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
                     // chats.add(newMessage);
                     // setState(() {});
-                    _sendMessage(_messageEditingController.text);
+                    _sendMessage(_messageEditingController.text, 'text');
                     _messageEditingController.clear();
                   }
                 },
@@ -196,7 +199,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Future<void> _sendMessage(String message) async {
+  Future<void> _sendMessage(String message, String type) async {
     CollectionReference newMessage = FirebaseFirestore.instance
         .collection('room')
         .doc('room_uid')
@@ -206,7 +209,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         message: message,
         sendDatetime: '14 Oct 2022',
         senderId: StorageServices.to.userId,
-        type: 'text');
+        type: type);
 
     return newMessage
         .add(chat.toMap())
@@ -219,6 +222,31 @@ class _ChattingScreenState extends State<ChattingScreen> {
       source: fromGallery ? ImageSource.gallery : ImageSource.camera,
       imageQuality: 50,
     );
+
+    var storage = FirebaseStorage.instance.ref();
+    var uploadImage = storage.child(file!.path).putFile(File(file.path));
+
+    uploadImage.snapshotEvents.listen((event) async {
+      switch (event.state) {
+        case TaskState.running:
+          final progress = 100.0 * (event.bytesTransferred / event.totalBytes);
+          print("Upload is $progress% complete.");
+          break;
+        case TaskState.paused:
+          print("Upload is paused.");
+          break;
+        case TaskState.canceled:
+          print("Upload was canceled");
+          break;
+        case TaskState.error:
+          // Handle unsuccessful uploads
+          break;
+        case TaskState.success:
+          var url = await storage.child(file.path).getDownloadURL();
+          _sendMessage(url, 'image');
+          break;
+      }
+    });
 
     // if (file != null) {
     //   var newMessage = Chat(
@@ -236,16 +264,30 @@ class _ChattingScreenState extends State<ChattingScreen> {
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    // if (result != null) {
-    //   var newMessage = Chat(
-    //     message: result.files.single.name,
-    //     time: '10:45',
-    //     status: 1,
-    //     received: false,
-    //     type: 'file',
-    //   );
-    //   chats.add(newMessage);
-    //   setState(() {});
-    // }
+    File file = File(result!.files.single.path!);
+    var storage = FirebaseStorage.instance.ref();
+    var uploadImage = storage.child(file.path).putFile(File(file.path));
+
+    uploadImage.snapshotEvents.listen((event) async {
+      switch (event.state) {
+        case TaskState.running:
+          final progress = 100.0 * (event.bytesTransferred / event.totalBytes);
+          print("Upload is $progress% complete.");
+          break;
+        case TaskState.paused:
+          print("Upload is paused.");
+          break;
+        case TaskState.canceled:
+          print("Upload was canceled");
+          break;
+        case TaskState.error:
+          // Handle unsuccessful uploads
+          break;
+        case TaskState.success:
+          var url = await storage.child(file.path).getDownloadURL();
+          _sendMessage(result.files.single.name, 'file');
+          break;
+      }
+    });
   }
 }
