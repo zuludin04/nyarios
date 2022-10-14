@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:nyarios/services/storage_services.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../data/chat.dart';
@@ -139,18 +140,19 @@ class _ChattingScreenState extends State<ChattingScreen> {
               ),
               InkWell(
                 onTap: () {
-                  // if (_messageEditingController.text.isNotEmpty) {
-                  //   var newMessage = Chat(
-                  //       message: _messageEditingController.text,
-                  //       time: '10:45',
-                  //       status: 1,
-                  //       received: false,
-                  //       type: 'text');
+                  if (_messageEditingController.text.isNotEmpty) {
+                    // var newMessage = Chat(
+                    //     message: _messageEditingController.text,
+                    //     time: '10:45',
+                    //     status: 1,
+                    //     received: false,
+                    //     type: 'text');
 
-                  //   chats.add(newMessage);
-                  //   setState(() {});
-                  //   _messageEditingController.clear();
-                  // }
+                    // chats.add(newMessage);
+                    // setState(() {});
+                    _sendMessage(_messageEditingController.text);
+                    _messageEditingController.clear();
+                  }
                 },
                 borderRadius: BorderRadius.circular(100),
                 child: Container(
@@ -192,6 +194,24 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _sendMessage(String message) async {
+    CollectionReference newMessage = FirebaseFirestore.instance
+        .collection('room')
+        .doc('room_uid')
+        .collection('messages');
+
+    Chat chat = Chat(
+        message: message,
+        sendDatetime: '14 Oct 2022',
+        senderId: StorageServices.to.userId,
+        type: 'text');
+
+    return newMessage
+        .add(chat.toMap())
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
   }
 
   void _pickImage(bool fromGallery) async {
