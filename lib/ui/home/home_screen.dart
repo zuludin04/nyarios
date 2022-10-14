@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,61 +23,80 @@ class HomeScreen extends StatelessWidget {
               delegate: CustomStickyBar(),
               pinned: true,
             ),
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Container(
-                    height: 90,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: ListView.builder(
-                      itemBuilder: (context, index) => _storyItem(),
-                      itemCount: 1,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // SliverToBoxAdapter(
+            //   child: Column(
+            //     children: [
+            //       const SizedBox(height: 20),
+            //       Container(
+            //         height: 90,
+            //         padding: const EdgeInsets.symmetric(horizontal: 12),
+            //         child: ListView.builder(
+            //           itemBuilder: (context, index) => _storyItem(),
+            //           itemCount: 1,
+            //           scrollDirection: Axis.horizontal,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             const SliverToBoxAdapter(
               child: SizedBox(height: 10),
             ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _chatItem(context),
-                childCount: 15,
-              ),
-            )
+            StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('contacts')
+                  .doc(StorageServices.to.userId)
+                  .collection('receiver')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const SliverToBoxAdapter(
+                      child: Text('Something went wrong'));
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SliverToBoxAdapter(child: Text("Loading"));
+                }
+
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) =>
+                        _chatItem(snapshot.data!.docs[index].data()),
+                    childCount: snapshot.data!.docs.length,
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _storyItem() {
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.lightBlue.shade100,
-            border: Border.all(color: Colors.blue, width: 2),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.add,
-            color: Colors.blue,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text('add_status'.tr)
-      ],
-    );
-  }
+  // Widget _storyItem() {
+  //   return Column(
+  //     children: [
+  //       Container(
+  //         width: 60,
+  //         height: 60,
+  //         margin: const EdgeInsets.symmetric(horizontal: 8),
+  //         decoration: BoxDecoration(
+  //           color: Colors.lightBlue.shade100,
+  //           border: Border.all(color: Colors.blue, width: 2),
+  //           shape: BoxShape.circle,
+  //         ),
+  //         child: const Icon(
+  //           Icons.add,
+  //           color: Colors.blue,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 4),
+  //       Text('add_status'.tr)
+  //     ],
+  //   );
+  // }
 
-  Widget _chatItem(BuildContext context) {
+  Widget _chatItem(Map<String, dynamic> map) {
     return InkWell(
       onTap: () => Get.toNamed(AppRoutes.chatting),
       child: Column(
@@ -99,16 +119,16 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Zulfikar Mauludin',
-                        style: TextStyle(
+                      Text(
+                      map['name'],
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Hallo',
+                        map['message'],
                         style: TextStyle(
                           color: StorageServices.to.darkMode
                               ? Colors.white54
@@ -124,15 +144,15 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '22 Sep 2022',
+                      map['send_datetime'],
                       style: TextStyle(
                         color: StorageServices.to.darkMode
                             ? Colors.white54
                             : Colors.black54,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    const Icon(Icons.check, size: 16),
+                    // const SizedBox(height: 4),
+                    // const Icon(Icons.check, size: 16),
                   ],
                 ),
               ],
