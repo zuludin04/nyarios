@@ -1,10 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-import '../../core/constants.dart';
 import '../../core/widgets/toolbar.dart';
 import '../../data/chat.dart';
 import 'chat_item.dart';
@@ -19,8 +19,6 @@ class ChattingScreen extends StatefulWidget {
 class _ChattingScreenState extends State<ChattingScreen> {
   final TextEditingController _messageEditingController =
       TextEditingController();
-
-  List<Chat> chats = chatDemo;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +43,30 @@ class _ChattingScreenState extends State<ChattingScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) => ChatItem(chat: chats[index]),
-              itemCount: chats.length,
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('room')
+                  .doc('room_uid')
+                  .collection('messages')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text("Loading");
+                }
+
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    var chat = Chat.fromMap(snapshot.data!.docs[index].data());
+                    return ChatItem(chat: chat);
+                  },
+                  itemCount: snapshot.data!.docs.length,
+                );
+              },
             ),
           ),
           Row(
@@ -121,18 +139,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
               ),
               InkWell(
                 onTap: () {
-                  if (_messageEditingController.text.isNotEmpty) {
-                    var newMessage = Chat(
-                        message: _messageEditingController.text,
-                        time: '10:45',
-                        status: 1,
-                        received: false,
-                        type: 'text');
+                  // if (_messageEditingController.text.isNotEmpty) {
+                  //   var newMessage = Chat(
+                  //       message: _messageEditingController.text,
+                  //       time: '10:45',
+                  //       status: 1,
+                  //       received: false,
+                  //       type: 'text');
 
-                    chats.add(newMessage);
-                    setState(() {});
-                    _messageEditingController.clear();
-                  }
+                  //   chats.add(newMessage);
+                  //   setState(() {});
+                  //   _messageEditingController.clear();
+                  // }
                 },
                 borderRadius: BorderRadius.circular(100),
                 child: Container(
@@ -182,32 +200,32 @@ class _ChattingScreenState extends State<ChattingScreen> {
       imageQuality: 50,
     );
 
-    if (file != null) {
-      var newMessage = Chat(
-        message: file.path,
-        time: '10:45',
-        status: 1,
-        received: false,
-        type: 'image',
-      );
-      chats.add(newMessage);
-      setState(() {});
-    }
+    // if (file != null) {
+    //   var newMessage = Chat(
+    //     message: file.path,
+    //     time: '10:45',
+    //     status: 1,
+    //     received: false,
+    //     type: 'image',
+    //   );
+    //   chats.add(newMessage);
+    //   setState(() {});
+    // }
   }
 
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    if (result != null) {
-      var newMessage = Chat(
-        message: result.files.single.name,
-        time: '10:45',
-        status: 1,
-        received: false,
-        type: 'file',
-      );
-      chats.add(newMessage);
-      setState(() {});
-    }
+    // if (result != null) {
+    //   var newMessage = Chat(
+    //     message: result.files.single.name,
+    //     time: '10:45',
+    //     status: 1,
+    //     received: false,
+    //     type: 'file',
+    //   );
+    //   chats.add(newMessage);
+    //   setState(() {});
+    // }
   }
 }

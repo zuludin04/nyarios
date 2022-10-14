@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/chat.dart';
+import '../../services/storage_services.dart';
 
 class ChatItem extends StatelessWidget {
   final Chat chat;
@@ -13,24 +14,28 @@ class ChatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: chat.received! ? Alignment.centerLeft : Alignment.centerRight,
+      alignment: chat.senderId != StorageServices.to.userId
+          ? Alignment.centerLeft
+          : Alignment.centerRight,
       child: Container(
         padding: const EdgeInsets.all(8),
         margin: EdgeInsets.only(
           top: 4,
           bottom: 4,
-          left: chat.received! ? 16 : 75,
-          right: chat.received! ? 75 : 16,
+          left: chat.senderId != StorageServices.to.userId ? 16 : 75,
+          right: chat.senderId != StorageServices.to.userId ? 75 : 16,
         ),
         decoration: BoxDecoration(
-          color: chat.received ?? false
+          color: chat.senderId != StorageServices.to.userId
               ? Colors.white
               : const Color.fromRGBO(251, 127, 107, 1),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(10),
             topRight: const Radius.circular(10),
-            bottomLeft: Radius.circular(chat.received! ? 0 : 10),
-            bottomRight: Radius.circular(chat.received! ? 10 : 0),
+            bottomLeft: Radius.circular(
+                chat.senderId != StorageServices.to.userId ? 0 : 10),
+            bottomRight: Radius.circular(
+                chat.senderId != StorageServices.to.userId ? 10 : 0),
           ),
           boxShadow: const [
             BoxShadow(
@@ -49,21 +54,21 @@ class ChatItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  chat.time!,
+                  chat.sendDatetime ?? "",
                   style: const TextStyle(
                     color: Colors.black54,
                     fontSize: 13,
                   ),
                 ),
-                const SizedBox(width: 4),
-                Visibility(
-                  visible: !chat.received!,
-                  child: Icon(
-                    _readStatusMessage(chat.status!),
-                    size: 18,
-                    color: Colors.black54,
-                  ),
-                ),
+                // const SizedBox(width: 4),
+                // Visibility(
+                //   visible: !chat.senderId != StorageServices.to.userId,
+                //   child: Icon(
+                //     _readStatusMessage(chat.status!),
+                //     size: 18,
+                //     color: Colors.black54,
+                //   ),
+                // ),
               ],
             ),
           ],
