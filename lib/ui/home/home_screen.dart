@@ -58,6 +58,11 @@ class HomeScreen extends StatelessWidget {
                   return const SliverToBoxAdapter(child: Text("Loading"));
                 }
 
+                if (snapshot.data!.size == 0) {
+                  return const SliverToBoxAdapter(
+                      child: Text("Empty Message"));
+                }
+
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) =>
@@ -120,7 +125,7 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                      map['name'],
+                        map['name'],
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
