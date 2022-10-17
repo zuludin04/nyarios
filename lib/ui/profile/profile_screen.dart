@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../core/widgets/toolbar.dart';
+import '../../data/profile.dart';
+import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -11,11 +14,8 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Toolbar.defaultToolbar('Profile'),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('profile')
-            .where('id', isNotEqualTo: StorageServices.to.userId)
-            .snapshots(),
+      body: FutureBuilder<List<Profile>>(
+        future: _loadProfileContact(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
@@ -26,18 +26,18 @@ class ProfileScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            itemBuilder: (context, index) => _profileItem(
-                snapshot.data!.docs[index].data() as Map<String, dynamic>),
-            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) =>
+                _profileItem(snapshot.data![index]),
+            itemCount: snapshot.data!.length,
           );
         },
       ),
     );
   }
 
-  Widget _profileItem(Map<String, dynamic> map) {
+  Widget _profileItem(Profile profile) {
     return InkWell(
-      onTap: () {},
+      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: profile.roomId),
       child: Column(
         children: [
           Container(
@@ -47,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: Image.network(
-                    map['photo'],
+                    profile.photo ?? "",
                     width: 40,
                     height: 40,
                   ),
@@ -59,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        map['name'],
+                        profile.name ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -75,5 +75,56 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<List<Profile>> _loadProfileContact() async {
+    var contacts = await FirebaseFirestore.instance
+        .collection('contacts')
+        .doc(StorageServices.to.userId)
+        .collection('receiver')
+        .get();
+
+    if (contacts.size == 0) {
+      var profiles = await FirebaseFirestore.instance
+          .collection('profile')
+          .where('id', isNotEqualTo: StorageServices.to.userId)
+          .get();
+
+      return profiles.docs.map((e) => Profile.fromMap(e.data())).toList();
+    } else {
+      var profiles = await FirebaseFirestore.instance
+          .collection('profile')
+          .where('id', isNotEqualTo: StorageServices.to.userId)
+          .get();
+
+      var list = profiles.docs.map((e) async {
+        var profile = Profile.fromMap(e.data());
+        var pro = await _contactReceiver(profile);
+        return pro;
+      }).toList();
+
+      return Future.wait(list);
+    }
+  }
+
+  Future<Profile> _contactReceiver(Profile profile) async {
+    var contact = await FirebaseFirestore.instance
+        .collection('contacts')
+        .doc(StorageServices.to.userId)
+        .collection('receiver')
+        .get();
+
+    var roomId = contact.docs.where((element) {
+      var uid = profile.uid ?? "";
+      return element['receiverId'] == uid;
+    }).toList();
+
+    if (roomId.isNotEmpty) {
+      profile.roomId = roomId[0]['roomId'];
+    } else {
+      profile.roomId = null;
+    }
+
+    return profile;
   }
 }
