@@ -224,8 +224,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
       selectedRoomId = roomId;
       setState(() {});
-
-      print("new chat");
     } else {
       _saveUpdateContact(true, true, message, '');
       _saveUpdateContact(false, true, message, '');
@@ -242,8 +240,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
           type: type);
 
       newMessage.add(chat.toMap());
-
-      print("continue chat");
     }
   }
 
