@@ -27,6 +27,13 @@ class _ChattingScreenState extends State<ChattingScreen> {
       TextEditingController();
 
   Profile profile = Get.arguments;
+  String? selectedRoomId;
+
+  @override
+  void initState() {
+    selectedRoomId = profile.roomId;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +61,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             child: StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('room')
-                  .doc(profile.roomId)
+                  .doc(selectedRoomId)
                   .collection('messages')
                   .snapshots(),
               builder: (context, snapshot) {
@@ -195,7 +202,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   void _sendMessage(String message, String type) async {
-    if (profile.roomId == null) {
+    if (selectedRoomId == null) {
       // create new room
       var roomId = const Uuid().v4();
 
@@ -214,13 +221,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
           type: type);
 
       newMessage.add(chat.toMap());
+
+      selectedRoomId = roomId;
+      setState(() {});
+
+      print("new chat");
     } else {
       _saveUpdateContact(true, true, message, '');
       _saveUpdateContact(false, true, message, '');
 
       CollectionReference newMessage = FirebaseFirestore.instance
           .collection('room')
-          .doc(profile.roomId)
+          .doc(selectedRoomId)
           .collection('messages');
 
       Chat chat = Chat(
@@ -230,6 +242,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
           type: type);
 
       newMessage.add(chat.toMap());
+
+      print("continue chat");
     }
   }
 
