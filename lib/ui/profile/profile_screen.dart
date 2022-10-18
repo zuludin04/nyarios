@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _profileItem(Profile profile) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: profile.roomId),
+      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: profile),
       child: Column(
         children: [
           Container(

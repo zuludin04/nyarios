@@ -8,9 +8,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:nyarios/services/storage_services.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../data/chat.dart';
+import '../../data/profile.dart';
 import 'chat_item.dart';
 
 class ChattingScreen extends StatefulWidget {
@@ -23,6 +25,8 @@ class ChattingScreen extends StatefulWidget {
 class _ChattingScreenState extends State<ChattingScreen> {
   final TextEditingController _messageEditingController =
       TextEditingController();
+
+  Profile profile = Get.arguments;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             child: StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('room')
-                  .doc('room_uid')
+                  .doc(profile.roomId)
                   .collection('messages')
                   .snapshots(),
               builder: (context, snapshot) {
@@ -144,15 +148,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
               InkWell(
                 onTap: () {
                   if (_messageEditingController.text.isNotEmpty) {
-                    // var newMessage = Chat(
-                    //     message: _messageEditingController.text,
-                    //     time: '10:45',
-                    //     status: 1,
-                    //     received: false,
-                    //     type: 'text');
-
-                    // chats.add(newMessage);
-                    // setState(() {});
                     _sendMessage(_messageEditingController.text, 'text');
                     _messageEditingController.clear();
                   }
@@ -199,22 +194,57 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Future<void> _sendMessage(String message, String type) async {
-    CollectionReference newMessage = FirebaseFirestore.instance
-        .collection('room')
-        .doc('room_uid')
-        .collection('messages');
+  void _sendMessage(String message, String type) async {
+    if (profile.roomId == null) {
+      // create new room
+      var roomId = const Uuid().v4();
 
-    Chat chat = Chat(
-        message: message,
-        sendDatetime: '14 Oct 2022',
-        senderId: StorageServices.to.userId,
-        type: type);
+      var collection = FirebaseFirestore.instance.collection('contacts');
+      collection
+          .doc(StorageServices.to.userId)
+          .collection('receiver')
+          .doc(profile.uid)
+          .set({
+        'message': message,
+        'name': profile.name,
+        'receiverId': profile.uid,
+        'roomId': roomId,
+        'send_datetime': '18 Oct 2022',
+      });
 
-    return newMessage
-        .add(chat.toMap())
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
+      CollectionReference newMessage = FirebaseFirestore.instance
+          .collection('room')
+          .doc(roomId)
+          .collection('messages');
+
+      Chat chat = Chat(
+          message: message,
+          sendDatetime: '14 Oct 2022',
+          senderId: StorageServices.to.userId,
+          type: type);
+
+      newMessage.add(chat.toMap());
+    } else {
+      var collection = FirebaseFirestore.instance.collection('contacts');
+      collection
+          .doc(StorageServices.to.userId)
+          .collection('receiver')
+          .doc(profile.uid)
+          .update({'message': message});
+
+      CollectionReference newMessage = FirebaseFirestore.instance
+          .collection('room')
+          .doc(profile.roomId)
+          .collection('messages');
+
+      Chat chat = Chat(
+          message: message,
+          sendDatetime: '14 Oct 2022',
+          senderId: StorageServices.to.userId,
+          type: type);
+
+      newMessage.add(chat.toMap());
+    }
   }
 
   void _pickImage(bool fromGallery) async {
@@ -230,16 +260,16 @@ class _ChattingScreenState extends State<ChattingScreen> {
       switch (event.state) {
         case TaskState.running:
           final progress = 100.0 * (event.bytesTransferred / event.totalBytes);
-          print("Upload is $progress% complete.");
+          debugPrint("Upload is $progress% complete.");
           break;
         case TaskState.paused:
-          print("Upload is paused.");
+          debugPrint("Upload is paused.");
           break;
         case TaskState.canceled:
-          print("Upload was canceled");
+          debugPrint("Upload was canceled");
           break;
         case TaskState.error:
-          // Handle unsuccessful uploads
+          debugPrint("Upload was error");
           break;
         case TaskState.success:
           var url = await storage.child(file.path).getDownloadURL();
@@ -247,18 +277,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
           break;
       }
     });
-
-    // if (file != null) {
-    //   var newMessage = Chat(
-    //     message: file.path,
-    //     time: '10:45',
-    //     status: 1,
-    //     received: false,
-    //     type: 'image',
-    //   );
-    //   chats.add(newMessage);
-    //   setState(() {});
-    // }
   }
 
   void _pickFile() async {
@@ -272,19 +290,19 @@ class _ChattingScreenState extends State<ChattingScreen> {
       switch (event.state) {
         case TaskState.running:
           final progress = 100.0 * (event.bytesTransferred / event.totalBytes);
-          print("Upload is $progress% complete.");
+          debugPrint("Upload is $progress% complete.");
           break;
         case TaskState.paused:
-          print("Upload is paused.");
+          debugPrint("Upload is paused.");
           break;
         case TaskState.canceled:
-          print("Upload was canceled");
+          debugPrint("Upload was canceled");
           break;
         case TaskState.error:
-          // Handle unsuccessful uploads
+          debugPrint("Upload was error");
           break;
         case TaskState.success:
-          var url = await storage.child(file.path).getDownloadURL();
+          // var url = await storage.child(file.path).getDownloadURL();
           _sendMessage(result.files.single.name, 'file');
           break;
       }
