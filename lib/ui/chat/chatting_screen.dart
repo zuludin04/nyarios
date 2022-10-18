@@ -32,7 +32,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
-        "Zulfikar Mauludin",
+        profile.name ?? "",
         subtitle: "Online",
         actions: [
           PopupMenuButton(
@@ -199,19 +199,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
       // create new room
       var roomId = const Uuid().v4();
 
-      var collection = FirebaseFirestore.instance.collection('contacts');
-      collection
-          .doc(StorageServices.to.userId)
-          .collection('receiver')
-          .doc(profile.uid)
-          .set({
-        'message': message,
-        'name': profile.name,
-        'receiverId': profile.uid,
-        'roomId': roomId,
-        'photo': profile.photo,
-        'send_datetime': '18 Oct 2022',
-      });
+      _saveUpdateContact(true, false, message, roomId);
+      _saveUpdateContact(false, false, message, roomId);
 
       CollectionReference newMessage = FirebaseFirestore.instance
           .collection('room')
@@ -226,12 +215,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
       newMessage.add(chat.toMap());
     } else {
-      var collection = FirebaseFirestore.instance.collection('contacts');
-      collection
-          .doc(StorageServices.to.userId)
-          .collection('receiver')
-          .doc(profile.uid)
-          .update({'message': message});
+      _saveUpdateContact(true, true, message, '');
+      _saveUpdateContact(false, true, message, '');
 
       CollectionReference newMessage = FirebaseFirestore.instance
           .collection('room')
@@ -245,6 +230,36 @@ class _ChattingScreenState extends State<ChattingScreen> {
           type: type);
 
       newMessage.add(chat.toMap());
+    }
+  }
+
+  void _saveUpdateContact(
+    bool fromSender,
+    bool update,
+    String message,
+    String roomId,
+  ) {
+    if (update) {
+      FirebaseFirestore.instance
+          .collection('contacts')
+          .doc(fromSender ? StorageServices.to.userId : profile.uid)
+          .collection('receiver')
+          .doc(fromSender ? profile.uid : StorageServices.to.userId)
+          .update({'message': message});
+    } else {
+      FirebaseFirestore.instance
+          .collection('contacts')
+          .doc(fromSender ? StorageServices.to.userId : profile.uid)
+          .collection('receiver')
+          .doc(fromSender ? profile.uid : StorageServices.to.userId)
+          .set({
+        'message': message,
+        'name': fromSender ? profile.name : StorageServices.to.userName,
+        'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
+        'roomId': roomId,
+        'photo': profile.photo,
+        'send_datetime': '18 Oct 2022',
+      });
     }
   }
 

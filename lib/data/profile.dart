@@ -36,6 +36,7 @@ class Profile {
       uid: contact.receiverId,
       name: contact.name,
       roomId: contact.roomId,
+      photo: contact.photo,
     );
   }
 }
