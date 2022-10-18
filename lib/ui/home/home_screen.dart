@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../data/contact.dart';
+import '../../data/profile.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 
@@ -59,14 +61,13 @@ class HomeScreen extends StatelessWidget {
                 }
 
                 if (snapshot.data!.size == 0) {
-                  return const SliverToBoxAdapter(
-                      child: Text("Empty Message"));
+                  return const SliverToBoxAdapter(child: Text("Empty Message"));
                 }
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) =>
-                        _chatItem(snapshot.data!.docs[index].data()),
+                    (context, index) => _chatItem(
+                        Contact.fromMap(snapshot.data!.docs[index].data())),
                     childCount: snapshot.data!.docs.length,
                   ),
                 );
@@ -101,21 +102,24 @@ class HomeScreen extends StatelessWidget {
   //   );
   // }
 
-  Widget _chatItem(Map<String, dynamic> map) {
+  Widget _chatItem(Contact contact) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.chatting),
+      onTap: () => Get.toNamed(
+        AppRoutes.chatting,
+        arguments: Profile.fromContact(contact),
+      ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               children: [
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.orange,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(40),
+                  child: Image.network(
+                    contact.photo ?? "",
+                    width: 40,
+                    height: 40,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -125,7 +129,7 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        map['name'],
+                        contact.name ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -133,7 +137,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        map['message'],
+                        contact.message ?? "",
                         style: TextStyle(
                           color: StorageServices.to.darkMode
                               ? Colors.white54
@@ -149,7 +153,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      map['send_datetime'],
+                      contact.sendDatetime ?? "",
                       style: TextStyle(
                         color: StorageServices.to.darkMode
                             ? Colors.white54

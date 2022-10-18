@@ -209,6 +209,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         'name': profile.name,
         'receiverId': profile.uid,
         'roomId': roomId,
+        'photo': profile.photo,
         'send_datetime': '18 Oct 2022',
       });
 

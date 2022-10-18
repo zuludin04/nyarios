@@ -1,3 +1,5 @@
+import 'contact.dart';
+
 class Profile {
   String? uid;
   String? name;
@@ -26,6 +28,14 @@ class Profile {
       name: map['name'] != null ? map['name'] as String : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
       roomId: map['roomId'] != null ? map['roomId'] as String : null,
+    );
+  }
+
+  factory Profile.fromContact(Contact contact) {
+    return Profile(
+      uid: contact.receiverId,
+      name: contact.name,
+      roomId: contact.roomId,
     );
   }
 }
