@@ -1,18 +1,17 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/widgets/toolbar.dart';
-import '../../data/chat.dart';
-import '../../data/profile.dart';
+import '../../data/model/chat.dart';
+import '../../data/model/profile.dart';
+import '../../data/nyarios_repository.dart';
 import 'chat_item.dart';
 
 class ChattingScreen extends StatefulWidget {
@@ -23,6 +22,7 @@ class ChattingScreen extends StatefulWidget {
 }
 
 class _ChattingScreenState extends State<ChattingScreen> {
+  final repository = NyariosRepository();
   final TextEditingController _messageEditingController =
       TextEditingController();
 
@@ -59,11 +59,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('room')
-                  .doc(selectedRoomId)
-                  .collection('messages')
-                  .snapshots(),
+              stream: repository.loadUserChatsByRoomId(selectedRoomId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const Text('Something went wrong');
@@ -206,70 +202,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
       // create new room
       var roomId = const Uuid().v4();
 
-      _saveUpdateContact(true, false, message, roomId);
-      _saveUpdateContact(false, false, message, roomId);
+      repository.updateRecentContact(true, false, profile, message, roomId);
+      repository.updateRecentContact(false, false, profile, message, roomId);
 
-      CollectionReference newMessage = FirebaseFirestore.instance
-          .collection('room')
-          .doc(roomId)
-          .collection('messages');
-
-      Chat chat = Chat(
-          message: message,
-          sendDatetime: '14 Oct 2022',
-          senderId: StorageServices.to.userId,
-          type: type);
-
-      newMessage.add(chat.toMap());
+      repository.sendNewMessage(roomId, message, type);
 
       selectedRoomId = roomId;
       setState(() {});
     } else {
-      _saveUpdateContact(true, true, message, '');
-      _saveUpdateContact(false, true, message, '');
+      repository.updateRecentContact(true, true, profile, message, '');
+      repository.updateRecentContact(false, true, profile, message, '');
 
-      CollectionReference newMessage = FirebaseFirestore.instance
-          .collection('room')
-          .doc(selectedRoomId)
-          .collection('messages');
-
-      Chat chat = Chat(
-          message: message,
-          sendDatetime: '14 Oct 2022',
-          senderId: StorageServices.to.userId,
-          type: type);
-
-      newMessage.add(chat.toMap());
-    }
-  }
-
-  void _saveUpdateContact(
-    bool fromSender,
-    bool update,
-    String message,
-    String roomId,
-  ) {
-    if (update) {
-      FirebaseFirestore.instance
-          .collection('contacts')
-          .doc(fromSender ? StorageServices.to.userId : profile.uid)
-          .collection('receiver')
-          .doc(fromSender ? profile.uid : StorageServices.to.userId)
-          .update({'message': message});
-    } else {
-      FirebaseFirestore.instance
-          .collection('contacts')
-          .doc(fromSender ? StorageServices.to.userId : profile.uid)
-          .collection('receiver')
-          .doc(fromSender ? profile.uid : StorageServices.to.userId)
-          .set({
-        'message': message,
-        'name': fromSender ? profile.name : StorageServices.to.userName,
-        'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
-        'roomId': roomId,
-        'photo': profile.photo,
-        'send_datetime': '18 Oct 2022',
-      });
+      repository.sendNewMessage(selectedRoomId, message, type);
     }
   }
 

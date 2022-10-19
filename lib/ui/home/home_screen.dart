@@ -1,14 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../data/contact.dart';
-import '../../data/profile.dart';
+import '../../data/model/contact.dart';
+import '../../data/model/profile.dart';
+import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final repository = NyariosRepository();
+
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +47,7 @@ class HomeScreen extends StatelessWidget {
               child: SizedBox(height: 10),
             ),
             StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('contacts')
-                  .doc(StorageServices.to.userId)
-                  .collection('receiver')
-                  .snapshots(),
+              stream: repository.loadUserContacts(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return const SliverToBoxAdapter(

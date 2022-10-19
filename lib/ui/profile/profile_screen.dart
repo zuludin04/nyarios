@@ -1,21 +1,22 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../core/widgets/toolbar.dart';
-import '../../data/profile.dart';
+import '../../data/model/profile.dart';
+import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
-import '../../services/storage_services.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final repository = NyariosRepository();
+
+  ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Toolbar.defaultToolbar('Profile'),
       body: FutureBuilder<List<Profile>>(
-        future: _loadProfileContact(),
+        future: repository.loadAllProfiles(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Something went wrong');
@@ -75,56 +76,5 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<List<Profile>> _loadProfileContact() async {
-    var contacts = await FirebaseFirestore.instance
-        .collection('contacts')
-        .doc(StorageServices.to.userId)
-        .collection('receiver')
-        .get();
-
-    if (contacts.size == 0) {
-      var profiles = await FirebaseFirestore.instance
-          .collection('profile')
-          .where('id', isNotEqualTo: StorageServices.to.userId)
-          .get();
-
-      return profiles.docs.map((e) => Profile.fromMap(e.data())).toList();
-    } else {
-      var profiles = await FirebaseFirestore.instance
-          .collection('profile')
-          .where('id', isNotEqualTo: StorageServices.to.userId)
-          .get();
-
-      var list = profiles.docs.map((e) async {
-        var profile = Profile.fromMap(e.data());
-        var pro = await _contactReceiver(profile);
-        return pro;
-      }).toList();
-
-      return Future.wait(list);
-    }
-  }
-
-  Future<Profile> _contactReceiver(Profile profile) async {
-    var contact = await FirebaseFirestore.instance
-        .collection('contacts')
-        .doc(StorageServices.to.userId)
-        .collection('receiver')
-        .get();
-
-    var roomId = contact.docs.where((element) {
-      var uid = profile.uid ?? "";
-      return element['receiverId'] == uid;
-    }).toList();
-
-    if (roomId.isNotEmpty) {
-      profile.roomId = roomId[0]['roomId'];
-    } else {
-      profile.roomId = null;
-    }
-
-    return profile;
   }
 }
