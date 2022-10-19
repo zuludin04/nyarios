@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../core/utils/helper.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
-import 'auth_input_field.dart';
+import 'widgets/auth_input_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

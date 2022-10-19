@@ -12,7 +12,7 @@ import '../../core/widgets/toolbar.dart';
 import '../../data/model/chat.dart';
 import '../../data/model/profile.dart';
 import '../../data/nyarios_repository.dart';
-import 'chat_item.dart';
+import 'widgets/chat_item.dart';
 
 class ChattingScreen extends StatefulWidget {
   const ChattingScreen({super.key});

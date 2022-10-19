@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../core/constants.dart';
 import '../../core/widgets/toolbar.dart';
 import '../../services/storage_services.dart';
+import 'widgets/language_item.dart';
 
 class LanguageSettingScreen extends StatefulWidget {
   const LanguageSettingScreen({super.key});
@@ -37,32 +38,6 @@ class _LanguageSettingScreenState extends State<LanguageSettingScreen> {
         },
         itemCount: languages.length,
       ),
-    );
-  }
-}
-
-class LanguageItem extends StatelessWidget {
-  final String title;
-  final bool selected;
-  final Function() onTap;
-
-  const LanguageItem({
-    super.key,
-    required this.title,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      leading: Icon(
-        Icons.check,
-        color:
-            selected ? Theme.of(context).iconTheme.color : Colors.transparent,
-      ),
-      onTap: onTap,
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../data/model/chat.dart';
-import '../../services/storage_services.dart';
+import '../../../data/model/chat.dart';
+import '../../../services/storage_services.dart';
 
 class ChatItem extends StatelessWidget {
   final Chat chat;
