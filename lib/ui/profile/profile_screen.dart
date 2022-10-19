@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../data/model/profile.dart';
 import '../../data/nyarios_repository.dart';
-import '../../routes/app_pages.dart';
 import 'widgets/profile_item.dart';
 
 class ProfileScreen extends StatelessWidget {
