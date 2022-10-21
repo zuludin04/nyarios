@@ -17,12 +17,12 @@ class StorageServices extends GetxService {
   }
 
   String get userId =>
-      _storage.read('USER_ID') ?? '4D6CDRztY6fV72ku9YsNpGcKzme2';
+      _storage.read('USER_ID') ?? 'DxQrN6wph1g8JGSh9Wj6hdHYF8I3';
   set userId(String value) {
     _storage.write('USER_ID', value);
   }
 
-  String get userName => _storage.read('USER_NAME') ?? 'Zulfikar Mauludin';
+  String get userName => _storage.read('USER_NAME') ?? 'Ali';
   set userName(String value) {
     _storage.write('USER_NAME', value);
   }

@@ -17,6 +17,7 @@ class NyariosRepository {
         .collection('contacts')
         .doc(StorageServices.to.userId)
         .collection('receiver')
+        .orderBy('send_datetime', descending: true)
         .snapshots();
   }
 
@@ -78,6 +79,7 @@ class NyariosRepository {
         .collection('room')
         .doc(roomId)
         .collection('messages')
+        .orderBy('sendDatetime')
         .snapshots();
   }
 
