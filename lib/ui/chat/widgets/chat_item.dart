@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/model/chat.dart';
@@ -52,7 +53,12 @@ class ChatItem extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  chat.sendDatetime ?? "",
+                  DateFormat("hh:mm a")
+                      .format(
+                        DateTime.fromMillisecondsSinceEpoch(
+                            chat.sendDatetime ?? 0),
+                      )
+                      .toLowerCase(),
                   style: const TextStyle(
                     color: Colors.black54,
                     fontSize: 13,

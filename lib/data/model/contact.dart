@@ -4,7 +4,7 @@ class Contact {
   String? photo;
   String? receiverId;
   String? roomId;
-  String? sendDatetime;
+  int? sendDatetime;
 
   Contact({
     this.message,
@@ -35,7 +35,7 @@ class Contact {
           map['receiverId'] != null ? map['receiverId'] as String : null,
       roomId: map['roomId'] != null ? map['roomId'] as String : null,
       sendDatetime:
-          map['send_datetime'] != null ? map['send_datetime'] as String : null,
+          map['send_datetime'] != null ? map['send_datetime'] as int : null,
     );
   }
 }

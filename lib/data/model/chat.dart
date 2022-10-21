@@ -1,6 +1,6 @@
 class Chat {
   String? message;
-  String? sendDatetime;
+  int? sendDatetime;
   String? senderId;
   String? type;
 
@@ -24,7 +24,7 @@ class Chat {
     return Chat(
       message: map['message'] != null ? map['message'] as String : null,
       sendDatetime:
-          map['sendDatetime'] != null ? map['sendDatetime'] as String : null,
+          map['sendDatetime'] != null ? map['sendDatetime'] as int : null,
       senderId: map['senderId'] != null ? map['senderId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../data/model/contact.dart';
 import '../../../data/model/profile.dart';
@@ -63,7 +64,10 @@ class ChatContactItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      contact.sendDatetime ?? "",
+                      DateFormat("dd MMM yyyy").format(
+                        DateTime.fromMillisecondsSinceEpoch(
+                            contact.sendDatetime ?? 0),
+                      ),
                       style: TextStyle(
                         color: StorageServices.to.darkMode
                             ? Colors.white54

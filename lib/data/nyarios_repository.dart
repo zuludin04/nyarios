@@ -81,7 +81,11 @@ class NyariosRepository {
         .snapshots();
   }
 
-  void sendNewMessage(String? roomId, String message, String type) {
+  void sendNewMessage(
+    String? roomId,
+    String message,
+    String type,
+  ) {
     CollectionReference newMessage = FirebaseFirestore.instance
         .collection('room')
         .doc(roomId)
@@ -89,7 +93,7 @@ class NyariosRepository {
 
     Chat chat = Chat(
         message: message,
-        sendDatetime: '14 Oct 2022',
+        sendDatetime: DateTime.now().millisecondsSinceEpoch,
         senderId: StorageServices.to.userId,
         type: type);
 
@@ -109,7 +113,10 @@ class NyariosRepository {
           .doc(fromSender ? StorageServices.to.userId : profile.uid)
           .collection('receiver')
           .doc(fromSender ? profile.uid : StorageServices.to.userId)
-          .update({'message': message});
+          .update({
+        'message': message,
+        'send_datetime': DateTime.now().millisecondsSinceEpoch,
+      });
     } else {
       FirebaseFirestore.instance
           .collection('contacts')
@@ -122,7 +129,7 @@ class NyariosRepository {
         'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
         'roomId': roomId,
         'photo': profile.photo,
-        'send_datetime': '18 Oct 2022',
+        'send_datetime': DateTime.now().millisecondsSinceEpoch,
       });
     }
   }
