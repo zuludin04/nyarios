@@ -12,6 +12,7 @@ import '../../core/widgets/toolbar.dart';
 import '../../data/model/chat.dart';
 import '../../data/model/profile.dart';
 import '../../data/nyarios_repository.dart';
+import '../../routes/app_pages.dart';
 import 'widgets/chat_item.dart';
 
 class ChattingScreen extends StatefulWidget {
@@ -41,6 +42,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
       appBar: Toolbar.defaultToolbar(
         profile.name ?? "",
         subtitle: "Online",
+        onTapTitle: () => Get.toNamed(
+          AppRoutes.contactDetail,
+          arguments: profile,
+        ),
+        elevation: 0,
         actions: [
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
@@ -51,6 +57,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   child: Text('view_contact'.tr),
                 ),
               ];
+            },
+            onSelected: (value) {
+              if (value == 0) {
+                Get.toNamed(
+                  AppRoutes.contactDetail,
+                  arguments: profile,
+                );
+              }
             },
           )
         ],

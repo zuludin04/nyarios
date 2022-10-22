@@ -11,4 +11,5 @@ abstract class AppRoutes {
   static const language = '/language';
   static const settings = '/settings';
   static const profile = '/profile';
+  static const contactDetail = '/contact_detail';
 }
