@@ -64,10 +64,7 @@ class ChatContactItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      DateFormat("dd MMM yyyy").format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            contact.sendDatetime ?? 0),
-                      ),
+                      _contactLastChat(contact.sendDatetime),
                       style: TextStyle(
                         color: StorageServices.to.darkMode
                             ? Colors.white54
@@ -85,5 +82,18 @@ class ChatContactItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _contactLastChat(int? datetime) {
+    var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
+    var today = DateTime.now();
+
+    if (date.day == today.day) {
+      return DateFormat("hh:mm a").format(date).toLowerCase();
+    } else if ((today.day - date.day) == 1) {
+      return "Yesterday";
+    } else {
+      return DateFormat("dd MMM yyyy").format(date);
+    }
   }
 }
