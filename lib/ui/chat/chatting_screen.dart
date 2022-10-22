@@ -125,8 +125,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             errorBorder: InputBorder.none,
                             disabledBorder: InputBorder.none,
                           ),
+                          focusNode: FocusNode(),
                           cursorColor: const Color.fromRGBO(251, 127, 107, 1),
-                          textInputAction: TextInputAction.done,
+                          textInputAction: TextInputAction.send,
+                          onEditingComplete: () {},
+                          onFieldSubmitted: (value) {
+                            _sendMessage(value, 'text');
+                            _messageEditingController.clear();
+                          },
                         ),
                       ),
                       IconButton(
