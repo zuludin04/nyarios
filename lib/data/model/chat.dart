@@ -3,12 +3,14 @@ class Chat {
   int? sendDatetime;
   String? senderId;
   String? type;
+  String? url;
 
   Chat({
     this.message,
     this.sendDatetime,
     this.senderId,
     this.type,
+    this.url,
   });
 
   Map<String, dynamic> toMap() {
@@ -17,6 +19,7 @@ class Chat {
       'sendDatetime': sendDatetime,
       'senderId': senderId,
       'type': type,
+      'url': url,
     };
   }
 
@@ -27,6 +30,7 @@ class Chat {
           map['sendDatetime'] != null ? map['sendDatetime'] as int : null,
       senderId: map['senderId'] != null ? map['senderId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
+      url: map['url'] != null ? map['url'] as String : null,
     );
   }
 }

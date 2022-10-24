@@ -87,6 +87,7 @@ class NyariosRepository {
     String? roomId,
     String message,
     String type,
+    String url,
   ) {
     CollectionReference newMessage = FirebaseFirestore.instance
         .collection('room')
@@ -94,10 +95,12 @@ class NyariosRepository {
         .collection('messages');
 
     Chat chat = Chat(
-        message: message,
-        sendDatetime: DateTime.now().millisecondsSinceEpoch,
-        senderId: StorageServices.to.userId,
-        type: type);
+      message: message,
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      senderId: StorageServices.to.userId,
+      type: type,
+      url: url,
+    );
 
     newMessage.add(chat.toMap());
   }

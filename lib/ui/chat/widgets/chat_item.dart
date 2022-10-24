@@ -86,7 +86,7 @@ class ChatItem extends StatelessWidget {
       case 'image':
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
-          child: Image.network(chat.message!),
+          child: Image.network(chat.url!),
         );
       case 'file':
         return Container(

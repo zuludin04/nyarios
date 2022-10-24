@@ -217,7 +217,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  void _sendMessage(String message, String type) async {
+  void _sendMessage(String message, String type, {String url = ""}) async {
     if (selectedRoomId == null) {
       // create new room
       var roomId = const Uuid().v4();
@@ -225,7 +225,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       repository.updateRecentContact(true, false, profile, message, roomId);
       repository.updateRecentContact(false, false, profile, message, roomId);
 
-      repository.sendNewMessage(roomId, message, type);
+      repository.sendNewMessage(roomId, message, type, url);
 
       selectedRoomId = roomId;
       setState(() {});
@@ -233,7 +233,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       repository.updateRecentContact(true, true, profile, message, '');
       repository.updateRecentContact(false, true, profile, message, '');
 
-      repository.sendNewMessage(selectedRoomId, message, type);
+      repository.sendNewMessage(selectedRoomId, message, type, url);
     }
   }
 
@@ -244,7 +244,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
 
     var storage = FirebaseStorage.instance.ref();
-    var uploadImage = storage.child(file!.path).putFile(File(file.path));
+    var uploadImage =
+        storage.child('nyarios/images/${file!.name}').putFile(File(file.path));
 
     uploadImage.snapshotEvents.listen((event) async {
       switch (event.state) {
@@ -262,8 +263,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
           debugPrint("Upload was error");
           break;
         case TaskState.success:
-          var url = await storage.child(file.path).getDownloadURL();
-          _sendMessage(url, 'image');
+          var url = await storage
+              .child('nyarios/images/${file.name}')
+              .getDownloadURL();
+          _sendMessage(file.name, 'image', url: url);
           break;
       }
     });
@@ -274,7 +277,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
     File file = File(result!.files.single.path!);
     var storage = FirebaseStorage.instance.ref();
-    var uploadImage = storage.child(file.path).putFile(File(file.path));
+    var uploadImage = storage
+        .child('nyarios/files/${file.path.split("/").last}')
+        .putFile(File(file.path));
 
     uploadImage.snapshotEvents.listen((event) async {
       switch (event.state) {
@@ -292,8 +297,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
           debugPrint("Upload was error");
           break;
         case TaskState.success:
-          // var url = await storage.child(file.path).getDownloadURL();
-          _sendMessage(result.files.single.name, 'file');
+          var url = await storage
+              .child('nyarios/files/${file.path.split("/").last}')
+              .getDownloadURL();
+          _sendMessage(result.files.single.name, 'file', url: url);
           break;
       }
     });
