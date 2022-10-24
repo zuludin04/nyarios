@@ -41,7 +41,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
         profile.name ?? "",
-        subtitle: "Online",
+        stream: true,
+        uid: profile.uid,
         onTapTitle: () => Get.toNamed(
           AppRoutes.contactDetail,
           arguments: profile,

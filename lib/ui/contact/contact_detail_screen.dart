@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../data/model/profile.dart';
+import '../../data/nyarios_repository.dart';
+import '../../services/storage_services.dart';
 
 class ContactDetailScreen extends StatelessWidget {
   final Profile profile = Get.arguments;
@@ -12,7 +14,7 @@ class ContactDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(''),
+      appBar: Toolbar.defaultToolbar('', elevation: 0),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -46,6 +48,34 @@ class ContactDetailScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height: 16),
+              StreamBuilder(
+                stream: NyariosRepository().getOnlineStatus(profile.uid),
+                builder: (context, snapshot) {
+                  String status = snapshot.data?.data()?["visibility"] ?? "";
+                  return Visibility(
+                    visible:
+                        snapshot.connectionState == ConnectionState.active &&
+                            status == "Online",
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        status,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: StorageServices.to.darkMode
+                              ? Colors.white70
+                              : Colors.black54,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              )
             ],
           ),
         ),

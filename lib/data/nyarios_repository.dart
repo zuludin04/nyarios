@@ -83,6 +83,13 @@ class NyariosRepository {
         .snapshots();
   }
 
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getOnlineStatus(String? uid) {
+    return FirebaseFirestore.instance
+        .collection('profile')
+        .doc(uid)
+        .snapshots();
+  }
+
   void sendNewMessage(
     String? roomId,
     String message,
