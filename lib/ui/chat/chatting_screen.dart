@@ -4,7 +4,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:uuid/uuid.dart';
 
@@ -84,14 +86,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   return const Text("Loading");
                 }
 
-                return ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    var chat = Chat.fromMap(snapshot.data!.docs[index].data());
-                    return ChatItem(chat: chat);
-                  },
-                  itemCount: snapshot.data!.docs.length,
-                );
+                return _buildChatMessages(snapshot.data!.docs
+                    .map((e) => Chat.fromMap(e.data()))
+                    .toList());
+
+                // return ListView.builder(
+                //   physics: const BouncingScrollPhysics(),
+                //   itemBuilder: (context, index) {
+                //     var chat = Chat.fromMap(snapshot.data!.docs[index].data());
+                //     return ChatItem(chat: chat);
+                //   },
+                //   itemCount: snapshot.data!.docs.length,
+                // );
               },
             ),
           ),
@@ -194,6 +200,45 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
+  Widget _buildChatMessages(List<Chat> chats) {
+    return GroupedListView<Chat, DateTime>(
+      physics: const BouncingScrollPhysics(),
+      elements: chats,
+      order: GroupedListOrder.DESC,
+      reverse: true,
+      floatingHeader: true,
+      useStickyGroupSeparators: true,
+      groupBy: (Chat chat) {
+        var date = DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!);
+        return DateTime(date.year, date.month, date.day);
+      },
+      groupHeaderBuilder: _createGroupHeader,
+      itemBuilder: (_, Chat chat) => ChatItem(chat: chat),
+    );
+  }
+
+  Widget _createGroupHeader(Chat chat) {
+    return SizedBox(
+      height: 40,
+      child: Align(
+        child: Container(
+          width: 120,
+          decoration: const BoxDecoration(
+            color: Color.fromRGBO(251, 127, 107, 1),
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              _messageDate(chat.sendDatetime),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _pickFileMenu(String title, IconData icon) {
     return InkWell(
       onTap: () async {
@@ -216,6 +261,19 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ],
       ),
     );
+  }
+
+  String _messageDate(int? datetime) {
+    var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
+    var today = DateTime.now();
+
+    if (date.day == today.day) {
+      return "Today";
+    } else if ((today.day - date.day) == 1) {
+      return "Yesterday";
+    } else {
+      return DateFormat("dd MMM yyyy").format(date);
+    }
   }
 
   void _sendMessage(String message, String type, {String url = ""}) async {
