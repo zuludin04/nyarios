@@ -90,6 +90,13 @@ class NyariosRepository {
         .snapshots();
   }
 
+  void updateOnlineStatus(String status) {
+    FirebaseFirestore.instance
+        .collection('profile')
+        .doc(StorageServices.to.userId)
+        .update({'visibility': status});
+  }
+
   void sendNewMessage(
     String? roomId,
     String message,
