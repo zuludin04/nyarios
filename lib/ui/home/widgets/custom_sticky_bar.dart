@@ -27,7 +27,10 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
           ),
           Row(
             children: [
-              ActionMenuItem(icon: Icons.search, onTap: () {}),
+              ActionMenuItem(
+                icon: Icons.search,
+                onTap: () => Get.toNamed(AppRoutes.search),
+              ),
               const SizedBox(width: 12),
               ActionMenuItem(
                 icon: Icons.settings,

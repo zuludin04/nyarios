@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+
+import 'search_controller.dart';
+import 'widgets/search_results.dart';
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final FloatingSearchBarController _controller = FloatingSearchBarController();
+  final SearchController _searchController = Get.find();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: FloatingSearchBar(
+        controller: _controller,
+        body: SearchResults(controller: _searchController),
+        backdropColor: Colors.transparent,
+        transition: CircularFloatingSearchBarTransition(),
+        hint: 'Search Contact',
+        onQueryChanged: (query) {
+          _searchController.searchContact(query);
+        },
+        builder: (context, transition) {
+          return Container();
+        },
+      ),
+    );
+  }
+}

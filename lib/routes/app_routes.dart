@@ -12,4 +12,5 @@ abstract class AppRoutes {
   static const settings = '/settings';
   static const profile = '/profile';
   static const contactDetail = '/contact_detail';
+  static const search = '/search';
 }

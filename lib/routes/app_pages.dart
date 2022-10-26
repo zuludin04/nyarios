@@ -7,6 +7,8 @@ import '../ui/contact/contact_detail_screen.dart';
 import '../ui/home/home_screen.dart';
 import '../ui/language/language_setting_screen.dart';
 import '../ui/profile/profile_screen.dart';
+import '../ui/search/search_binding.dart';
+import '../ui/search/search_screen.dart';
 import '../ui/settings/settings_screen.dart';
 import '../ui/splash/splash_screen.dart';
 
@@ -53,6 +55,11 @@ class AppPages {
     GetPage(
       name: AppRoutes.contactDetail,
       page: () => ContactDetailScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.search,
+      page: () => const SearchScreen(),
+      binding: SearchBinding(),
     ),
   ];
 }

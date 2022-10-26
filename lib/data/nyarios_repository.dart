@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../services/storage_services.dart';
 import 'model/chat.dart';
+import 'model/contact.dart';
 import 'model/profile.dart';
 
 class NyariosRepository {
@@ -19,6 +20,17 @@ class NyariosRepository {
         .collection('receiver')
         .orderBy('send_datetime', descending: true)
         .snapshots();
+  }
+
+  Future<List<Contact>> loadContacts() async {
+    var contacts = await FirebaseFirestore.instance
+        .collection('contacts')
+        .doc(StorageServices.to.userId)
+        .collection('receiver')
+        .orderBy('send_datetime', descending: true)
+        .get();
+
+    return contacts.docs.map((e) => Contact.fromMap(e.data())).toList();
   }
 
   Future<List<Profile>> loadAllProfiles() async {
