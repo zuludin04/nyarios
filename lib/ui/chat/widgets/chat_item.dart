@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:substring_highlight/substring_highlight.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/model/chat.dart';
@@ -120,35 +121,29 @@ class ChatItem extends StatelessWidget {
           ),
         );
       default:
-        return GestureDetector(
-          onTap: () {
-            if (_isLink(chat.message!)) {
-              launchUrl(Uri(path: chat.message!));
-            }
-          },
-          child: Text(
-            chat.message!,
-            style: TextStyle(
-              color: _isLink(chat.message!) ? Colors.blueGrey : Colors.black54,
-              fontSize: 16,
-              decoration: _isLink(chat.message!)
-                  ? TextDecoration.underline
-                  : TextDecoration.none,
-            ),
+        return SubstringHighlight(
+          text: chat.message!,
+          term: 'f',
+          textStyle: TextStyle(
+            color: _isLink(chat.message!) ? Colors.blueGrey : Colors.black54,
+            fontSize: 16,
+            decoration: _isLink(chat.message!)
+                ? TextDecoration.underline
+                : TextDecoration.none,
           ),
         );
     }
   }
 
-  IconData _readStatusMessage(int status) {
-    if (status == 3) {
-      return Icons.done_all;
-    } else if (status == 2) {
-      return Icons.done;
-    } else {
-      return Icons.av_timer;
-    }
-  }
+  // IconData _readStatusMessage(int status) {
+  //   if (status == 3) {
+  //     return Icons.done_all;
+  //   } else if (status == 2) {
+  //     return Icons.done;
+  //   } else {
+  //     return Icons.av_timer;
+  //   }
+  // }
 
   bool _isLink(String input) {
     final matcher = RegExp(
@@ -168,7 +163,7 @@ class ChatItem extends StatelessWidget {
             var downloadRatio = (count / total);
             var downloadIndicator =
                 "${(downloadRatio * 100).toStringAsFixed(2)}%";
-            print("download progress $downloadIndicator");
+            debugPrint("download progress $downloadIndicator");
           } else {
             Get.rawSnackbar(message: "success download");
           }

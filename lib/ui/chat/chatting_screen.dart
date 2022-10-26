@@ -59,6 +59,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   value: 0,
                   child: Text('view_contact'.tr),
                 ),
+                const PopupMenuItem(
+                  value: 1,
+                  child: Text('Search'),
+                ),
               ];
             },
             onSelected: (value) {
@@ -66,6 +70,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 Get.toNamed(
                   AppRoutes.contactDetail,
                   arguments: profile,
+                );
+              } else if (value == 1) {
+                Get.toNamed(
+                  AppRoutes.search,
+                  arguments: {
+                    'type': 'chats',
+                    'roomId': selectedRoomId,
+                    'user': profile.name,
+                  },
                 );
               }
             },

@@ -95,6 +95,17 @@ class NyariosRepository {
         .snapshots();
   }
 
+  Future<List<Chat>> loadChats(String? roomId) async {
+    var chats = await FirebaseFirestore.instance
+        .collection('room')
+        .doc(roomId)
+        .collection('messages')
+        .orderBy('sendDatetime')
+        .get();
+
+    return chats.docs.map((e) => Chat.fromMap(e.data())).toList();
+  }
+
   Stream<DocumentSnapshot<Map<String, dynamic>>> getOnlineStatus(String? uid) {
     return FirebaseFirestore.instance
         .collection('profile')

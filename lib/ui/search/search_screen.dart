@@ -31,9 +31,15 @@ class _SearchScreenState extends State<SearchScreen> {
         body: SearchResults(controller: _searchController),
         backdropColor: Colors.transparent,
         transition: CircularFloatingSearchBarTransition(),
-        hint: 'Search Contact',
+        hint: _searchController.type == 'contacts'
+            ? 'Search Contact'
+            : 'Search Chat',
         onQueryChanged: (query) {
-          _searchController.searchContact(query);
+          if (_searchController.type == 'contacts') {
+            _searchController.searchContact(query);
+          } else {
+            _searchController.searchChat(query);
+          }
         },
         builder: (context, transition) {
           return Container();
