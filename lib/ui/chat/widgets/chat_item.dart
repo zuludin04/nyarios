@@ -1,5 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/model/chat.dart';
@@ -12,70 +15,84 @@ class ChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: chat.senderId != StorageServices.to.userId
-          ? Alignment.centerLeft
-          : Alignment.centerRight,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        margin: EdgeInsets.only(
-          top: 4,
-          bottom: 4,
-          left: chat.senderId != StorageServices.to.userId ? 16 : 75,
-          right: chat.senderId != StorageServices.to.userId ? 75 : 16,
-        ),
-        decoration: BoxDecoration(
-          color: chat.senderId != StorageServices.to.userId
-              ? Colors.white
-              : const Color.fromRGBO(251, 127, 107, 1),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(10),
-            topRight: const Radius.circular(10),
-            bottomLeft: Radius.circular(
-                chat.senderId != StorageServices.to.userId ? 0 : 10),
-            bottomRight: Radius.circular(
-                chat.senderId != StorageServices.to.userId ? 10 : 0),
+    return GestureDetector(
+      onTap: () async {
+        if (chat.type == "image") {
+          var savePath = await getExternalStorageDirectory();
+          _downloadFile(chat.url!, "${savePath!.path}/${chat.message}");
+        }
+
+        if (chat.type == "text") {
+          if (_isLink(chat.message!)) {
+            launchUrl(Uri(path: chat.message!));
+          }
+        }
+      },
+      child: Align(
+        alignment: chat.senderId != StorageServices.to.userId
+            ? Alignment.centerLeft
+            : Alignment.centerRight,
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          margin: EdgeInsets.only(
+            top: 4,
+            bottom: 4,
+            left: chat.senderId != StorageServices.to.userId ? 16 : 75,
+            right: chat.senderId != StorageServices.to.userId ? 75 : 16,
           ),
-          boxShadow: const [
-            BoxShadow(
-              offset: Offset(0, 0),
-              blurRadius: 1,
-              spreadRadius: 1,
-              color: Colors.black12,
+          decoration: BoxDecoration(
+            color: chat.senderId != StorageServices.to.userId
+                ? Colors.white
+                : const Color.fromRGBO(251, 127, 107, 1),
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(10),
+              topRight: const Radius.circular(10),
+              bottomLeft: Radius.circular(
+                  chat.senderId != StorageServices.to.userId ? 0 : 10),
+              bottomRight: Radius.circular(
+                  chat.senderId != StorageServices.to.userId ? 10 : 0),
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            _showChatType(chat.type!),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  DateFormat("hh:mm a")
-                      .format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            chat.sendDatetime ?? 0),
-                      )
-                      .toLowerCase(),
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 13,
+            boxShadow: const [
+              BoxShadow(
+                offset: Offset(0, 0),
+                blurRadius: 1,
+                spreadRadius: 1,
+                color: Colors.black12,
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              _showChatType(chat.type!),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    DateFormat("hh:mm a")
+                        .format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              chat.sendDatetime ?? 0),
+                        )
+                        .toLowerCase(),
+                    style: const TextStyle(
+                      color: Colors.black54,
+                      fontSize: 13,
+                    ),
                   ),
-                ),
-                // const SizedBox(width: 4),
-                // Visibility(
-                //   visible: !chat.senderId != StorageServices.to.userId,
-                //   child: Icon(
-                //     _readStatusMessage(chat.status!),
-                //     size: 18,
-                //     color: Colors.black54,
-                //   ),
-                // ),
-              ],
-            ),
-          ],
+                  // const SizedBox(width: 4),
+                  // Visibility(
+                  //   visible: !chat.senderId != StorageServices.to.userId,
+                  //   child: Icon(
+                  //     _readStatusMessage(chat.status!),
+                  //     size: 18,
+                  //     color: Colors.black54,
+                  //   ),
+                  // ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -137,5 +154,32 @@ class ChatItem extends StatelessWidget {
     final matcher = RegExp(
         r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)");
     return matcher.hasMatch(input);
+  }
+
+  void _downloadFile(String downloadUrl, String savePath) async {
+    Dio dio = Dio();
+
+    try {
+      await dio.download(
+        downloadUrl,
+        savePath,
+        onReceiveProgress: (count, total) {
+          if (total != -1) {
+            var downloadRatio = (count / total);
+            var downloadIndicator =
+                "${(downloadRatio * 100).toStringAsFixed(2)}%";
+            print("download progress $downloadIndicator");
+          } else {
+            Get.rawSnackbar(message: "success download");
+          }
+        },
+      );
+    } on DioError catch (e) {
+      if (CancelToken.isCancel(e)) {
+        debugPrint("Request canceled ${e.message}");
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
