@@ -172,6 +172,7 @@ class NyariosRepository {
         'roomId': roomId,
         'photo': profile.photo,
         'send_datetime': DateTime.now().millisecondsSinceEpoch,
+        'block': false,
       });
     }
   }

@@ -5,6 +5,7 @@ class Contact {
   String? receiverId;
   String? roomId;
   int? sendDatetime;
+  bool? block;
 
   Contact({
     this.message,
@@ -13,6 +14,7 @@ class Contact {
     this.receiverId,
     this.roomId,
     this.sendDatetime,
+    this.block,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,20 +24,22 @@ class Contact {
       'photo': photo,
       'receiverId': receiverId,
       'roomId': roomId,
-      'send_datetime': sendDatetime,
+      'sendDatetime': sendDatetime,
+      'block': block,
     };
   }
 
   factory Contact.fromMap(Map<String, dynamic> map) {
     return Contact(
       message: map['message'] != null ? map['message'] as String : null,
-      photo: map['photo'] != null ? map['photo'] as String : null,
       name: map['name'] != null ? map['name'] as String : null,
+      photo: map['photo'] != null ? map['photo'] as String : null,
       receiverId:
           map['receiverId'] != null ? map['receiverId'] as String : null,
       roomId: map['roomId'] != null ? map['roomId'] as String : null,
       sendDatetime:
-          map['send_datetime'] != null ? map['send_datetime'] as int : null,
+          map['sendDatetime'] != null ? map['sendDatetime'] as int : null,
+      block: map['block'] != null ? map['block'] as bool : null,
     );
   }
 }

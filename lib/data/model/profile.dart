@@ -5,12 +5,14 @@ class Profile {
   String? name;
   String? photo;
   String? roomId;
+  bool? block;
 
   Profile({
     this.uid,
     this.name,
     this.photo,
     this.roomId,
+    this.block,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class Profile {
       'name': name,
       'photo': photo,
       'roomId': roomId,
+      'block': block,
     };
   }
 
@@ -28,6 +31,7 @@ class Profile {
       name: map['name'] != null ? map['name'] as String : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
       roomId: map['roomId'] != null ? map['roomId'] as String : null,
+      block: map['block'] != null ? map['block'] as bool : null,
     );
   }
 
@@ -37,6 +41,7 @@ class Profile {
       name: contact.name,
       roomId: contact.roomId,
       photo: contact.photo,
+      block: contact.block,
     );
   }
 }
