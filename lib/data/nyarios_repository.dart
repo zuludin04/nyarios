@@ -18,7 +18,7 @@ class NyariosRepository {
         .collection('contacts')
         .doc(StorageServices.to.userId)
         .collection('receiver')
-        .orderBy('send_datetime', descending: true)
+        .orderBy('sendDatetime', descending: true)
         .snapshots();
   }
 
@@ -27,7 +27,7 @@ class NyariosRepository {
         .collection('contacts')
         .doc(StorageServices.to.userId)
         .collection('receiver')
-        .orderBy('send_datetime', descending: true)
+        .orderBy('sendDatetime', descending: true)
         .get();
 
     return contacts.docs.map((e) => Contact.fromMap(e.data())).toList();
@@ -148,6 +148,7 @@ class NyariosRepository {
     Profile profile,
     String message,
     String roomId,
+    int unreadMessage,
   ) {
     if (update) {
       FirebaseFirestore.instance
@@ -157,7 +158,8 @@ class NyariosRepository {
           .doc(fromSender ? profile.uid : StorageServices.to.userId)
           .update({
         'message': message,
-        'send_datetime': DateTime.now().millisecondsSinceEpoch,
+        'sendDatetime': DateTime.now().millisecondsSinceEpoch,
+        'unreadMessage': unreadMessage
       });
     } else {
       FirebaseFirestore.instance
@@ -171,8 +173,9 @@ class NyariosRepository {
         'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
         'roomId': roomId,
         'photo': profile.photo,
-        'send_datetime': DateTime.now().millisecondsSinceEpoch,
+        'sendDatetime': DateTime.now().millisecondsSinceEpoch,
         'block': false,
+        'unreadMessage': unreadMessage
       });
     }
   }

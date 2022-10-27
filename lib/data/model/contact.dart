@@ -6,6 +6,7 @@ class Contact {
   String? roomId;
   int? sendDatetime;
   bool? block;
+  int? unreadMessage;
 
   Contact({
     this.message,
@@ -15,6 +16,7 @@ class Contact {
     this.roomId,
     this.sendDatetime,
     this.block,
+    this.unreadMessage,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class Contact {
       'roomId': roomId,
       'sendDatetime': sendDatetime,
       'block': block,
+      'unreadMessage': unreadMessage,
     };
   }
 
@@ -40,6 +43,8 @@ class Contact {
       sendDatetime:
           map['sendDatetime'] != null ? map['sendDatetime'] as int : null,
       block: map['block'] != null ? map['block'] as bool : null,
+      unreadMessage:
+          map['unreadMessage'] != null ? map['unreadMessage'] as int : null,
     );
   }
 }

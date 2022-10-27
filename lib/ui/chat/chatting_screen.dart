@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/widgets/toolbar.dart';
@@ -31,10 +33,12 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   Profile profile = Get.arguments;
   String? selectedRoomId;
+  late int unreadMessage;
 
   @override
   void initState() {
     selectedRoomId = profile.roomId;
+    unreadMessage = profile.unreadMessage ?? 0;
     super.initState();
   }
 
@@ -293,17 +297,21 @@ class _ChattingScreenState extends State<ChattingScreen> {
     if (selectedRoomId == null) {
       // create new room
       var roomId = const Uuid().v4();
+      var unread = unreadMessage += 1;
 
-      repository.updateRecentContact(true, false, profile, message, roomId);
-      repository.updateRecentContact(false, false, profile, message, roomId);
+      repository.updateRecentContact(true, false, profile, message, roomId, 0);
+      repository.updateRecentContact(
+          false, false, profile, message, roomId, unread);
 
       repository.sendNewMessage(roomId, message, type, url);
 
       selectedRoomId = roomId;
       setState(() {});
     } else {
-      repository.updateRecentContact(true, true, profile, message, '');
-      repository.updateRecentContact(false, true, profile, message, '');
+      var unread = unreadMessage += 1;
+
+      repository.updateRecentContact(true, true, profile, message, '', 0);
+      repository.updateRecentContact(false, true, profile, message, '', unread);
 
       repository.sendNewMessage(selectedRoomId, message, type, url);
     }
@@ -375,6 +383,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
           _sendMessage(result.files.single.name, 'file', url: url);
           break;
       }
+    });
+  }
+
+  void listenDocumentChange() {
+    var contact = FirebaseFirestore.instance
+        .collection('contacts')
+        .doc(StorageServices.to.userId)
+        .collection('receiver')
+        .doc(profile.uid)
+        .snapshots();
+
+    contact.listen((event) {
+      var message = event.data()!['message'];
+      debugPrint('current message $message');
     });
   }
 }

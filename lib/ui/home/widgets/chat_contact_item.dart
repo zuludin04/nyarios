@@ -71,8 +71,25 @@ class ChatContactItem extends StatelessWidget {
                             : Colors.black54,
                       ),
                     ),
-                    // const SizedBox(height: 4),
-                    // const Icon(Icons.check, size: 16),
+                    const SizedBox(height: 4),
+                    Visibility(
+                      visible: contact.unreadMessage! > 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: Color.fromRGBO(251, 127, 107, 1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '${contact.unreadMessage}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ],
