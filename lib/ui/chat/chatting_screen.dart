@@ -52,7 +52,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       appBar: Toolbar.defaultToolbar(
         selectedChat.isEmpty
             ? profile.name ?? ""
-            : "${selectedChat.length} chat is selected",
+            : "${selectedChat.length} ${"selected_chat".tr}",
         leading: selectedChat.isEmpty
             ? null
             : IconButton(
@@ -81,9 +81,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         value: 0,
                         child: Text('view_contact'.tr),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 1,
-                        child: Text('Search'),
+                        child: Text('search'.tr),
                       ),
                     ];
                   },
@@ -115,11 +115,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
               stream: repository.loadUserChatsByRoomId(selectedRoomId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Text('Something went wrong');
+                  return Center(child: Text('something_went_wrong'.tr));
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text("Loading");
+                  return Center(child: Text("loading".tr));
                 }
 
                 return _buildChatMessages(snapshot.data!.docs
@@ -312,7 +312,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
           var messages =
               selectedChat.map((e) => _copiedMessage(e)).toList().join();
           FlutterClipboard.copy(messages).then((value) {
-            Get.rawSnackbar(message: "${selectedChat.length} messages copied");
+            Get.rawSnackbar(
+                message: "${selectedChat.length} ${"messages_copied".tr}");
             setState(() {
               selectedChat.clear();
               selectionMode = false;
@@ -342,9 +343,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
     var today = DateTime.now();
 
     if (date.day == today.day) {
-      return "Today";
+      return "today".tr;
     } else if ((today.day - date.day) == 1) {
-      return "Yesterday";
+      return "yesterday".tr;
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }

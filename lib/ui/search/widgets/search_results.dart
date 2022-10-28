@@ -19,8 +19,8 @@ class SearchResults extends StatelessWidget {
       if (controller.filterContact.isEmpty && controller.filterChat.isEmpty) {
         return Center(
           child: Text(controller.type == 'contacts'
-              ? "There are no contact"
-              : "There are no chat"),
+              ? "empty_contact".tr
+              : "empty_chat".tr),
         );
       } else {
         return ListView.builder(
@@ -53,7 +53,7 @@ class SearchResults extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(chat.senderId == StorageServices.to.userId
-                  ? 'You'
+                  ? 'you'.tr
                   : controller.user),
               Text(_contactLastChat(chat.sendDatetime)),
             ],
@@ -78,7 +78,7 @@ class SearchResults extends StatelessWidget {
     if (date.day == today.day) {
       return DateFormat("hh:mm a").format(date).toLowerCase();
     } else if ((today.day - date.day) == 1) {
-      return "Yesterday";
+      return "yesterday".tr;
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }

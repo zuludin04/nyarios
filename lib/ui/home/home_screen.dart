@@ -8,12 +8,12 @@ import 'widgets/chat_contact_item.dart';
 import 'widgets/custom_sticky_bar.dart';
 
 class HomeScreen extends StatelessWidget {
-  final repository = NyariosRepository();
-
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var repository = NyariosRepository();
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.profile),
@@ -50,16 +50,21 @@ class HomeScreen extends StatelessWidget {
               stream: repository.loadUserContacts(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const SliverToBoxAdapter(
-                      child: Text('Something went wrong'));
+                  return SliverToBoxAdapter(
+                    child: Center(child: Text('something_went_wrong'.tr)),
+                  );
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SliverToBoxAdapter(child: Text("Loading"));
+                  return SliverToBoxAdapter(
+                    child: Center(child: Text('loading'.tr)),
+                  );
                 }
 
                 if (snapshot.data!.size == 0) {
-                  return const SliverToBoxAdapter(child: Text("Empty Message"));
+                  return SliverToBoxAdapter(
+                    child: Center(child: Text('empty_message'.tr)),
+                  );
                 }
 
                 return SliverList(

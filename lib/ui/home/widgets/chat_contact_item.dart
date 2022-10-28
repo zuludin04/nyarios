@@ -96,7 +96,7 @@ class ChatContactItem extends StatelessWidget {
     if (date.day == today.day) {
       return DateFormat("hh:mm a").format(date).toLowerCase();
     } else if ((today.day - date.day) == 1) {
-      return "Yesterday";
+      return "yesterday".tr;
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }
