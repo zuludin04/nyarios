@@ -390,67 +390,73 @@ class _ChattingScreenState extends State<ChattingScreen> {
       imageQuality: 50,
     );
 
-    var storage = FirebaseStorage.instance.ref();
-    var uploadImage =
-        storage.child('nyarios/images/${file!.name}').putFile(File(file.path));
+    if (file != null) {
+      var storage = FirebaseStorage.instance.ref();
+      var uploadImage =
+          storage.child('nyarios/images/${file.name}').putFile(File(file.path));
 
-    uploadImage.snapshotEvents.listen((event) async {
-      switch (event.state) {
-        case TaskState.running:
-          final progress = 100.0 * (event.bytesTransferred / event.totalBytes);
-          debugPrint("Upload is $progress% complete.");
-          break;
-        case TaskState.paused:
-          debugPrint("Upload is paused.");
-          break;
-        case TaskState.canceled:
-          debugPrint("Upload was canceled");
-          break;
-        case TaskState.error:
-          debugPrint("Upload was error");
-          break;
-        case TaskState.success:
-          var url = await storage
-              .child('nyarios/images/${file.name}')
-              .getDownloadURL();
-          _sendMessage(file.name, 'image', url: url);
-          break;
-      }
-    });
+      uploadImage.snapshotEvents.listen((event) async {
+        switch (event.state) {
+          case TaskState.running:
+            final progress =
+                100.0 * (event.bytesTransferred / event.totalBytes);
+            debugPrint("Upload is $progress% complete.");
+            break;
+          case TaskState.paused:
+            debugPrint("Upload is paused.");
+            break;
+          case TaskState.canceled:
+            debugPrint("Upload was canceled");
+            break;
+          case TaskState.error:
+            debugPrint("Upload was error");
+            break;
+          case TaskState.success:
+            var url = await storage
+                .child('nyarios/images/${file.name}')
+                .getDownloadURL();
+            _sendMessage(file.name, 'image', url: url);
+            break;
+        }
+      });
+    }
   }
 
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    File file = File(result!.files.single.path!);
-    var storage = FirebaseStorage.instance.ref();
-    var uploadImage = storage
-        .child('nyarios/files/${file.path.split("/").last}')
-        .putFile(File(file.path));
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      var storage = FirebaseStorage.instance.ref();
+      var uploadImage = storage
+          .child('nyarios/files/${file.path.split("/").last}')
+          .putFile(File(file.path));
 
-    uploadImage.snapshotEvents.listen((event) async {
-      switch (event.state) {
-        case TaskState.running:
-          final progress = 100.0 * (event.bytesTransferred / event.totalBytes);
-          debugPrint("Upload is $progress% complete.");
-          break;
-        case TaskState.paused:
-          debugPrint("Upload is paused.");
-          break;
-        case TaskState.canceled:
-          debugPrint("Upload was canceled");
-          break;
-        case TaskState.error:
-          debugPrint("Upload was error");
-          break;
-        case TaskState.success:
-          var url = await storage
-              .child('nyarios/files/${file.path.split("/").last}')
-              .getDownloadURL();
-          _sendMessage(result.files.single.name, 'file', url: url);
-          break;
-      }
-    });
+      uploadImage.snapshotEvents.listen((event) async {
+        switch (event.state) {
+          case TaskState.running:
+            final progress =
+                100.0 * (event.bytesTransferred / event.totalBytes);
+            debugPrint("Upload is $progress% complete.");
+            break;
+          case TaskState.paused:
+            debugPrint("Upload is paused.");
+            break;
+          case TaskState.canceled:
+            debugPrint("Upload was canceled");
+            break;
+          case TaskState.error:
+            debugPrint("Upload was error");
+            break;
+          case TaskState.success:
+            var url = await storage
+                .child('nyarios/files/${file.path.split("/").last}')
+                .getDownloadURL();
+            _sendMessage(result.files.single.name, 'file', url: url);
+            break;
+        }
+      });
+    }
   }
 
   void listenDocumentChange() {
