@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/toolbar.dart';
 import '../../data/model/profile.dart';
 import '../../data/nyarios_repository.dart';
@@ -23,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: Text('loading'.tr));
+            return const Center(child: CustomIndicator());
           }
 
           return ListView.builder(

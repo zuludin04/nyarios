@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../core/widgets/custom_indicator.dart';
 import '../../data/model/contact.dart';
 import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
@@ -50,20 +51,30 @@ class HomeScreen extends StatelessWidget {
               stream: repository.loadUserContacts(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return SliverToBoxAdapter(
+                  return SliverFillRemaining(
                     child: Center(child: Text('something_went_wrong'.tr)),
                   );
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SliverToBoxAdapter(
-                    child: Center(child: Text('loading'.tr)),
+                  return const SliverFillRemaining(
+                    child: Center(child: CustomIndicator()),
                   );
                 }
 
                 if (snapshot.data!.size == 0) {
-                  return SliverToBoxAdapter(
-                    child: Center(child: Text('empty_message'.tr)),
+                  return SliverFillRemaining(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.speaker_notes_off, size: 80),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => Get.toNamed(AppRoutes.profile),
+                          child: Text('start_conversation'.tr),
+                        ),
+                      ],
+                    ),
                   );
                 }
 

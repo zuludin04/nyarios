@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/toolbar.dart';
 import '../../data/model/chat.dart';
 import '../../data/model/profile.dart';
@@ -119,7 +120,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: Text("loading".tr));
+                  return const Center(child: CustomIndicator());
                 }
 
                 return _buildChatMessages(snapshot.data!.docs

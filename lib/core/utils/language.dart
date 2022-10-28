@@ -25,6 +25,7 @@ const Map<String, String> idID = {
   "search_contact": "Cari Kontak",
   "search_chat": "Cari Obrolan",
   "splash_message": "Nyarios",
+  "start_conversation": "Mulai Pembicaraan",
 };
 
 const Map<String, String> enUS = {
@@ -54,4 +55,5 @@ const Map<String, String> enUS = {
   "search_contact": "Search Contact",
   "search_chat": "Search Chat",
   "splash_message": "Nyarios",
+  "start_conversation": "Start Conversation",
 };
