@@ -34,7 +34,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.home,
-      page: () => HomeScreen(),
+      page: () => const HomeScreen(),
     ),
     GetPage(
       name: AppRoutes.chatting,
@@ -50,11 +50,11 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.profile,
-      page: () => ProfileScreen(),
+      page: () => const ProfileScreen(),
     ),
     GetPage(
       name: AppRoutes.contactDetail,
-      page: () => ContactDetailScreen(),
+      page: () => const ContactDetailScreen(),
     ),
     GetPage(
       name: AppRoutes.search,
