@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import '../../../data/model/contact.dart';
 import '../../../data/model/profile.dart';
 import '../../../routes/app_pages.dart';
-import '../../../services/storage_services.dart';
 
 class ChatContactItem extends StatelessWidget {
   final Contact contact;
@@ -47,14 +46,7 @@ class ChatContactItem extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        contact.message ?? "",
-                        style: TextStyle(
-                          color: StorageServices.to.darkMode
-                              ? Colors.white54
-                              : Colors.black54,
-                        ),
-                      ),
+                      Text(contact.message ?? ""),
                     ],
                   ),
                 ),
@@ -63,17 +55,13 @@ class ChatContactItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      _contactLastChat(contact.sendDatetime),
-                      style: TextStyle(
-                        color: StorageServices.to.darkMode
-                            ? Colors.white54
-                            : Colors.black54,
-                      ),
-                    ),
+                    Text(_contactLastChat(contact.sendDatetime)),
                     const SizedBox(height: 4),
                     Visibility(
                       visible: contact.unreadMessage! > 0,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: const BoxDecoration(

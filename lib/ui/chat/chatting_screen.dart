@@ -10,7 +10,6 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/widgets/toolbar.dart';
@@ -18,6 +17,7 @@ import '../../data/model/chat.dart';
 import '../../data/model/profile.dart';
 import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
+import '../../services/storage_services.dart';
 import 'widgets/chat_item.dart';
 
 class ChattingScreen extends StatefulWidget {
@@ -174,8 +174,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           showMaterialModalBottomSheet(
                             expand: false,
                             context: context,
-                            builder: (context) => Container(
-                              color: Colors.white,
+                            builder: (context) => SizedBox(
                               height: 100,
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -274,6 +273,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             child: Text(
               _messageDate(chat.sendDatetime),
               textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.black),
             ),
           ),
         ),

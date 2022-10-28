@@ -7,12 +7,12 @@ import '../../data/nyarios_repository.dart';
 import '../../services/storage_services.dart';
 
 class ContactDetailScreen extends StatelessWidget {
-  final Profile profile = Get.arguments;
-
-  ContactDetailScreen({super.key});
+  const ContactDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Profile profile = Get.arguments;
+
     return Scaffold(
       appBar: Toolbar.defaultToolbar('', elevation: 0),
       body: SingleChildScrollView(
@@ -29,7 +29,12 @@ class ContactDetailScreen extends StatelessWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black26, width: 1.5),
+                      border: Border.all(
+                        color: StorageServices.to.darkMode
+                            ? Colors.white24
+                            : Colors.black26,
+                        width: 1.5,
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: Image.network(

@@ -60,7 +60,10 @@ class SearchResults extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: SubstringHighlight(text: chat.message!, term: term),
+            child: SubstringHighlight(
+              text: chat.message!,
+              term: term,
+            ),
           ),
           const Divider(),
         ],
