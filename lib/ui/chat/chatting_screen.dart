@@ -35,6 +35,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
   String? selectedRoomId;
   late int unreadMessage;
 
+  List<Chat> selectedChat = [];
+  bool selectionMode = false;
+
   @override
   void initState() {
     selectedRoomId = profile.roomId;
@@ -46,7 +49,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
-        profile.name ?? "",
+        selectedChat.isEmpty
+            ? profile.name ?? ""
+            : "${selectedChat.length} chat is selected",
+        leading: selectedChat.isEmpty
+            ? null
+            : IconButton(
+                onPressed: () {
+                  setState(() {
+                    selectedChat.clear();
+                    selectionMode = false;
+                  });
+                },
+                icon: const Icon(Icons.close),
+              ),
         stream: true,
         uid: profile.uid,
         onTapTitle: () => Get.toNamed(
@@ -106,15 +122,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 return _buildChatMessages(snapshot.data!.docs
                     .map((e) => Chat.fromMap(e.data()))
                     .toList());
-
-                // return ListView.builder(
-                //   physics: const BouncingScrollPhysics(),
-                //   itemBuilder: (context, index) {
-                //     var chat = Chat.fromMap(snapshot.data!.docs[index].data());
-                //     return ChatItem(chat: chat);
-                //   },
-                //   itemCount: snapshot.data!.docs.length,
-                // );
               },
             ),
           ),
@@ -230,7 +237,22 @@ class _ChattingScreenState extends State<ChattingScreen> {
         return DateTime(date.year, date.month, date.day);
       },
       groupHeaderBuilder: _createGroupHeader,
-      itemBuilder: (_, Chat chat) => ChatItem(chat: chat),
+      itemBuilder: (_, Chat chat) => ChatItem(
+        chat: chat,
+        isSelected: selectedChat.contains(chat),
+        onSelect: () {
+          setState(() {
+            if (selectedChat.contains(chat)) {
+              selectedChat.remove(chat);
+            } else {
+              selectedChat.add(chat);
+            }
+            selectionMode = selectedChat.isNotEmpty;
+          });
+        },
+        selectionMode: selectionMode,
+        key: Key(chat.sendDatetime.toString()),
+      ),
     );
   }
 

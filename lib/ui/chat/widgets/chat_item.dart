@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:substring_highlight/substring_highlight.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/model/chat.dart';
@@ -11,13 +10,26 @@ import '../../../services/storage_services.dart';
 
 class ChatItem extends StatelessWidget {
   final Chat chat;
+  final bool isSelected;
+  final bool selectionMode;
+  final Function onSelect;
 
-  const ChatItem({Key? key, required this.chat}) : super(key: key);
+  const ChatItem({
+    Key? key,
+    required this.chat,
+    required this.isSelected,
+    required this.onSelect,
+    this.selectionMode = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        if (selectionMode) {
+          onSelect();
+        }
+
         if (chat.type == "image") {
           var savePath = await getExternalStorageDirectory();
           _downloadFile(chat.url!, "${savePath!.path}/${chat.message}");
@@ -27,6 +39,11 @@ class ChatItem extends StatelessWidget {
           if (_isLink(chat.message!)) {
             launchUrl(Uri(path: chat.message!));
           }
+        }
+      },
+      onLongPress: () {
+        if (!selectionMode) {
+          onSelect();
         }
       },
       child: Align(
@@ -42,9 +59,11 @@ class ChatItem extends StatelessWidget {
             right: chat.senderId != StorageServices.to.userId ? 75 : 16,
           ),
           decoration: BoxDecoration(
-            color: chat.senderId != StorageServices.to.userId
-                ? Colors.white
-                : const Color.fromRGBO(251, 127, 107, 1),
+            color: isSelected
+                ? Colors.red
+                : chat.senderId != StorageServices.to.userId
+                    ? Colors.white
+                    : const Color.fromRGBO(251, 127, 107, 1),
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(10),
               topRight: const Radius.circular(10),
@@ -121,10 +140,9 @@ class ChatItem extends StatelessWidget {
           ),
         );
       default:
-        return SubstringHighlight(
-          text: chat.message!,
-          term: 'f',
-          textStyle: TextStyle(
+        return Text(
+          chat.message!,
+          style: TextStyle(
             color: _isLink(chat.message!) ? Colors.blueGrey : Colors.black54,
             fontSize: 16,
             decoration: _isLink(chat.message!)
