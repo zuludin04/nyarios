@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clipboard/clipboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -71,38 +72,55 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ),
         elevation: 0,
         actions: [
-          PopupMenuButton(
-            icon: const Icon(Icons.more_vert),
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  value: 0,
-                  child: Text('view_contact'.tr),
-                ),
-                const PopupMenuItem(
-                  value: 1,
-                  child: Text('Search'),
-                ),
-              ];
-            },
-            onSelected: (value) {
-              if (value == 0) {
-                Get.toNamed(
-                  AppRoutes.contactDetail,
-                  arguments: profile,
-                );
-              } else if (value == 1) {
-                Get.toNamed(
-                  AppRoutes.search,
-                  arguments: {
-                    'type': 'chats',
-                    'roomId': selectedRoomId,
-                    'user': profile.name,
-                  },
-                );
-              }
-            },
-          )
+          if (!selectionMode)
+            PopupMenuButton(
+              icon: const Icon(Icons.more_vert),
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    value: 0,
+                    child: Text('view_contact'.tr),
+                  ),
+                  const PopupMenuItem(
+                    value: 1,
+                    child: Text('Search'),
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                if (value == 0) {
+                  Get.toNamed(
+                    AppRoutes.contactDetail,
+                    arguments: profile,
+                  );
+                } else if (value == 1) {
+                  Get.toNamed(
+                    AppRoutes.search,
+                    arguments: {
+                      'type': 'chats',
+                      'roomId': selectedRoomId,
+                      'user': profile.name,
+                    },
+                  );
+                }
+              },
+            )
+          else
+            IconButton(
+              onPressed: () {
+                var messages =
+                    selectedChat.map((e) => _copiedMessage(e)).toList().join();
+                FlutterClipboard.copy(messages).then((value) {
+                  Get.rawSnackbar(
+                      message: "${selectedChat.length} messages copied");
+                  setState(() {
+                    selectedChat.clear();
+                    selectionMode = false;
+                  });
+                });
+              },
+              icon: const Icon(Icons.copy),
+            ),
         ],
       ),
       body: Column(
@@ -313,6 +331,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }
+  }
+
+  String _copiedMessage(Chat chat) {
+    var date = DateFormat("MM/dd, hh:mm a")
+        .format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
+    var user = chat.senderId == StorageServices.to.userId
+        ? StorageServices.to.userName
+        : profile.name;
+    return "[$date] $user: ${chat.message}\n";
   }
 
   void _sendMessage(String message, String type, {String url = ""}) async {
