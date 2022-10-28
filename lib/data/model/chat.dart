@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Chat {
+  String? messageId;
   String? message;
   int? sendDatetime;
   String? senderId;
@@ -7,6 +7,7 @@ class Chat {
   String? url;
 
   Chat({
+    this.messageId,
     this.message,
     this.sendDatetime,
     this.senderId,
@@ -24,8 +25,9 @@ class Chat {
     };
   }
 
-  factory Chat.fromMap(Map<String, dynamic> map) {
+  factory Chat.fromMap(Map<String, dynamic> map, String messageId) {
     return Chat(
+      messageId: messageId,
       message: map['message'] != null ? map['message'] as String : null,
       sendDatetime:
           map['sendDatetime'] != null ? map['sendDatetime'] as int : null,

@@ -103,7 +103,7 @@ class NyariosRepository {
         .orderBy('sendDatetime')
         .get();
 
-    return chats.docs.map((e) => Chat.fromMap(e.data())).toList();
+    return chats.docs.map((e) => Chat.fromMap(e.data(), "")).toList();
   }
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> getOnlineStatus(String? uid) {
@@ -142,14 +142,36 @@ class NyariosRepository {
     newMessage.add(chat.toMap());
   }
 
+  Future<void> batchDelete(
+      String roomId, List<Chat> chatMessages, Profile profile) async {
+    CollectionReference messages = FirebaseFirestore.instance
+        .collection('room')
+        .doc(roomId)
+        .collection('messages');
+
+    for (var message in chatMessages) {
+      messages.doc(message.messageId).delete();
+    }
+
+    var updatedMessages = await loadChats(roomId);
+    var selectedMessage = updatedMessages[updatedMessages.length - 1];
+    updateRecentContact(
+        true, true, profile, selectedMessage.message!, roomId, 0,
+        sendDateTime: selectedMessage.sendDatetime);
+    updateRecentContact(
+        false, true, profile, selectedMessage.message!, roomId, 0,
+        sendDateTime: selectedMessage.sendDatetime);
+  }
+
   void updateRecentContact(
     bool fromSender,
     bool update,
     Profile profile,
     String message,
     String roomId,
-    int unreadMessage,
-  ) {
+    int unreadMessage, {
+    int? sendDateTime,
+  }) {
     if (update) {
       FirebaseFirestore.instance
           .collection('contacts')
@@ -158,7 +180,7 @@ class NyariosRepository {
           .doc(fromSender ? profile.uid : StorageServices.to.userId)
           .update({
         'message': message,
-        'sendDatetime': DateTime.now().millisecondsSinceEpoch,
+        'sendDatetime': sendDateTime ?? DateTime.now().millisecondsSinceEpoch,
         'unreadMessage': unreadMessage
       });
     } else {

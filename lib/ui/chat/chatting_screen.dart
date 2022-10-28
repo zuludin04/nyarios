@@ -71,57 +71,42 @@ class _ChattingScreenState extends State<ChattingScreen> {
           arguments: profile,
         ),
         elevation: 0,
-        actions: [
-          if (!selectionMode)
-            PopupMenuButton(
-              icon: const Icon(Icons.more_vert),
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem(
-                    value: 0,
-                    child: Text('view_contact'.tr),
-                  ),
-                  const PopupMenuItem(
-                    value: 1,
-                    child: Text('Search'),
-                  ),
-                ];
-              },
-              onSelected: (value) {
-                if (value == 0) {
-                  Get.toNamed(
-                    AppRoutes.contactDetail,
-                    arguments: profile,
-                  );
-                } else if (value == 1) {
-                  Get.toNamed(
-                    AppRoutes.search,
-                    arguments: {
-                      'type': 'chats',
-                      'roomId': selectedRoomId,
-                      'user': profile.name,
-                    },
-                  );
-                }
-              },
-            )
-          else
-            IconButton(
-              onPressed: () {
-                var messages =
-                    selectedChat.map((e) => _copiedMessage(e)).toList().join();
-                FlutterClipboard.copy(messages).then((value) {
-                  Get.rawSnackbar(
-                      message: "${selectedChat.length} messages copied");
-                  setState(() {
-                    selectedChat.clear();
-                    selectionMode = false;
-                  });
-                });
-              },
-              icon: const Icon(Icons.copy),
-            ),
-        ],
+        actions: !selectionMode
+            ? [
+                PopupMenuButton(
+                  icon: const Icon(Icons.more_vert),
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        value: 0,
+                        child: Text('view_contact'.tr),
+                      ),
+                      const PopupMenuItem(
+                        value: 1,
+                        child: Text('Search'),
+                      ),
+                    ];
+                  },
+                  onSelected: (value) {
+                    if (value == 0) {
+                      Get.toNamed(
+                        AppRoutes.contactDetail,
+                        arguments: profile,
+                      );
+                    } else if (value == 1) {
+                      Get.toNamed(
+                        AppRoutes.search,
+                        arguments: {
+                          'type': 'chats',
+                          'roomId': selectedRoomId,
+                          'user': profile.name,
+                        },
+                      );
+                    }
+                  },
+                )
+              ]
+            : _selectedChatActions(),
       ),
       body: Column(
         children: [
@@ -138,7 +123,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 }
 
                 return _buildChatMessages(snapshot.data!.docs
-                    .map((e) => Chat.fromMap(e.data()))
+                    .map((e) => Chat.fromMap(e.data(), e.id))
                     .toList());
               },
             ),
@@ -318,6 +303,38 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ],
       ),
     );
+  }
+
+  List<Widget> _selectedChatActions() {
+    return [
+      IconButton(
+        onPressed: () {
+          var messages =
+              selectedChat.map((e) => _copiedMessage(e)).toList().join();
+          FlutterClipboard.copy(messages).then((value) {
+            Get.rawSnackbar(message: "${selectedChat.length} messages copied");
+            setState(() {
+              selectedChat.clear();
+              selectionMode = false;
+            });
+          });
+        },
+        icon: const Icon(Icons.copy),
+      ),
+      IconButton(
+        onPressed: () {
+          repository
+              .batchDelete(selectedRoomId!, selectedChat, profile)
+              .then((value) {
+            setState(() {
+              selectedChat.clear();
+              selectionMode = false;
+            });
+          });
+        },
+        icon: const Icon(Icons.delete),
+      ),
+    ];
   }
 
   String _messageDate(int? datetime) {
