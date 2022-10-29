@@ -135,7 +135,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
-                    color: Get.theme.colorScheme.surface,
                     boxShadow: const [
                       BoxShadow(
                         offset: Offset(0, 0),
