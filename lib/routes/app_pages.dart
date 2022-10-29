@@ -4,6 +4,7 @@ import '../ui/auth/signin_screen.dart';
 import '../ui/auth/signup_screen.dart';
 import '../ui/chat/chatting_screen.dart';
 import '../ui/contact/contact_detail_screen.dart';
+import '../ui/contact/contact_media_binding.dart';
 import '../ui/home/home_screen.dart';
 import '../ui/language/language_setting_screen.dart';
 import '../ui/profile/profile_screen.dart';
@@ -55,6 +56,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.contactDetail,
       page: () => const ContactDetailScreen(),
+      binding: ContactMediaBinding(),
     ),
     GetPage(
       name: AppRoutes.search,
