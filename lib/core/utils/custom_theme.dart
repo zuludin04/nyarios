@@ -5,10 +5,10 @@ class CustomTheme {
     return ThemeData(
       backgroundColor: const Color(0xfff7f7f7),
       colorScheme: const ColorScheme(
-        primary: Color.fromRGBO(251, 127, 107, 1),
-        primaryContainer: Color(0xfffb7f6b),
-        secondary: Color(0xfffb7f6b),
-        secondaryContainer: Color(0xfffb7f6b),
+        primary: Color(0xffb3404a),
+        primaryContainer: Color(0xffb3404a),
+        secondary: Color(0xffb3404a),
+        secondaryContainer: Color(0xffb3404a),
         surface: Colors.white,
         background: Colors.white,
         error: Colors.redAccent,
@@ -28,7 +28,7 @@ class CustomTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(const Color(0xfffb7f6b)),
+              MaterialStateProperty.all<Color>(const Color(0xffb3404a)),
         ),
       ),
     );
@@ -40,8 +40,8 @@ class CustomTheme {
       colorScheme: const ColorScheme(
         primary: Color(0xff252526),
         primaryContainer: Colors.black,
-        secondary: Color(0xfffb7f6b),
-        secondaryContainer: Color(0xfffb7f6b),
+        secondary: Color(0xffb3404a),
+        secondaryContainer: Color(0xffb3404a),
         surface: Color(0xff252526),
         background: Color(0xff252526),
         error: Colors.redAccent,
@@ -61,7 +61,7 @@ class CustomTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(const Color(0xfffb7f6b)),
+              MaterialStateProperty.all<Color>(const Color(0xffb3404a)),
         ),
       ),
     );

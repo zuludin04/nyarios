@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.profile),
-        child: const Icon(Icons.edit),
+        child: const Icon(Icons.edit, color: Colors.white),
       ),
       body: SafeArea(
         child: CustomScrollView(

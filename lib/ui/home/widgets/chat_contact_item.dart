@@ -65,7 +65,7 @@ class ChatContactItem extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: const BoxDecoration(
-                          color: Color.fromRGBO(251, 127, 107, 1),
+                          color: Color(0xffb3404a),
                           shape: BoxShape.circle,
                         ),
                         child: Text(

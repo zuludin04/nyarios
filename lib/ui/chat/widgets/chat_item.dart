@@ -63,7 +63,7 @@ class ChatItem extends StatelessWidget {
               decoration: BoxDecoration(
                 color: chat.senderId != StorageServices.to.userId
                     ? Colors.white
-                    : const Color.fromRGBO(251, 127, 107, 1),
+                    : const Color(0xffb3404a),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(10),
                   topRight: const Radius.circular(10),
@@ -96,7 +96,7 @@ class ChatItem extends StatelessWidget {
                             )
                             .toLowerCase(),
                         style: const TextStyle(
-                          color: Colors.black54,
+                          color: Colors.white54,
                           fontSize: 13,
                         ),
                       ),
@@ -119,7 +119,8 @@ class ChatItem extends StatelessWidget {
             visible: isSelected,
             child: Positioned.fill(
               child: Container(
-                color: const Color.fromRGBO(251, 127, 107, 1).withOpacity(0.3),
+                margin: const EdgeInsets.symmetric(vertical: 2),
+                color: const Color(0xffb3404a).withOpacity(0.3),
               ),
             ),
           ),
@@ -138,7 +139,7 @@ class ChatItem extends StatelessWidget {
       case 'file':
         return Container(
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 213, 116, 101),
+            color: const Color(0xffb3404a),
             borderRadius: BorderRadius.circular(10),
           ),
           padding: const EdgeInsets.all(12),
@@ -153,7 +154,7 @@ class ChatItem extends StatelessWidget {
         return Text(
           chat.message!,
           style: TextStyle(
-            color: _isLink(chat.message!) ? Colors.blueGrey : Colors.black54,
+            color: _isLink(chat.message!) ? Colors.blueGrey : Colors.white,
             fontSize: 16,
             decoration: _isLink(chat.message!)
                 ? TextDecoration.underline

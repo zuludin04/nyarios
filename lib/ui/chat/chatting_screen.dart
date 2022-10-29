@@ -162,7 +162,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                             disabledBorder: InputBorder.none,
                           ),
                           focusNode: FocusNode(),
-                          cursorColor: const Color.fromRGBO(251, 127, 107, 1),
+                          cursorColor: const Color(0xffb3404a),
                           textInputAction: TextInputAction.send,
                           onEditingComplete: () {},
                           onFieldSubmitted: (value) {
@@ -214,10 +214,13 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 child: Container(
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color.fromRGBO(251, 127, 107, 1),
+                    color: Color(0xffb3404a),
                   ),
                   padding: const EdgeInsets.all(10),
-                  child: const Icon(Icons.send),
+                  child: const Icon(
+                    Icons.send,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -267,7 +270,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         child: Container(
           width: 120,
           decoration: const BoxDecoration(
-            color: Color.fromRGBO(251, 127, 107, 1),
+            color: Color(0xffb3404a),
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
           child: Padding(
@@ -275,7 +278,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             child: Text(
               _messageDate(chat.sendDatetime),
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ),
