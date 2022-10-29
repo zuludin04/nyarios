@@ -46,74 +46,84 @@ class ChatItem extends StatelessWidget {
           onSelect();
         }
       },
-      child: Align(
-        alignment: chat.senderId != StorageServices.to.userId
-            ? Alignment.centerLeft
-            : Alignment.centerRight,
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          margin: EdgeInsets.only(
-            top: 4,
-            bottom: 4,
-            left: chat.senderId != StorageServices.to.userId ? 16 : 75,
-            right: chat.senderId != StorageServices.to.userId ? 75 : 16,
-          ),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? Colors.red
-                : chat.senderId != StorageServices.to.userId
+      child: Stack(
+        children: [
+          Align(
+            alignment: chat.senderId != StorageServices.to.userId
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              margin: EdgeInsets.only(
+                top: 8,
+                bottom: 8,
+                left: chat.senderId != StorageServices.to.userId ? 16 : 75,
+                right: chat.senderId != StorageServices.to.userId ? 75 : 16,
+              ),
+              decoration: BoxDecoration(
+                color: chat.senderId != StorageServices.to.userId
                     ? Colors.white
                     : const Color.fromRGBO(251, 127, 107, 1),
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(10),
-              topRight: const Radius.circular(10),
-              bottomLeft: Radius.circular(
-                  chat.senderId != StorageServices.to.userId ? 0 : 10),
-              bottomRight: Radius.circular(
-                  chat.senderId != StorageServices.to.userId ? 10 : 0),
-            ),
-            boxShadow: const [
-              BoxShadow(
-                offset: Offset(0, 0),
-                blurRadius: 1,
-                spreadRadius: 1,
-                color: Colors.black12,
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              _showChatType(chat.type!),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    DateFormat("hh:mm a")
-                        .format(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              chat.sendDatetime ?? 0),
-                        )
-                        .toLowerCase(),
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 13,
-                    ),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(10),
+                  topRight: const Radius.circular(10),
+                  bottomLeft: Radius.circular(
+                      chat.senderId != StorageServices.to.userId ? 0 : 10),
+                  bottomRight: Radius.circular(
+                      chat.senderId != StorageServices.to.userId ? 10 : 0),
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 1,
+                    spreadRadius: 1,
+                    color: Colors.black12,
                   ),
-                  // const SizedBox(width: 4),
-                  // Visibility(
-                  //   visible: !chat.senderId != StorageServices.to.userId,
-                  //   child: Icon(
-                  //     _readStatusMessage(chat.status!),
-                  //     size: 18,
-                  //     color: Colors.black54,
-                  //   ),
-                  // ),
                 ],
               ),
-            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _showChatType(chat.type!),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        DateFormat("hh:mm a")
+                            .format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  chat.sendDatetime ?? 0),
+                            )
+                            .toLowerCase(),
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 13,
+                        ),
+                      ),
+                      // const SizedBox(width: 4),
+                      // Visibility(
+                      //   visible: !chat.senderId != StorageServices.to.userId,
+                      //   child: Icon(
+                      //     _readStatusMessage(chat.status!),
+                      //     size: 18,
+                      //     color: Colors.black54,
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
+          Visibility(
+            visible: isSelected,
+            child: Positioned.fill(
+              child: Container(
+                color: const Color.fromRGBO(251, 127, 107, 1).withOpacity(0.3),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
