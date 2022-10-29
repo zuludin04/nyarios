@@ -151,6 +151,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       Expanded(
                         child: TextFormField(
                           controller: _messageEditingController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.all(16),
                             hintText: 'message'.tr,
