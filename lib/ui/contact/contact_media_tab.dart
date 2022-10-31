@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/widgets/custom_indicator.dart';
+import '../../core/widgets/empty_widget.dart';
 import '../../data/model/chat.dart';
 import 'contact_media_controller.dart';
 
@@ -36,8 +37,8 @@ class _ContactMediaTabState extends State<ContactMediaTab>
       builder: (controller) {
         if (controller.loading) {
           return const Center(child: CustomIndicator());
-        } else if (controller.loading) {
-          return const Center(child: Text("Empty Media"));
+        } else if (controller.empty) {
+          return const Center(child: EmptyWidget(message: 'Media is Empty'));
         } else {
           return ListView.builder(
             itemBuilder: (context, index) {
