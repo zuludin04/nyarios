@@ -198,7 +198,7 @@ class NyariosRepository {
         'name': fromSender ? profile.name : StorageServices.to.userName,
         'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
         'roomId': roomId,
-        'photo': profile.photo,
+        'photo': fromSender ? profile.photo : StorageServices.to.userImage,
         'sendDatetime': DateTime.now().millisecondsSinceEpoch,
         'block': false,
         'unreadMessage': unreadMessage
