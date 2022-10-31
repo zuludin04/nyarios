@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
-import '../../services/storage_services.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -56,7 +55,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await signInWithGoogle(context: context);
+                            await signInWithGoogle();
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(
@@ -94,18 +93,15 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Future<void> signInWithGoogle({required BuildContext context}) async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+  Future<void> signInWithGoogle() async {
+    NyariosRepository repository = NyariosRepository();
 
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
-
-    if (googleSignInAccount != null) {
+    var login = await repository.signInUser();
+    if (login) {
       Get.offAllNamed(AppRoutes.home);
-      StorageServices.to.alreadyLogin = true;
     } else {
       Get.rawSnackbar(
-          message: 'There\'s something wrong when login, please try again');
+          message: 'There is something wrong when login, please try again');
     }
   }
 }

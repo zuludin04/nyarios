@@ -27,6 +27,11 @@ class StorageServices extends GetxService {
     _storage.write('USER_NAME', value);
   }
 
+  String get userImage => _storage.read('USER_IMAGE') ?? '';
+  set userImage(String value) {
+    _storage.write('USER_NAME', value);
+  }
+
   bool get alreadyLogin => _storage.read('ALREADY_LOGIN') ?? false;
   set alreadyLogin(bool value) {
     _storage.write('ALREADY_LOGIN', value);

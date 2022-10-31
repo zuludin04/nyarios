@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../services/storage_services.dart';
 import 'model/chat.dart';
@@ -113,11 +114,14 @@ class NyariosRepository {
         .snapshots();
   }
 
-  void updateOnlineStatus(String status) {
-    FirebaseFirestore.instance
-        .collection('profile')
-        .doc(StorageServices.to.userId)
-        .update({'visibility': status});
+  void updateOnlineStatus(String status) async {
+    var exist = await checkIfUserExist(StorageServices.to.userId);
+    if (exist) {
+      FirebaseFirestore.instance
+          .collection('profile')
+          .doc(StorageServices.to.userId)
+          .update({'visibility': status});
+    }
   }
 
   void sendNewMessage(
@@ -202,5 +206,40 @@ class NyariosRepository {
     }
   }
 
-  
+  Future<bool> signInUser() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      var userExist = await checkIfUserExist(googleSignInAccount.id);
+
+      StorageServices.to.alreadyLogin = true;
+      StorageServices.to.userId = googleSignInAccount.id;
+      StorageServices.to.userName = googleSignInAccount.displayName ?? "";
+      StorageServices.to.userImage = googleSignInAccount.photoUrl ?? "";
+
+      if (!userExist) {
+        FirebaseFirestore.instance
+            .collection('profile')
+            .doc(googleSignInAccount.id)
+            .set({
+          'id': googleSignInAccount.id,
+          'name': googleSignInAccount.displayName,
+          'photo': googleSignInAccount.photoUrl,
+          'visibility': true,
+        });
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> checkIfUserExist(String userId) async {
+    var doc = await profileReference.doc(userId).get();
+    return doc.exists;
+  }
 }
