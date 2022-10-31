@@ -62,7 +62,7 @@ class ChatItem extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: chat.senderId != StorageServices.to.userId
-                    ? Colors.white
+                    ? Colors.grey
                     : const Color(0xffb3404a),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(10),
