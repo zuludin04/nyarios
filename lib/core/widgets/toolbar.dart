@@ -45,12 +45,12 @@ class Toolbar {
       return StreamBuilder(
         stream: NyariosRepository().getOnlineStatus(uid),
         builder: (context, snapshot) {
-          String status = snapshot.data?.data()?["visibility"] ?? "";
+          bool online = snapshot.data?.data()?["visibility"] ?? false;
           return Visibility(
-            visible: snapshot.connectionState == ConnectionState.active &&
-                status == "Online",
+            visible:
+                snapshot.connectionState == ConnectionState.active && online,
             child: Text(
-              status,
+              online ? "Online" : "Offline",
               style: TextStyle(
                 fontSize: 14,
                 color: StorageServices.to.darkMode

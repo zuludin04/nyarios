@@ -114,7 +114,7 @@ class NyariosRepository {
         .snapshots();
   }
 
-  void updateOnlineStatus(String status) async {
+  void updateOnlineStatus(bool status) async {
     var exist = await checkIfUserExist(StorageServices.to.userId);
     if (exist) {
       FirebaseFirestore.instance

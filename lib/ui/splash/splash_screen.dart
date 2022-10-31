@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
     splashTime();
 
     WidgetsBinding.instance.addObserver(this);
-    repository.updateOnlineStatus("Online");
+    repository.updateOnlineStatus(true);
     super.initState();
   }
 
@@ -33,9 +33,9 @@ class _SplashScreenState extends State<SplashScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
-      repository.updateOnlineStatus("Online");
+      repository.updateOnlineStatus(true);
     } else {
-      repository.updateOnlineStatus("Offline");
+      repository.updateOnlineStatus(false);
     }
   }
 

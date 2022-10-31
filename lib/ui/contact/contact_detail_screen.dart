@@ -81,12 +81,12 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     StreamBuilder(
                       stream: NyariosRepository().getOnlineStatus(profile.uid),
                       builder: (context, snapshot) {
-                        String status =
-                            snapshot.data?.data()?["visibility"] ?? "";
+                        bool online =
+                            snapshot.data?.data()?["visibility"] ?? false;
                         return Visibility(
                           visible: snapshot.connectionState ==
                                   ConnectionState.active &&
-                              status == "Online",
+                              online,
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
@@ -94,7 +94,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              status,
+                              online ? "Online" : "Offline",
                               style: TextStyle(
                                 fontSize: 14,
                                 color: StorageServices.to.darkMode
