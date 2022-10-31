@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
@@ -55,9 +55,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Get.offAllNamed(AppRoutes.home);
-                            StorageServices.to.alreadyLogin = true;
+                          onPressed: () async {
+                            await signInWithGoogle(context: context);
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(
@@ -95,21 +94,18 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void loginUser() async {
-    try {
-      // final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      //   email: emailController.text,
-      //   password: passwordController.text,
-      // );
+  Future<void> signInWithGoogle({required BuildContext context}) async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      // debugPrint('success login ${credential.user?.email}');
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
 
-      // Get.offAllNamed(AppRoutes.home);
-      // StorageServices.to.alreadyLogin = true;
-    } on FirebaseAuthException catch (e) {
-      debugPrint('error firebase login ${e.code}');
-    } catch (e) {
-      debugPrint('error ${e.toString()}');
+    if (googleSignInAccount != null) {
+      Get.offAllNamed(AppRoutes.home);
+      StorageServices.to.alreadyLogin = true;
+    } else {
+      Get.rawSnackbar(
+          message: 'There\'s something wrong when login, please try again');
     }
   }
 }
