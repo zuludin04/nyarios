@@ -206,6 +206,7 @@ class NyariosRepository {
   }
 
   Future<bool> signInUser() async {
+    StorageServices.to.alreadyLogin = true;
     return true;
     // final GoogleSignIn googleSignIn = GoogleSignIn();
 
