@@ -128,6 +128,7 @@ class NyariosRepository {
     String message,
     String type,
     String url,
+    String fileSize,
   ) {
     CollectionReference newMessage = FirebaseFirestore.instance
         .collection('room')
@@ -140,6 +141,7 @@ class NyariosRepository {
       senderId: StorageServices.to.userId,
       type: type,
       url: url,
+      fileSize: fileSize,
     );
 
     newMessage.add(chat.toMap());

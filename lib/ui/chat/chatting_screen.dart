@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:clipboard/clipboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -365,7 +366,12 @@ class _ChattingScreenState extends State<ChattingScreen> {
     return "[$date] $user: ${chat.message}\n";
   }
 
-  void _sendMessage(String message, String type, {String url = ""}) async {
+  void _sendMessage(
+    String message,
+    String type, {
+    String url = "",
+    String fileSize = "",
+  }) async {
     if (selectedRoomId == null) {
       // create new room
       var roomId = const Uuid().v4();
@@ -375,7 +381,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       repository.updateRecentContact(
           false, false, profile, message, roomId, unread);
 
-      repository.sendNewMessage(roomId, message, type, url);
+      repository.sendNewMessage(roomId, message, type, url, fileSize);
 
       selectedRoomId = roomId;
       setState(() {});
@@ -385,20 +391,22 @@ class _ChattingScreenState extends State<ChattingScreen> {
       repository.updateRecentContact(true, true, profile, message, '', 0);
       repository.updateRecentContact(false, true, profile, message, '', unread);
 
-      repository.sendNewMessage(selectedRoomId, message, type, url);
+      repository.sendNewMessage(selectedRoomId, message, type, url, fileSize);
     }
   }
 
   void _pickImage(bool fromGallery) async {
-    final file = await ImagePicker().pickImage(
+    final pickedFile = await ImagePicker().pickImage(
       source: fromGallery ? ImageSource.gallery : ImageSource.camera,
       imageQuality: 50,
     );
 
-    if (file != null) {
+    if (pickedFile != null) {
+      var file = File(pickedFile.path);
       var storage = FirebaseStorage.instance.ref();
-      var uploadImage =
-          storage.child('nyarios/images/${file.name}').putFile(File(file.path));
+      var uploadImage = storage
+          .child('nyarios/images/${pickedFile.name}')
+          .putFile(File(pickedFile.path));
 
       uploadImage.snapshotEvents.listen((event) async {
         switch (event.state) {
@@ -418,9 +426,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
             break;
           case TaskState.success:
             var url = await storage
-                .child('nyarios/images/${file.name}')
+                .child('nyarios/images/${pickedFile.name}')
                 .getDownloadURL();
-            _sendMessage(file.name, 'image', url: url);
+            var fileSize = await getFileSize(file, 1);
+            _sendMessage(pickedFile.name, 'image',
+                url: url, fileSize: fileSize);
             break;
         }
       });
@@ -457,11 +467,21 @@ class _ChattingScreenState extends State<ChattingScreen> {
             var url = await storage
                 .child('nyarios/files/${file.path.split("/").last}')
                 .getDownloadURL();
-            _sendMessage(result.files.single.name, 'file', url: url);
+            var fileSize = await getFileSize(file, 1);
+            _sendMessage(result.files.single.name, 'file',
+                url: url, fileSize: fileSize);
             break;
         }
       });
     }
+  }
+
+  Future<String> getFileSize(File file, int decimals) async {
+    int bytes = await file.length();
+    if (bytes <= 0) return "0 B";
+    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
   void listenDocumentChange() {

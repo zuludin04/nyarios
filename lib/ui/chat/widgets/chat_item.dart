@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -135,7 +137,22 @@ class ChatItem extends StatelessWidget {
       case 'image':
         return ClipRRect(
           borderRadius: BorderRadius.circular(5),
-          child: Image.network(chat.url!),
+          child: Stack(
+            children: [
+              Image.network(chat.url!),
+              Positioned(
+                bottom: 5,
+                right: 10,
+                child: Text(
+                  chat.fileSize ?? "",
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       case 'file':
         return Container(
@@ -147,7 +164,26 @@ class ChatItem extends StatelessWidget {
           child: Row(
             children: [
               const Icon(Icons.attach_file),
-              Text(chat.message!),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    chat.message!,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    chat.fileSize!,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         );

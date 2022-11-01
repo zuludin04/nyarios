@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class Chat {
   String? messageId;
   String? message;
@@ -5,6 +6,7 @@ class Chat {
   String? senderId;
   String? type;
   String? url;
+  String? fileSize;
 
   Chat({
     this.messageId,
@@ -13,6 +15,7 @@ class Chat {
     this.senderId,
     this.type,
     this.url,
+    this.fileSize,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,6 +25,7 @@ class Chat {
       'senderId': senderId,
       'type': type,
       'url': url,
+      'fileSize': fileSize,
     };
   }
 
@@ -34,6 +38,7 @@ class Chat {
       senderId: map['senderId'] != null ? map['senderId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
       url: map['url'] != null ? map['url'] as String : null,
+      fileSize: map['fileSize'] != null ? map['fileSize'] as String : null,
     );
   }
 
