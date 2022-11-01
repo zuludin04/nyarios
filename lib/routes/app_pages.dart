@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
 import '../ui/auth/signin_screen.dart';
-import '../ui/auth/signup_screen.dart';
 import '../ui/chat/chatting_screen.dart';
 import '../ui/contact/contact_detail_screen.dart';
 import '../ui/contact/contact_media_binding.dart';
@@ -28,10 +27,6 @@ class AppPages {
     GetPage(
       name: AppRoutes.signIn,
       page: () => const SignInScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.signUp,
-      page: () => const SignUpScreen(),
     ),
     GetPage(
       name: AppRoutes.home,

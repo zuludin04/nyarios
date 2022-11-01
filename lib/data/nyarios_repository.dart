@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../services/storage_services.dart';
 import 'model/chat.dart';
@@ -207,35 +206,36 @@ class NyariosRepository {
   }
 
   Future<bool> signInUser() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+    return true;
+    // final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
+    // final GoogleSignInAccount? googleSignInAccount =
+    //     await googleSignIn.signIn();
 
-    if (googleSignInAccount != null) {
-      var userExist = await checkIfUserExist(googleSignInAccount.id);
+    // if (googleSignInAccount != null) {
+    //   var userExist = await checkIfUserExist(googleSignInAccount.id);
 
-      StorageServices.to.alreadyLogin = true;
-      StorageServices.to.userId = googleSignInAccount.id;
-      StorageServices.to.userName = googleSignInAccount.displayName ?? "";
-      StorageServices.to.userImage = googleSignInAccount.photoUrl ?? "";
+    //   StorageServices.to.alreadyLogin = true;
+    //   StorageServices.to.userId = googleSignInAccount.id;
+    //   StorageServices.to.userName = googleSignInAccount.displayName ?? "";
+    //   StorageServices.to.userImage = googleSignInAccount.photoUrl ?? "";
 
-      if (!userExist) {
-        FirebaseFirestore.instance
-            .collection('profile')
-            .doc(googleSignInAccount.id)
-            .set({
-          'id': googleSignInAccount.id,
-          'name': googleSignInAccount.displayName,
-          'photo': googleSignInAccount.photoUrl,
-          'visibility': true,
-        });
-      }
+    //   if (!userExist) {
+    //     FirebaseFirestore.instance
+    //         .collection('profile')
+    //         .doc(googleSignInAccount.id)
+    //         .set({
+    //       'id': googleSignInAccount.id,
+    //       'name': googleSignInAccount.displayName,
+    //       'photo': googleSignInAccount.photoUrl,
+    //       'visibility': true,
+    //     });
+    //   }
 
-      return true;
-    } else {
-      return false;
-    }
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   Future<bool> checkIfUserExist(String userId) async {
