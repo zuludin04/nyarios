@@ -48,7 +48,11 @@ class ChatItem extends StatelessWidget {
           bool exist = await file.exists();
 
           if (!exist) {
-            _downloadFile(chat.url!, "${savePath.path}/files/${chat.message}");
+            _downloadFile(
+              chat.url!,
+              "${savePath.path}/files/${chat.message}",
+              () => Get.rawSnackbar(message: "Success downloading file"),
+            );
           } else {
             Get.rawSnackbar(message: "File is already exist");
           }
@@ -228,7 +232,8 @@ class ChatItem extends StatelessWidget {
     return matcher.hasMatch(input);
   }
 
-  void _downloadFile(String downloadUrl, String savePath) async {
+  void _downloadFile(
+      String downloadUrl, String savePath, Function() downloadCallback) async {
     Dio dio = Dio();
 
     try {
@@ -241,11 +246,8 @@ class ChatItem extends StatelessWidget {
             var downloadIndicator =
                 "${(downloadRatio * 100).toStringAsFixed(2)}%";
             if (downloadIndicator == "100.00%") {
-              Get.back();
-              Get.rawSnackbar(message: "success download");
+              downloadCallback();
             }
-          } else {
-            Get.rawSnackbar(message: "success download");
           }
         },
       );
@@ -279,8 +281,15 @@ class ChatItem extends StatelessWidget {
                     child: IconButton(
                       onPressed: () async {
                         if (!exist) {
-                          _downloadFile(chat.url!,
-                              "${savePath.path}/images/${chat.message}");
+                          _downloadFile(
+                            chat.url!,
+                            "${savePath.path}/images/${chat.message}",
+                            () {
+                              Get.back();
+                              Get.rawSnackbar(
+                                  message: "Success downloading file");
+                            },
+                          );
                         } else {
                           Get.rawSnackbar(message: "File is already exist");
                         }
