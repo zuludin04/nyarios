@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -33,13 +33,24 @@ class ChatItem extends StatelessWidget {
         }
 
         if (chat.type == "image") {
-          var savePath = await getExternalStorageDirectory();
-          _downloadFile(chat.url!, "${savePath!.path}/${chat.message}");
+          showImageDialog(context);
         }
 
         if (chat.type == "text") {
           if (_isLink(chat.message!)) {
             launchUrl(Uri(path: chat.message!));
+          }
+        }
+
+        if (chat.type == "file") {
+          var savePath = await getExternalStorageDirectory();
+          File file = File("${savePath!.path}/files/${chat.message}");
+          bool exist = await file.exists();
+
+          if (!exist) {
+            _downloadFile(chat.url!, "${savePath.path}/files/${chat.message}");
+          } else {
+            Get.rawSnackbar(message: "File is already exist");
           }
         }
       },
@@ -229,7 +240,10 @@ class ChatItem extends StatelessWidget {
             var downloadRatio = (count / total);
             var downloadIndicator =
                 "${(downloadRatio * 100).toStringAsFixed(2)}%";
-            debugPrint("download progress $downloadIndicator");
+            if (downloadIndicator == "100.00%") {
+              Get.back();
+              Get.rawSnackbar(message: "success download");
+            }
           } else {
             Get.rawSnackbar(message: "success download");
           }
@@ -242,5 +256,58 @@ class ChatItem extends StatelessWidget {
     } on Exception catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  void showImageDialog(BuildContext context) async {
+    var savePath = await getExternalStorageDirectory();
+    File file = File("${savePath!.path}/images/${chat.message}");
+    var exist = await file.exists();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Visibility(
+                  visible: !exist,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: IconButton(
+                      onPressed: () async {
+                        if (!exist) {
+                          _downloadFile(chat.url!,
+                              "${savePath.path}/images/${chat.message}");
+                        } else {
+                          Get.rawSnackbar(message: "File is already exist");
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.download,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                Material(
+                  color: Colors.transparent,
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Image.network(chat.url!),
+          ],
+        );
+      },
+    );
   }
 }
