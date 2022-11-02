@@ -160,11 +160,9 @@ class NyariosRepository {
 
     var updatedMessages = await loadChats(roomId);
     var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    updateRecentContact(
-        true, true, profile, selectedMessage.message!, roomId, 0,
+    updateRecentContact(true, true, profile, selectedMessage.message!, roomId,
         sendDateTime: selectedMessage.sendDatetime);
-    updateRecentContact(
-        false, true, profile, selectedMessage.message!, roomId, 0,
+    updateRecentContact(false, true, profile, selectedMessage.message!, roomId,
         sendDateTime: selectedMessage.sendDatetime);
   }
 
@@ -173,8 +171,7 @@ class NyariosRepository {
     bool update,
     Profile profile,
     String message,
-    String roomId,
-    int unreadMessage, {
+    String roomId, {
     int? sendDateTime,
   }) {
     if (update) {
@@ -186,7 +183,6 @@ class NyariosRepository {
           .update({
         'message': message,
         'sendDatetime': sendDateTime ?? DateTime.now().millisecondsSinceEpoch,
-        'unreadMessage': unreadMessage
       });
     } else {
       FirebaseFirestore.instance
@@ -202,7 +198,6 @@ class NyariosRepository {
         'photo': fromSender ? profile.photo : StorageServices.to.userImage,
         'sendDatetime': DateTime.now().millisecondsSinceEpoch,
         'block': false,
-        'unreadMessage': unreadMessage
       });
     }
   }

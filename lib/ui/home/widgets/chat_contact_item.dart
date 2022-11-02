@@ -57,27 +57,6 @@ class ChatContactItem extends StatelessWidget {
                   children: [
                     Text(_contactLastChat(contact.sendDatetime)),
                     const SizedBox(height: 4),
-                    Visibility(
-                      visible: contact.unreadMessage! > 0,
-                      maintainSize: true,
-                      maintainAnimation: true,
-                      maintainState: true,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
-                          color: Color(0xffb3404a),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '${contact.unreadMessage}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    )
                   ],
                 ),
               ],

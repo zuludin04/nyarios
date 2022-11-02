@@ -36,7 +36,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   Profile profile = Get.arguments;
   String? selectedRoomId;
-  late int unreadMessage;
 
   List<Chat> selectedChat = [];
   bool selectionMode = false;
@@ -44,7 +43,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
   @override
   void initState() {
     selectedRoomId = profile.roomId;
-    unreadMessage = profile.unreadMessage ?? 0;
     super.initState();
   }
 
@@ -375,21 +373,17 @@ class _ChattingScreenState extends State<ChattingScreen> {
     if (selectedRoomId == null) {
       // create new room
       var roomId = const Uuid().v4();
-      var unread = unreadMessage += 1;
 
-      repository.updateRecentContact(true, false, profile, message, roomId, 0);
-      repository.updateRecentContact(
-          false, false, profile, message, roomId, unread);
+      repository.updateRecentContact(true, false, profile, message, roomId);
+      repository.updateRecentContact(false, false, profile, message, roomId);
 
       repository.sendNewMessage(roomId, message, type, url, fileSize);
 
       selectedRoomId = roomId;
       setState(() {});
     } else {
-      var unread = unreadMessage += 1;
-
-      repository.updateRecentContact(true, true, profile, message, '', 0);
-      repository.updateRecentContact(false, true, profile, message, '', unread);
+      repository.updateRecentContact(true, true, profile, message, '');
+      repository.updateRecentContact(false, true, profile, message, '');
 
       repository.sendNewMessage(selectedRoomId, message, type, url, fileSize);
     }
