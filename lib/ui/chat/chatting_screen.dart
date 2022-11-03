@@ -422,7 +422,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             var url = await storage
                 .child('nyarios/images/${pickedFile.name}')
                 .getDownloadURL();
-            var fileSize = await getFileSize(file, 1);
+            var fileSize = await getFileSize(file);
             _sendMessage(pickedFile.name, 'image',
                 url: url, fileSize: fileSize);
             break;
@@ -461,7 +461,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             var url = await storage
                 .child('nyarios/files/${file.path.split("/").last}')
                 .getDownloadURL();
-            var fileSize = await getFileSize(file, 1);
+            var fileSize = await getFileSize(file);
             _sendMessage(result.files.single.name, 'file',
                 url: url, fileSize: fileSize);
             break;
@@ -470,12 +470,12 @@ class _ChattingScreenState extends State<ChattingScreen> {
     }
   }
 
-  Future<String> getFileSize(File file, int decimals) async {
+  Future<String> getFileSize(File file) async {
     int bytes = await file.length();
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     var i = (log(bytes) / log(1024)).floor();
-    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
+    return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
   }
 
   void listenDocumentChange() {
