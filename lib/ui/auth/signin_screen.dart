@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
+import '../../services/storage_services.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -12,6 +16,41 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  final supabase = Supabase.instance.client;
+  final repository = NyariosRepository();
+  late final StreamSubscription<AuthState> _authSubscription;
+
+  @override
+  void initState() {
+    _authSubscription = supabase.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+      final Session? session = data.session;
+      final User? user = session?.user;
+
+      if (event == AuthChangeEvent.signedIn) {
+        var id = user?.id ?? "";
+        var name = user?.userMetadata?['full_name'] ?? "";
+        var photo = user?.userMetadata?['avatar_url'] ?? "";
+
+        StorageServices.to.alreadyLogin = true;
+        StorageServices.to.userId = id;
+        StorageServices.to.userName = name;
+        StorageServices.to.userImage = photo;
+
+        repository.saveUserProfile(id, name, photo);
+
+        Get.offAllNamed(AppRoutes.home);
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _authSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await signInWithGoogle();
+                            await supabaseGoogleSignIn();
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(
@@ -93,15 +132,10 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Future<void> signInWithGoogle() async {
-    NyariosRepository repository = NyariosRepository();
-
-    var login = await repository.signInUser();
-    if (login) {
-      Get.offAllNamed(AppRoutes.home);
-    } else {
-      Get.rawSnackbar(
-          message: 'There is something wrong when login, please try again');
-    }
+  Future<void> supabaseGoogleSignIn() async {
+    await supabase.auth.signInWithOAuth(
+      Provider.google,
+      redirectTo: 'io.supabase.flutter://reset-callback/',
+    );
   }
 }

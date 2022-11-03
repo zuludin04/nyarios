@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/utils/custom_theme.dart';
 import 'routes/app_pages.dart';
@@ -14,10 +14,11 @@ void main() async {
 
   await Firebase.initializeApp();
   await GetStorage.init();
-
-  // if (shouldUseFirebaseEmulator) {
-  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  // }
+  await Supabase.initialize(
+    url: 'https://ldpsikxegafogjimywfo.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkcHNpa3hlZ2Fmb2dqaW15d2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Njc0OTc0MTcsImV4cCI6MTk4MzA3MzQxN30.LTXIzenlDS6g0TxBORzovzuW8eeZae6FArhcdmYw_28',
+  );
 
   runApp(const MyApp());
 }
