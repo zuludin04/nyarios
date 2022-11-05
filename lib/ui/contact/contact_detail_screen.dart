@@ -114,24 +114,30 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
               pinned: true,
               delegate: SliverPersistentHeaderDelegateImpl(
                 tabBar: TabBar(
+                  padding: const EdgeInsets.all(0),
+                  labelPadding: const EdgeInsets.all(0),
                   labelColor: const Color(0xffb3404a),
                   indicatorColor: const Color(0xffb3404a),
                   unselectedLabelColor: const Color(0xffBDBDBD),
                   controller: tabController,
-                  tabs: const [
-                    Tab(
-                      icon: Text(
-                        'Media',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
+                  tabs: [
+                    Container(
+                      color: Get.theme.backgroundColor,
+                      width: double.infinity,
+                      child: const Tab(
+                        icon: Text(
+                          'Media',
+                          style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
-                    Tab(
-                      icon: Text(
-                        'Docs',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
+                    Container(
+                      color: Get.theme.backgroundColor,
+                      width: double.infinity,
+                      child: const Tab(
+                        icon: Text(
+                          'Docs',
+                          style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
