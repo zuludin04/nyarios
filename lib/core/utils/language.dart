@@ -13,6 +13,7 @@ const Map<String, String> idID = {
   "you": "Kamu",
   "empty_contact": "Kontak tidak ditemukan",
   "empty_chat": "Chat tidak ditemukan",
+  "empty_media": "Media Kosong",
   "selected_chat": "chat terpilih",
   "search": "Cari",
   "something_wrong": "Terjadi kesalahan",
@@ -26,6 +27,8 @@ const Map<String, String> idID = {
   "search_chat": "Cari Obrolan",
   "splash_message": "Nyarios",
   "start_conversation": "Mulai Pembicaraan",
+  "media": "Media",
+  "docs": "Dokumen",
 };
 
 const Map<String, String> enUS = {
@@ -43,6 +46,7 @@ const Map<String, String> enUS = {
   "you": "you",
   "empty_contact": "There are no contact",
   "empty_chat": "There are no chat",
+  "empty_media": "Media is Empty",
   "selected_chat": "chats selected",
   "search": "Search",
   "something_wrong": "Something went wrong",
@@ -56,4 +60,6 @@ const Map<String, String> enUS = {
   "search_chat": "Search Chat",
   "splash_message": "Nyarios",
   "start_conversation": "Start Conversation",
+  "media": "Media",
+  "docs": "Docs",
 };

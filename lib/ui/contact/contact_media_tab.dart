@@ -38,7 +38,7 @@ class _ContactMediaTabState extends State<ContactMediaTab>
         if (controller.loading) {
           return const Center(child: CustomIndicator());
         } else if (controller.empty) {
-          return const Center(child: EmptyWidget(message: 'Media is Empty'));
+          return Center(child: EmptyWidget(message: 'empty_media'.tr));
         } else {
           return ListView.builder(
             itemBuilder: (context, index) {

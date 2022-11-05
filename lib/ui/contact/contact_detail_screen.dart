@@ -124,20 +124,20 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     Container(
                       color: Get.theme.backgroundColor,
                       width: double.infinity,
-                      child: const Tab(
+                      child: Tab(
                         icon: Text(
-                          'Media',
-                          style: TextStyle(fontWeight: FontWeight.w700),
+                          'media'.tr,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
                     Container(
                       color: Get.theme.backgroundColor,
                       width: double.infinity,
-                      child: const Tab(
+                      child: Tab(
                         icon: Text(
-                          'Docs',
-                          style: TextStyle(fontWeight: FontWeight.w700),
+                          'docs'.tr,
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
