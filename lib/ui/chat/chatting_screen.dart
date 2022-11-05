@@ -11,6 +11,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/widgets/custom_indicator.dart';
@@ -39,6 +40,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   List<Chat> selectedChat = [];
   bool selectionMode = false;
+  String uploadIndicator = '0';
+  bool upload = false;
 
   @override
   void initState() {
@@ -110,6 +113,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
       ),
       body: Column(
         children: [
+          Visibility(
+            visible: upload,
+            child: LinearPercentIndicator(
+              percent: double.parse(uploadIndicator) / 100,
+              progressColor: Colors.red,
+              padding: const EdgeInsets.all(0),
+              lineHeight: 3,
+            ),
+          ),
           Expanded(
             child: StreamBuilder(
               stream: repository.loadUserChatsByRoomId(selectedRoomId),
@@ -441,12 +453,17 @@ class _ChattingScreenState extends State<ChattingScreen> {
           .child('nyarios/files/${file.path.split("/").last}')
           .putFile(File(file.path));
 
+      setState(() {
+        upload = true;
+      });
+
       uploadImage.snapshotEvents.listen((event) async {
         switch (event.state) {
           case TaskState.running:
-            final progress =
-                100.0 * (event.bytesTransferred / event.totalBytes);
-            debugPrint("Upload is $progress% complete.");
+            final progress = event.bytesTransferred / event.totalBytes;
+            setState(() {
+              uploadIndicator = (progress * 100).toStringAsFixed(0);
+            });
             break;
           case TaskState.paused:
             debugPrint("Upload is paused.");
@@ -464,6 +481,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
             var fileSize = await getFileSize(file);
             _sendMessage(result.files.single.name, 'file',
                 url: url, fileSize: fileSize);
+            setState(() {
+              upload = false;
+            });
             break;
         }
       });
