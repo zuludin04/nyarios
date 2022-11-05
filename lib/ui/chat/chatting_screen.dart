@@ -414,12 +414,17 @@ class _ChattingScreenState extends State<ChattingScreen> {
           .child('nyarios/images/${pickedFile.name}')
           .putFile(File(pickedFile.path));
 
+      setState(() {
+        upload = true;
+      });
+
       uploadImage.snapshotEvents.listen((event) async {
         switch (event.state) {
           case TaskState.running:
-            final progress =
-                100.0 * (event.bytesTransferred / event.totalBytes);
-            debugPrint("Upload is $progress% complete.");
+            final progress = event.bytesTransferred / event.totalBytes;
+            setState(() {
+              uploadIndicator = (progress * 100).toStringAsFixed(0);
+            });
             break;
           case TaskState.paused:
             debugPrint("Upload is paused.");
@@ -437,6 +442,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
             var fileSize = await getFileSize(file);
             _sendMessage(pickedFile.name, 'image',
                 url: url, fileSize: fileSize);
+            setState(() {
+              upload = false;
+            });
             break;
         }
       });
