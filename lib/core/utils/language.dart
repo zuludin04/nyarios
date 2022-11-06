@@ -29,6 +29,7 @@ const Map<String, String> idID = {
   "start_conversation": "Mulai Pembicaraan",
   "media": "Media",
   "docs": "Dokumen",
+  "name": "Nama",
 };
 
 const Map<String, String> enUS = {
@@ -62,4 +63,5 @@ const Map<String, String> enUS = {
   "start_conversation": "Start Conversation",
   "media": "Media",
   "docs": "Docs",
+  "name": "Name",
 };

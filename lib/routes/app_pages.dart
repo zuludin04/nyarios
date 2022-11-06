@@ -6,6 +6,7 @@ import '../ui/contact/contact_detail_screen.dart';
 import '../ui/contact/contact_media_binding.dart';
 import '../ui/home/home_screen.dart';
 import '../ui/language/language_setting_screen.dart';
+import '../ui/profile/profile_edit_screen.dart';
 import '../ui/profile/profile_screen.dart';
 import '../ui/search/search_binding.dart';
 import '../ui/search/search_screen.dart';
@@ -47,6 +48,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.profile,
       page: () => const ProfileScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.profileEdit,
+      page: () => const ProfileEditScreen(),
     ),
     GetPage(
       name: AppRoutes.contactDetail,

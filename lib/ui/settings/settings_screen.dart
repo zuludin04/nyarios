@@ -39,7 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 title: Text(StorageServices.to.userName),
                 description: Text(StorageServices.to.userStatus),
-                onPressed: (context) {},
+                onPressed: (context) => Get.toNamed(AppRoutes.profileEdit),
               )
             ],
           ),
