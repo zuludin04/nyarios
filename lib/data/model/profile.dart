@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'contact.dart';
 
 class Profile {
@@ -6,6 +7,7 @@ class Profile {
   String? photo;
   String? roomId;
   bool? block;
+  String? status;
 
   Profile({
     this.uid,
@@ -13,6 +15,7 @@ class Profile {
     this.photo,
     this.roomId,
     this.block,
+    this.status,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,6 +25,7 @@ class Profile {
       'photo': photo,
       'roomId': roomId,
       'block': block,
+      'status': status,
     };
   }
 
@@ -32,6 +36,7 @@ class Profile {
       photo: map['photo'] != null ? map['photo'] as String : null,
       roomId: map['roomId'] != null ? map['roomId'] as String : null,
       block: map['block'] != null ? map['block'] as bool : null,
+      status: map['status'] != null ? map['status'] as String : null,
     );
   }
 

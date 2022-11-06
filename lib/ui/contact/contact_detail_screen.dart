@@ -77,6 +77,12 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    FutureBuilder(
+                      future: NyariosRepository().loadUserStatus(profile.uid),
+                      builder: (context, snapshot) {
+                        return Text(snapshot.data ?? "");
+                      },
+                    ),
                     const SizedBox(height: 16),
                     StreamBuilder(
                       stream: NyariosRepository().getOnlineStatus(profile.uid),
@@ -96,7 +102,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                             child: Text(
                               online ? "Online" : "Offline",
                               style: TextStyle(
-                                fontSize: 14,
                                 color: StorageServices.to.darkMode
                                     ? Colors.white70
                                     : Colors.black54,

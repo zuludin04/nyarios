@@ -27,6 +27,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         sections: [
           SettingsSection(
+            tiles: [
+              SettingsTile(
+                leading: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.network(
+                    StorageServices.to.userImage,
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
+                title: Text(StorageServices.to.userName),
+                description: Text(StorageServices.to.userStatus),
+                onPressed: (context) {},
+              )
+            ],
+          ),
+          SettingsSection(
             title: Text("common".tr),
             tiles: [
               SettingsTile.switchTile(

@@ -216,4 +216,10 @@ class NyariosRepository {
     var doc = await profileReference.doc(userId).get();
     return doc.exists;
   }
+
+  Future<String?> loadUserStatus(String? userId) async {
+    var collection = FirebaseFirestore.instance.collection('profile');
+    var doc = await collection.doc(userId).get();
+    return doc.data()?['status'];
+  }
 }

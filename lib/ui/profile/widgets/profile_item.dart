@@ -40,6 +40,7 @@ class ProfileItem extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      Text(profile.status ?? ""),
                     ],
                   ),
                 ),
