@@ -208,6 +208,7 @@ class NyariosRepository {
       'name': name,
       'photo': photo,
       'visibility': true,
+      'status': 'Hey there! Let\' be friend',
     });
   }
 
