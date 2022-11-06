@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/model/chat.dart';
 import '../../../services/storage_services.dart';
 
-class ChatItem extends StatelessWidget {
+class ChatItem extends StatefulWidget {
   final Chat chat;
   final bool isSelected;
   final bool selectionMode;
@@ -25,33 +26,46 @@ class ChatItem extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ChatItem> createState() => _ChatItemState();
+}
+
+class _ChatItemState extends State<ChatItem> {
+  var downloadIndicator = "0";
+
+  @override
+  void initState() {
+    checkFileAlreadyExist();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        if (selectionMode) {
-          onSelect();
+        if (widget.selectionMode) {
+          widget.onSelect();
         }
 
-        if (chat.type == "image") {
+        if (widget.chat.type == "image") {
           showImageDialog(context);
         }
 
-        if (chat.type == "text") {
-          if (_isLink(chat.message!)) {
-            launchUrl(Uri(path: chat.message!));
+        if (widget.chat.type == "text") {
+          if (_isLink(widget.chat.message!)) {
+            launchUrl(Uri(path: widget.chat.message!));
           }
         }
 
-        if (chat.type == "file") {
+        if (widget.chat.type == "file") {
           var savePath = await getExternalStorageDirectory();
-          File file = File("${savePath!.path}/files/${chat.message}");
+          File file = File("${savePath!.path}/files/${widget.chat.message}");
           bool exist = await file.exists();
 
           if (!exist) {
             _downloadFile(
-              chat.url!,
-              "${savePath.path}/files/${chat.message}",
-              () => Get.rawSnackbar(message: "Success downloading file"),
+              widget.chat.url!,
+              "${savePath.path}/files/${widget.chat.message}",
+              () {},
             );
           } else {
             Get.rawSnackbar(message: "File is already exist");
@@ -59,14 +73,14 @@ class ChatItem extends StatelessWidget {
         }
       },
       onLongPress: () {
-        if (!selectionMode) {
-          onSelect();
+        if (!widget.selectionMode) {
+          widget.onSelect();
         }
       },
       child: Stack(
         children: [
           Align(
-            alignment: chat.senderId != StorageServices.to.userId
+            alignment: widget.chat.senderId != StorageServices.to.userId
                 ? Alignment.centerLeft
                 : Alignment.centerRight,
             child: Container(
@@ -74,20 +88,26 @@ class ChatItem extends StatelessWidget {
               margin: EdgeInsets.only(
                 top: 8,
                 bottom: 8,
-                left: chat.senderId != StorageServices.to.userId ? 16 : 75,
-                right: chat.senderId != StorageServices.to.userId ? 75 : 16,
+                left:
+                    widget.chat.senderId != StorageServices.to.userId ? 16 : 75,
+                right:
+                    widget.chat.senderId != StorageServices.to.userId ? 75 : 16,
               ),
               decoration: BoxDecoration(
-                color: chat.senderId != StorageServices.to.userId
+                color: widget.chat.senderId != StorageServices.to.userId
                     ? Colors.grey
                     : const Color(0xffb3404a),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(10),
                   topRight: const Radius.circular(10),
                   bottomLeft: Radius.circular(
-                      chat.senderId != StorageServices.to.userId ? 0 : 10),
+                      widget.chat.senderId != StorageServices.to.userId
+                          ? 0
+                          : 10),
                   bottomRight: Radius.circular(
-                      chat.senderId != StorageServices.to.userId ? 10 : 0),
+                      widget.chat.senderId != StorageServices.to.userId
+                          ? 10
+                          : 0),
                 ),
                 boxShadow: const [
                   BoxShadow(
@@ -101,7 +121,7 @@ class ChatItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _showChatType(chat.type!),
+                  _showChatType(widget.chat.type!),
                   const SizedBox(height: 4),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -110,7 +130,7 @@ class ChatItem extends StatelessWidget {
                         DateFormat("hh:mm a")
                             .format(
                               DateTime.fromMillisecondsSinceEpoch(
-                                  chat.sendDatetime ?? 0),
+                                  widget.chat.sendDatetime ?? 0),
                             )
                             .toLowerCase(),
                         style: const TextStyle(
@@ -134,7 +154,7 @@ class ChatItem extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: isSelected,
+            visible: widget.isSelected,
             child: Positioned.fill(
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 2),
@@ -154,12 +174,12 @@ class ChatItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
           child: Stack(
             children: [
-              Image.network(chat.url!),
+              Image.network(widget.chat.url!),
               Positioned(
                 bottom: 5,
                 right: 10,
                 child: Text(
-                  chat.fileSize ?? "",
+                  widget.chat.fileSize ?? "",
                   style: const TextStyle(
                     fontSize: 13,
                     color: Colors.white,
@@ -178,20 +198,25 @@ class ChatItem extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              const Icon(Icons.attach_file),
+              CircularPercentIndicator(
+                radius: 24,
+                center: const Icon(Icons.attach_file),
+                percent: double.parse(downloadIndicator) / 100,
+                lineWidth: 2,
+              ),
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    chat.message!,
+                    widget.chat.message!,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
-                    chat.fileSize!,
+                    widget.chat.fileSize!,
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.black54,
@@ -204,27 +229,18 @@ class ChatItem extends StatelessWidget {
         );
       default:
         return Text(
-          chat.message!,
+          widget.chat.message!,
           style: TextStyle(
-            color: _isLink(chat.message!) ? Colors.blueGrey : Colors.white,
+            color:
+                _isLink(widget.chat.message!) ? Colors.blueGrey : Colors.white,
             fontSize: 16,
-            decoration: _isLink(chat.message!)
+            decoration: _isLink(widget.chat.message!)
                 ? TextDecoration.underline
                 : TextDecoration.none,
           ),
         );
     }
   }
-
-  // IconData _readStatusMessage(int status) {
-  //   if (status == 3) {
-  //     return Icons.done_all;
-  //   } else if (status == 2) {
-  //     return Icons.done;
-  //   } else {
-  //     return Icons.av_timer;
-  //   }
-  // }
 
   bool _isLink(String input) {
     final matcher = RegExp(
@@ -243,9 +259,10 @@ class ChatItem extends StatelessWidget {
         onReceiveProgress: (count, total) {
           if (total != -1) {
             var downloadRatio = (count / total);
-            var downloadIndicator =
-                "${(downloadRatio * 100).toStringAsFixed(2)}%";
-            if (downloadIndicator == "100.00%") {
+            setState(() {
+              downloadIndicator = (downloadRatio * 100).toStringAsFixed(0);
+            });
+            if (downloadIndicator == "100") {
               downloadCallback();
             }
           }
@@ -262,7 +279,7 @@ class ChatItem extends StatelessWidget {
 
   void showImageDialog(BuildContext context) async {
     var savePath = await getExternalStorageDirectory();
-    File file = File("${savePath!.path}/images/${chat.message}");
+    File file = File("${savePath!.path}/images/${widget.chat.message}");
     var exist = await file.exists();
 
     showDialog(
@@ -282,8 +299,8 @@ class ChatItem extends StatelessWidget {
                       onPressed: () async {
                         if (!exist) {
                           _downloadFile(
-                            chat.url!,
-                            "${savePath.path}/images/${chat.message}",
+                            widget.chat.url!,
+                            "${savePath.path}/images/${widget.chat.message}",
                             () {
                               Get.back();
                               Get.rawSnackbar(
@@ -313,10 +330,22 @@ class ChatItem extends StatelessWidget {
                 ),
               ],
             ),
-            Image.network(chat.url!),
+            Image.network(widget.chat.url!),
           ],
         );
       },
     );
+  }
+
+  void checkFileAlreadyExist() async {
+    var savePath = await getExternalStorageDirectory();
+    File file = File("${savePath!.path}/files/${widget.chat.message}");
+    bool exist = await file.exists();
+
+    if (exist) {
+      setState(() {
+        downloadIndicator = "100";
+      });
+    }
   }
 }
