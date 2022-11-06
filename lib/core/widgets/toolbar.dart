@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/data/nyarios_repository.dart';
 
+import '../../data/nyarios_repository.dart';
 import '../../services/storage_services.dart';
 
 class Toolbar {
