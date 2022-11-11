@@ -29,6 +29,7 @@ class NyariosRepository {
         var profile = await loadSingleProfile(contact.receiverId);
         contact.name = profile.name;
         contact.photo = profile.photo;
+        contacts.clear();
         contacts.add(contact);
       }
       yield contacts;
