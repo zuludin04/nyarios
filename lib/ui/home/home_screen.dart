@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../core/widgets/custom_indicator.dart';
-import '../../data/model/contact.dart';
 import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import 'widgets/chat_contact_item.dart';
@@ -62,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                   );
                 }
 
-                if (snapshot.data!.size == 0) {
+                if (snapshot.data!.isEmpty) {
                   return SliverFillRemaining(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -80,12 +79,9 @@ class HomeScreen extends StatelessWidget {
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => ChatContactItem(
-                      contact: Contact.fromMap(
-                        snapshot.data!.docs[index].data(),
-                      ),
-                    ),
-                    childCount: snapshot.data!.docs.length,
+                    (context, index) =>
+                        ChatContactItem(contact: snapshot.data![index]),
+                    childCount: snapshot.data!.length,
                   ),
                 );
               },

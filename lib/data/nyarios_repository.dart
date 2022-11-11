@@ -13,13 +13,32 @@ class NyariosRepository {
   final CollectionReference roomReference =
       FirebaseFirestore.instance.collection('room');
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadUserContacts() {
-    return FirebaseFirestore.instance
+  Stream<List<Contact>> loadUserContacts() async* {
+    var contactStream = FirebaseFirestore.instance
         .collection('contacts')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .orderBy('sendDatetime', descending: true)
         .snapshots();
+
+    var contacts = <Contact>[];
+
+    await for (var snapshot in contactStream) {
+      for (var doc in snapshot.docs) {
+        var contact = Contact.fromMap(doc.data());
+        var profile = await loadSingleProfile(contact.receiverId);
+        contact.name = profile.name;
+        contact.photo = profile.photo;
+        contacts.add(contact);
+      }
+      yield contacts;
+    }
+  }
+
+  Future<Profile> loadSingleProfile(String? uid) async {
+    var profiles =
+        await FirebaseFirestore.instance.collection('profile').doc(uid).get();
+    return Profile.fromMap(profiles.data()!);
   }
 
   Future<List<Contact>> loadContacts() async {
@@ -30,7 +49,15 @@ class NyariosRepository {
         .orderBy('sendDatetime', descending: true)
         .get();
 
-    return contacts.docs.map((e) => Contact.fromMap(e.data())).toList();
+    var list = contacts.docs.map((e) async {
+      Contact contact = Contact.fromMap(e.data());
+      var profile = await loadSingleProfile(contact.receiverId);
+      contact.name = profile.name;
+      contact.photo = profile.photo;
+      return contact;
+    }).toList();
+
+    return Future.wait(list);
   }
 
   Future<List<Profile>> loadAllProfiles() async {
@@ -192,10 +219,8 @@ class NyariosRepository {
           .doc(fromSender ? profile.uid : StorageServices.to.userId)
           .set({
         'message': message,
-        'name': fromSender ? profile.name : StorageServices.to.userName,
         'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
         'roomId': roomId,
-        'photo': fromSender ? profile.photo : StorageServices.to.userImage,
         'sendDatetime': DateTime.now().millisecondsSinceEpoch,
         'block': false,
       });

@@ -20,8 +20,6 @@ class Contact {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'message': message,
-      'name': name,
-      'photo': photo,
       'receiverId': receiverId,
       'roomId': roomId,
       'sendDatetime': sendDatetime,
@@ -32,8 +30,6 @@ class Contact {
   factory Contact.fromMap(Map<String, dynamic> map) {
     return Contact(
       message: map['message'] != null ? map['message'] as String : null,
-      name: map['name'] != null ? map['name'] as String : null,
-      photo: map['photo'] != null ? map['photo'] as String : null,
       receiverId:
           map['receiverId'] != null ? map['receiverId'] as String : null,
       roomId: map['roomId'] != null ? map['roomId'] as String : null,
