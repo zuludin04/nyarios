@@ -35,7 +35,6 @@ class _SignInScreenState extends State<SignInScreen> {
         StorageServices.to.alreadyLogin = true;
         StorageServices.to.userId = id;
         StorageServices.to.userName = name;
-        StorageServices.to.userImage = photo;
 
         repository.saveUserProfile(id, name, photo);
 

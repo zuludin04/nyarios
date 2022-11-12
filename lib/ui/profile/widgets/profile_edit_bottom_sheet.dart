@@ -45,18 +45,11 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
               TextButton(
                 onPressed: () {
                   if (_textEditingController.text.isNotEmpty) {
-                    var name = widget.updateName
-                        ? _textEditingController.text
-                        : StorageServices.to.userName;
-                    var status = widget.updateName
-                        ? StorageServices.to.userStatus
-                        : _textEditingController.text;
-
-                    StorageServices.to.userName = name;
-                    StorageServices.to.userStatus = status;
-
                     _repository.updateProfile(
-                        StorageServices.to.userId, name, status);
+                      StorageServices.to.userId,
+                      _textEditingController.text,
+                      widget.updateName,
+                    );
                     Get.back();
                   } else {
                     Get.rawSnackbar(message: 'Please fill your data');
