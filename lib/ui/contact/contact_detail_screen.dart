@@ -65,6 +65,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                             profile.photo!,
                             width: 80,
                             height: 80,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),

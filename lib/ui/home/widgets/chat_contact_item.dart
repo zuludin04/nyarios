@@ -30,6 +30,7 @@ class ChatContactItem extends StatelessWidget {
                     contact.photo ?? "",
                     width: 40,
                     height: 40,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 const SizedBox(width: 12),

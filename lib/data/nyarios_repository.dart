@@ -265,4 +265,11 @@ class NyariosRepository {
         .doc(profileId)
         .update({'name': name, 'status': status});
   }
+
+  Future<void> updateImageProfile(String profileId, String url) async {
+    FirebaseFirestore.instance
+        .collection('profile')
+        .doc(profileId)
+        .update({'photo': url});
+  }
 }

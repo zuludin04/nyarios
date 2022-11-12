@@ -107,6 +107,7 @@ class ProfileStreamWidget extends StatelessWidget {
                     snapshot.data!.photo!,
                     width: 50,
                     height: 50,
+                    fit: BoxFit.cover,
                   ),
                 );
         } else {
