@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../../core/widgets/toolbar.dart';
+import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 
@@ -29,16 +30,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SettingsSection(
             tiles: [
               SettingsTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    StorageServices.to.userImage,
-                    width: 50,
-                    height: 50,
-                  ),
-                ),
-                title: Text(StorageServices.to.userName),
-                description: Text(StorageServices.to.userStatus),
+                leading: const ProfileStreamWidget(type: 1),
+                title: const ProfileStreamWidget(type: 2),
+                description: const ProfileStreamWidget(type: 3),
                 onPressed: (context) => Get.toNamed(AppRoutes.profileEdit),
               )
             ],
@@ -83,6 +77,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
           )
         ],
       ),
+    );
+  }
+}
+
+class ProfileStreamWidget extends StatelessWidget {
+  final int type;
+
+  const ProfileStreamWidget({super.key, required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: NyariosRepository().loadStreamProfile(StorageServices.to.userId),
+      builder: (context, snapshot) {
+        if (type == 1) {
+          return snapshot.data?.photo == null
+              ? Container(
+                  width: 50,
+                  height: 50,
+                  decoration: const BoxDecoration(
+                    color: Colors.grey,
+                    shape: BoxShape.circle,
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.network(
+                    snapshot.data!.photo!,
+                    width: 50,
+                    height: 50,
+                  ),
+                );
+        } else {
+          return Text(
+            type == 2
+                ? snapshot.data?.name ?? "-"
+                : snapshot.data?.status ?? "-",
+          );
+        }
+      },
     );
   }
 }

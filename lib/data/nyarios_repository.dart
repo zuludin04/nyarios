@@ -141,6 +141,12 @@ class NyariosRepository {
         .snapshots();
   }
 
+  Stream<Profile> loadStreamProfile(String uid) async* {
+    var profile =
+        FirebaseFirestore.instance.collection('profile').doc(uid).snapshots();
+    yield* profile.map((event) => Profile.fromMap(event.data()!));
+  }
+
   void updateOnlineStatus(bool status) async {
     var exist = await checkIfUserExist(StorageServices.to.userId);
     if (exist) {
@@ -247,5 +253,16 @@ class NyariosRepository {
     var collection = FirebaseFirestore.instance.collection('profile');
     var doc = await collection.doc(userId).get();
     return doc.data()?['status'];
+  }
+
+  Future<void> updateProfile(
+    String profileId,
+    String name,
+    String status,
+  ) async {
+    FirebaseFirestore.instance
+        .collection('profile')
+        .doc(profileId)
+        .update({'name': name, 'status': status});
   }
 }
