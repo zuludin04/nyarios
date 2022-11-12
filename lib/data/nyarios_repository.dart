@@ -235,13 +235,16 @@ class NyariosRepository {
   }
 
   Future<void> saveUserProfile(String id, String name, String photo) async {
-    FirebaseFirestore.instance.collection('profile').doc(id).set({
-      'id': id,
-      'name': name,
-      'photo': photo,
-      'visibility': true,
-      'status': 'Hey there! Let\' be friend',
-    });
+    var exist = await checkIfUserExist(id);
+    if (!exist) {
+      FirebaseFirestore.instance.collection('profile').doc(id).set({
+        'id': id,
+        'name': name,
+        'photo': photo,
+        'visibility': true,
+        'status': 'Hey there! Let\' be friend',
+      });
+    }
   }
 
   Future<bool> checkIfUserExist(String userId) async {
