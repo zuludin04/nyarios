@@ -1,16 +1,19 @@
-# nyarios
+# Nyarios
+Description + tech stack + Icon
 
-A new Flutter project.
+## Features
 
-## Getting Started
+-
+-
 
-This project is a starting point for a Flutter application.
+## Screenshot
 
-A few resources to get you started if this is your first Flutter project:
+## Future Implementation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [ ] Feature One  
+ 
+## Credits
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Contact
+
+For support, email fake@fake.com or join our Slack channel.
