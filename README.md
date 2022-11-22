@@ -28,4 +28,4 @@ You can try this app by clicking this link below.
 
 ## Contact
 
-For support, email fake@fake.com or join our Slack channel.
+Send me email if you have something to ask, zmauludin04@gmail.com
