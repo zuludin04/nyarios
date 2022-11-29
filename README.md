@@ -16,6 +16,9 @@ You can try this app by clicking this link below.
 - Show user status
 
 ## Screenshot
+|![file](https://raw.githubusercontent.com/zuludin04/nyarios/main/screenshot/nyarios_sc_1.webp) | ![file](https://raw.githubusercontent.com/zuludin04/nyarios/main/screenshot/nyarios_sc_3.webp)|
+
+|![file](https://raw.githubusercontent.com/zuludin04/nyarios/main/screenshot/nyarios_sc_5.webp) | ![file](https://raw.githubusercontent.com/zuludin04/nyarios/main/screenshot/nyarios_sc_6.webp)|
 
 ## Future Implementation
 
