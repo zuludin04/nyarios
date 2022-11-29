@@ -4,7 +4,7 @@ The name 'Nyarios' was coming from Sundanese language wich means 'speaking', sin
 I've been building this application from 2-3 months ago as my personal project.
 As the suggest this application heavily inspired by Whatsapp so there are so many features that similar to Whatsapp.
 You can try this app by clicking this link below.
-[Download]()
+[Download](https://github.com/zuludin04/nyarios/blob/main/download/nyarios.apk)
 
 ## Features
 
