@@ -10,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:uuid/uuid.dart';
 
@@ -184,10 +183,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       ),
                       IconButton(
                         onPressed: () {
-                          showMaterialModalBottomSheet(
-                            expand: false,
-                            context: context,
-                            builder: (context) => SizedBox(
+                          Get.bottomSheet(
+                            SizedBox(
                               height: 100,
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
