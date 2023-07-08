@@ -197,6 +197,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                                 ],
                               ),
                             ),
+                            backgroundColor: Get.theme.colorScheme.background,
                           );
                         },
                         icon: const Icon(Icons.attach_file),

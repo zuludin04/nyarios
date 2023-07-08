@@ -40,7 +40,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverToBoxAdapter(
-              child: Padding(
+              child: Container(
+                color: Get.theme.colorScheme.background,
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,10 +177,7 @@ class SliverPersistentHeaderDelegateImpl
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Colors.white,
-      child: tabBar,
-    );
+    return Container(child: tabBar);
   }
 
   @override

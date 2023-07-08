@@ -40,7 +40,14 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
             children: [
               TextButton(
                 onPressed: Get.back,
-                child: const Text('Cancel'),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: StorageServices.to.darkMode
+                        ? Colors.white
+                        : const Color(0xffb3404a),
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -55,7 +62,14 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
                     Get.rawSnackbar(message: 'Please fill your data');
                   }
                 },
-                child: const Text('Save'),
+                child: Text(
+                  'Save',
+                  style: TextStyle(
+                    color: StorageServices.to.darkMode
+                        ? Colors.white
+                        : const Color(0xffb3404a),
+                  ),
+                ),
               ),
             ],
           ),

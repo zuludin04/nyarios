@@ -164,11 +164,11 @@ class ImageProfile extends StatelessWidget {
             ),
           ),
         ),
-        const Positioned(
+        Positioned(
           left: 100,
           right: 0,
           bottom: 0,
-          child: Icon(Icons.edit, color: Colors.black),
+          child: Icon(Icons.edit, color: Get.theme.iconTheme.color),
         ),
       ],
     );

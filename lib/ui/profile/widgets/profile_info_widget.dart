@@ -30,7 +30,7 @@ class ProfileInfoWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            Icon(icon, size: 28, color: Colors.black87),
+            Icon(icon, size: 28, color: Get.theme.iconTheme.color),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

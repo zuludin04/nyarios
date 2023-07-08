@@ -25,7 +25,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         physics: const BouncingScrollPhysics(),
         lightTheme: const SettingsThemeData(
           titleTextColor: Color.fromRGBO(251, 127, 107, 1),
+          settingsListBackground: Color(0xfff7f7f7),
         ),
+        darkTheme: const SettingsThemeData(
+          titleTextColor: Colors.white,
+          settingsListBackground: Color(0xff252526),
+        ),
+        brightness: darkMode ? Brightness.dark : Brightness.light,
         sections: [
           SettingsSection(
             tiles: [

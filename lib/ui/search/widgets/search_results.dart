@@ -23,21 +23,29 @@ class SearchResults extends StatelessWidget {
               : "empty_chat".tr),
         );
       } else {
-        return ListView.builder(
-          padding: const EdgeInsets.only(top: 85),
-          itemBuilder: (context, index) {
-            if (controller.type == 'contacts') {
-              return ChatContactItem(contact: controller.filterContact[index]);
-            } else {
-              return _chatSearchItem(
-                controller.filterChat[index],
-                controller.term,
-              );
-            }
-          },
-          itemCount: controller.type == 'contacts'
-              ? controller.filterContact.length
-              : controller.filterChat.length,
+        return Column(
+          children: [
+            const SizedBox(height: 48),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.only(top: 85),
+                itemBuilder: (context, index) {
+                  if (controller.type == 'contacts') {
+                    return ChatContactItem(
+                        contact: controller.filterContact[index]);
+                  } else {
+                    return _chatSearchItem(
+                      controller.filterChat[index],
+                      controller.term,
+                    );
+                  }
+                },
+                itemCount: controller.type == 'contacts'
+                    ? controller.filterContact.length
+                    : controller.filterChat.length,
+              ),
+            ),
+          ],
         );
       }
     });
@@ -63,6 +71,9 @@ class SearchResults extends StatelessWidget {
             child: SubstringHighlight(
               text: chat.message!,
               term: term,
+              textStyle: TextStyle(
+                color: Get.theme.colorScheme.onBackground.withOpacity(0.6),
+              ),
             ),
           ),
           const Divider(),
