@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 class CustomTheme {
   static ThemeData get defaultTheme {
     return ThemeData(
-      backgroundColor: const Color(0xfff7f7f7),
       colorScheme: const ColorScheme(
         primary: Color(0xffb3404a),
         primaryContainer: Color(0xffb3404a),
         secondary: Color(0xffb3404a),
         secondaryContainer: Color(0xffb3404a),
         surface: Colors.white,
-        background: Colors.white,
+        background: Color(0xfff7f7f7),
         error: Colors.redAccent,
         onPrimary: Colors.black,
         onSecondary: Colors.black,
@@ -36,7 +35,6 @@ class CustomTheme {
 
   static ThemeData get darkTheme {
     return ThemeData(
-      backgroundColor: const Color(0xff252526),
       colorScheme: const ColorScheme(
         primary: Color(0xff252526),
         primaryContainer: Colors.black,

@@ -128,7 +128,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                   controller: tabController,
                   tabs: [
                     Container(
-                      color: Get.theme.backgroundColor,
+                      color: Get.theme.colorScheme.background,
                       width: double.infinity,
                       child: Tab(
                         icon: Text(
@@ -138,7 +138,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                       ),
                     ),
                     Container(
-                      color: Get.theme.backgroundColor,
+                      color: Get.theme.colorScheme.background,
                       width: double.infinity,
                       child: Tab(
                         icon: Text(

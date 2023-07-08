@@ -37,7 +37,7 @@ class ProfileInfoWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(title, style: Get.textTheme.caption),
+                  Text(title, style: Get.textTheme.bodySmall),
                   Text(data, style: Get.textTheme.titleMedium),
                   const Divider(),
                 ],

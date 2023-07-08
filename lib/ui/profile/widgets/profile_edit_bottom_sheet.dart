@@ -25,7 +25,7 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Get.theme.backgroundColor,
+      color: Get.theme.colorScheme.background,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,

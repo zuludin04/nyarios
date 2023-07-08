@@ -287,11 +287,12 @@ class _ChatItemState extends State<ChatItem> {
     File file = File("${savePath!.path}/images/${widget.chat.message}");
     var exist = await file.exists();
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Column(
+    Get.dialog(
+      AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        content: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -337,8 +338,8 @@ class _ChatItemState extends State<ChatItem> {
             ),
             Image.network(widget.chat.url!),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 

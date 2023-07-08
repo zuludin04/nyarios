@@ -12,7 +12,7 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Container(
-      color: Theme.of(context).backgroundColor,
+      color: Theme.of(context).colorScheme.background,
       height: kToolbarHeight,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
