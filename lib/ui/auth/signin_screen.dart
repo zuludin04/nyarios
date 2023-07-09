@@ -1,8 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
@@ -16,39 +17,10 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final supabase = Supabase.instance.client;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
   final repository = NyariosRepository();
-  late final StreamSubscription<AuthState> _authSubscription;
-
-  @override
-  void initState() {
-    _authSubscription = supabase.auth.onAuthStateChange.listen((data) {
-      final AuthChangeEvent event = data.event;
-      final Session? session = data.session;
-      final User? user = session?.user;
-
-      if (event == AuthChangeEvent.signedIn) {
-        var id = user?.id ?? "";
-        var name = user?.userMetadata?['full_name'] ?? "";
-        var photo = user?.userMetadata?['avatar_url'] ?? "";
-
-        StorageServices.to.alreadyLogin = true;
-        StorageServices.to.userId = id;
-        StorageServices.to.userName = name;
-
-        repository.saveUserProfile(id, name, photo);
-
-        Get.offAllNamed(AppRoutes.home);
-      }
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _authSubscription.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await supabaseGoogleSignIn();
+                            await signInGoogle();
                           },
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all(
@@ -131,10 +103,43 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Future<void> supabaseGoogleSignIn() async {
-    await supabase.auth.signInWithOAuth(
-      Provider.google,
-      redirectTo: 'io.supabase.flutter://reset-callback/',
-    );
+  Future<void> signInGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      var auth = await _auth.signInWithCredential(credential);
+      var user = auth.user;
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        );
+        var id = user?.uid ?? "";
+        var name = user?.displayName ?? "";
+        var photo = user?.photoURL ?? "";
+        var email = user?.email ?? "";
+
+        StorageServices.to.alreadyLogin = true;
+        StorageServices.to.userId = id;
+        StorageServices.to.userName = name;
+        StorageServices.to.email = email;
+
+        repository.saveUserProfile(id, name, photo, email);
+
+        Get.offAllNamed(AppRoutes.home);
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.message);
+    }
   }
 }

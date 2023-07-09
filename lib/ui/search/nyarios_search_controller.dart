@@ -4,7 +4,7 @@ import '../../data/model/chat.dart';
 import '../../data/model/contact.dart';
 import '../../data/nyarios_repository.dart';
 
-class SearchController extends GetxController {
+class NyariosSearchController extends GetxController {
   final repository = NyariosRepository();
 
   String type = Get.arguments['type'];

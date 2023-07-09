@@ -26,6 +26,11 @@ class StorageServices extends GetxService {
     _storage.write('USER_NAME', value);
   }
 
+  String get email => _storage.read('USER_EMAIL') ?? '';
+  set email(String value) {
+    _storage.write('USER_EMAIL', value);
+  }
+
   bool get alreadyLogin => _storage.read('ALREADY_LOGIN') ?? false;
   set alreadyLogin(bool value) {
     _storage.write('ALREADY_LOGIN', value);

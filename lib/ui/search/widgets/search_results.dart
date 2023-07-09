@@ -6,10 +6,10 @@ import 'package:substring_highlight/substring_highlight.dart';
 import '../../../data/model/chat.dart';
 import '../../../services/storage_services.dart';
 import '../../home/widgets/chat_contact_item.dart';
-import '../search_controller.dart';
+import '../nyarios_search_controller.dart';
 
 class SearchResults extends StatelessWidget {
-  final SearchController controller;
+  final NyariosSearchController controller;
 
   const SearchResults({super.key, required this.controller});
 

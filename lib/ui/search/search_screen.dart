@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:material_floating_search_bar_2/material_floating_search_bar_2.dart';
 
-import 'search_controller.dart';
+import 'nyarios_search_controller.dart';
 import 'widgets/search_results.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -14,7 +14,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final FloatingSearchBarController _controller = FloatingSearchBarController();
-  final SearchController _searchController = Get.find();
+  final NyariosSearchController _searchController = Get.find();
 
   @override
   void dispose() {
