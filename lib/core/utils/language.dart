@@ -30,6 +30,7 @@ const Map<String, String> idID = {
   "media": "Media",
   "docs": "Dokumen",
   "name": "Nama",
+  "logout": "Keluar",
 };
 
 const Map<String, String> enUS = {
@@ -64,4 +65,5 @@ const Map<String, String> enUS = {
   "media": "Media",
   "docs": "Docs",
   "name": "Name",
+  "logout": "Logout",
 };

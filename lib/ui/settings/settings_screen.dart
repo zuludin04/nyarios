@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../../core/widgets/toolbar.dart';
@@ -80,10 +82,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: (context) {},
               ),
             ],
+          ),
+          SettingsSection(
+            tiles: [
+              SettingsTile(
+                title: Text('logout'.tr),
+                leading: const Icon(Icons.logout),
+                onPressed: (context) async {
+                  await signOut();
+                  Get.offAllNamed(AppRoutes.signIn);
+                },
+              ),
+            ],
           )
         ],
       ),
     );
+  }
+
+  Future<void> signOut() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    try {
+      await googleSignIn.signOut();
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      debugPrint("error sign out");
+    }
   }
 }
 
