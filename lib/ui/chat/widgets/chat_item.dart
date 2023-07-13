@@ -210,24 +210,28 @@ class _ChatItemState extends State<ChatItem> {
                     : Colors.red,
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.chat.message!,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.chat.message!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  Text(
-                    widget.chat.fileSize!,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.black54,
+                    Text(
+                      widget.chat.fileSize!,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.black54,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -273,7 +277,7 @@ class _ChatItemState extends State<ChatItem> {
           }
         },
       );
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if (CancelToken.isCancel(e)) {
         debugPrint("Request canceled ${e.message}");
       }
