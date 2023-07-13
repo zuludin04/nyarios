@@ -384,16 +384,16 @@ class _ChattingScreenState extends State<ChattingScreen> {
       // create new room
       var roomId = const Uuid().v4();
 
-      repository.updateRecentContact(true, false, profile, message, roomId);
-      repository.updateRecentContact(false, false, profile, message, roomId);
+      repository.updateLastMessage(true, false, profile, message, roomId);
+      repository.updateLastMessage(false, false, profile, message, roomId);
 
       repository.sendNewMessage(roomId, message, type, url, fileSize);
 
       selectedRoomId = roomId;
       setState(() {});
     } else {
-      repository.updateRecentContact(true, true, profile, message, '');
-      repository.updateRecentContact(false, true, profile, message, '');
+      repository.updateLastMessage(true, true, profile, message, '');
+      repository.updateLastMessage(false, true, profile, message, '');
 
       repository.sendNewMessage(selectedRoomId, message, type, url, fileSize);
     }
@@ -505,14 +505,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   void listenDocumentChange() {
-    var contact = FirebaseFirestore.instance
-        .collection('contacts')
+    var lastMessage = FirebaseFirestore.instance
+        .collection('lastMessage')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .doc(profile.uid)
         .snapshots();
 
-    contact.listen((event) {
+    lastMessage.listen((event) {
       var message = event.data()!['message'];
       debugPrint('current message $message');
     });

@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../data/model/contact.dart';
+import '../../../data/model/last_message.dart';
 import '../../../data/model/profile.dart';
 import '../../../routes/app_pages.dart';
 
-class ChatContactItem extends StatelessWidget {
-  final Contact contact;
+class LastMessageItem extends StatelessWidget {
+  final LastMessage lastMessage;
 
-  const ChatContactItem({super.key, required this.contact});
+  const LastMessageItem({super.key, required this.lastMessage});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => Get.toNamed(
         AppRoutes.chatting,
-        arguments: Profile.fromContact(contact),
+        arguments: Profile.fromContact(lastMessage),
       ),
       child: Column(
         children: [
@@ -27,7 +27,7 @@ class ChatContactItem extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: Image.network(
-                    contact.photo ?? "",
+                    lastMessage.photo ?? "",
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
@@ -40,14 +40,14 @@ class ChatContactItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        contact.name ?? "",
+                        lastMessage.name ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(contact.message ?? ""),
+                      Text(lastMessage.message ?? ""),
                     ],
                   ),
                 ),
@@ -56,7 +56,7 @@ class ChatContactItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(_contactLastChat(contact.sendDatetime)),
+                    Text(_lastMessageDate(lastMessage.sendDatetime)),
                     const SizedBox(height: 4),
                   ],
                 ),
@@ -69,7 +69,7 @@ class ChatContactItem extends StatelessWidget {
     );
   }
 
-  String _contactLastChat(int? datetime) {
+  String _lastMessageDate(int? datetime) {
     var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
     var today = DateTime.now();
 

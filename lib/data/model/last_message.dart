@@ -1,4 +1,4 @@
-class Contact {
+class LastMessage {
   String? message;
   String? name;
   String? photo;
@@ -7,7 +7,7 @@ class Contact {
   int? sendDatetime;
   bool? block;
 
-  Contact({
+  LastMessage({
     this.message,
     this.name,
     this.photo,
@@ -27,8 +27,8 @@ class Contact {
     };
   }
 
-  factory Contact.fromMap(Map<String, dynamic> map) {
-    return Contact(
+  factory LastMessage.fromMap(Map<String, dynamic> map) {
+    return LastMessage(
       message: map['message'] != null ? map['message'] as String : null,
       receiverId:
           map['receiverId'] != null ? map['receiverId'] as String : null,

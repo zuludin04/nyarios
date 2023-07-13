@@ -31,7 +31,7 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
                 icon: Icons.search,
                 onTap: () => Get.toNamed(
                   AppRoutes.search,
-                  arguments: {'type': 'contacts', 'roomId': '', 'user': ''},
+                  arguments: {'type': 'lastMessage', 'roomId': '', 'user': ''},
                 ),
               ),
               const SizedBox(width: 12),

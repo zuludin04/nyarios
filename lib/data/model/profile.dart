@@ -1,4 +1,4 @@
-import 'contact.dart';
+import 'last_message.dart';
 
 class Profile {
   String? uid;
@@ -44,7 +44,7 @@ class Profile {
     );
   }
 
-  factory Profile.fromContact(Contact contact) {
+  factory Profile.fromContact(LastMessage contact) {
     return Profile(
       uid: contact.receiverId,
       name: contact.name,

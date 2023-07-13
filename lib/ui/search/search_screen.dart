@@ -31,12 +31,12 @@ class _SearchScreenState extends State<SearchScreen> {
         body: SearchResults(controller: _searchController),
         backdropColor: Colors.transparent,
         transition: CircularFloatingSearchBarTransition(),
-        hint: _searchController.type == 'contacts'
+        hint: _searchController.type == 'lastMessage'
             ? 'search_contact'.tr
             : 'search_chat'.tr,
         onQueryChanged: (query) {
-          if (_searchController.type == 'contacts') {
-            _searchController.searchContact(query);
+          if (_searchController.type == 'lastMessage') {
+            _searchController.searchLastMessage(query);
           } else {
             _searchController.searchChat(query);
           }

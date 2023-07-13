@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../data/model/chat.dart';
-import '../../data/model/contact.dart';
+import '../../data/model/last_message.dart';
 import '../../data/nyarios_repository.dart';
 
 class NyariosSearchController extends GetxController {
@@ -13,8 +13,8 @@ class NyariosSearchController extends GetxController {
 
   String term = '';
 
-  var filterContact = <Contact>[].obs;
-  var contacts = <Contact>[].obs;
+  var filterLastMessage = <LastMessage>[].obs;
+  var lastMessages = <LastMessage>[].obs;
 
   var filterChat = <Chat>[].obs;
   var chats = <Chat>[].obs;
@@ -22,22 +22,22 @@ class NyariosSearchController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    if (type == 'contacts') {
-      loadContacts();
+    if (type == 'lastMessage') {
+      loadLastMessages();
     } else {
       loadChats();
     }
   }
 
-  void searchContact(String term) {
+  void searchLastMessage(String term) {
     if (term.isNotEmpty) {
-      var filter = contacts
+      var filter = lastMessages
           .where((element) =>
               element.name!.toLowerCase().contains(term.toLowerCase()))
           .toList();
-      filterContact.value = filter;
+      filterLastMessage.value = filter;
     } else {
-      filterContact.value = contacts;
+      filterLastMessage.value = lastMessages;
     }
   }
 
@@ -56,10 +56,10 @@ class NyariosSearchController extends GetxController {
     }
   }
 
-  void loadContacts() async {
-    var contacts = await repository.loadContacts();
-    filterContact.value = contacts;
-    this.contacts.value = contacts;
+  void loadLastMessages() async {
+    var lastMessages = await repository.loadLastMessages();
+    filterLastMessage.value = lastMessages;
+    this.lastMessages.value = lastMessages;
   }
 
   void loadChats() async {

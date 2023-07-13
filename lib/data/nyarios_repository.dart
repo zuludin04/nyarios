@@ -2,37 +2,37 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../services/storage_services.dart';
 import 'model/chat.dart';
-import 'model/contact.dart';
+import 'model/last_message.dart';
 import 'model/profile.dart';
 
 class NyariosRepository {
   final CollectionReference profileReference =
       FirebaseFirestore.instance.collection('profile');
-  final CollectionReference contactReference =
-      FirebaseFirestore.instance.collection('contacts');
+  final CollectionReference lastMessageReference =
+      FirebaseFirestore.instance.collection('lastMessage');
   final CollectionReference roomReference =
       FirebaseFirestore.instance.collection('room');
 
-  Stream<List<Contact>> loadUserContacts() async* {
-    var contactStream = FirebaseFirestore.instance
-        .collection('contacts')
+  Stream<List<LastMessage>> loadUsersLastMessages() async* {
+    var lastMessageStream = FirebaseFirestore.instance
+        .collection('lastMessage')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .orderBy('sendDatetime', descending: true)
         .snapshots();
 
-    var contacts = <Contact>[];
+    var lastMessages = <LastMessage>[];
 
-    await for (var snapshot in contactStream) {
+    await for (var snapshot in lastMessageStream) {
       for (var doc in snapshot.docs) {
-        var contact = Contact.fromMap(doc.data());
-        var profile = await loadSingleProfile(contact.receiverId);
-        contact.name = profile.name;
-        contact.photo = profile.photo;
-        contacts.clear();
-        contacts.add(contact);
+        var lastMessage = LastMessage.fromMap(doc.data());
+        var profile = await loadSingleProfile(lastMessage.receiverId);
+        lastMessage.name = profile.name;
+        lastMessage.photo = profile.photo;
+        lastMessages.clear();
+        lastMessages.add(lastMessage);
       }
-      yield contacts;
+      yield lastMessages;
     }
   }
 
@@ -42,33 +42,33 @@ class NyariosRepository {
     return Profile.fromMap(profiles.data()!);
   }
 
-  Future<List<Contact>> loadContacts() async {
-    var contacts = await FirebaseFirestore.instance
-        .collection('contacts')
+  Future<List<LastMessage>> loadLastMessages() async {
+    var lastMessages = await FirebaseFirestore.instance
+        .collection('lastMessage')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .orderBy('sendDatetime', descending: true)
         .get();
 
-    var list = contacts.docs.map((e) async {
-      Contact contact = Contact.fromMap(e.data());
-      var profile = await loadSingleProfile(contact.receiverId);
-      contact.name = profile.name;
-      contact.photo = profile.photo;
-      return contact;
+    var list = lastMessages.docs.map((e) async {
+      LastMessage lastMessage = LastMessage.fromMap(e.data());
+      var profile = await loadSingleProfile(lastMessage.receiverId);
+      lastMessage.name = profile.name;
+      lastMessage.photo = profile.photo;
+      return lastMessage;
     }).toList();
 
     return Future.wait(list);
   }
 
   Future<List<Profile>> loadAllProfiles() async {
-    var contacts = await FirebaseFirestore.instance
-        .collection('contacts')
+    var lastMessages = await FirebaseFirestore.instance
+        .collection('lastMessage')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .get();
 
-    if (contacts.size == 0) {
+    if (lastMessages.size == 0) {
       var profiles = await FirebaseFirestore.instance
           .collection('profile')
           .where('id', isNotEqualTo: StorageServices.to.userId)
@@ -83,7 +83,7 @@ class NyariosRepository {
 
       var list = profiles.docs.map((e) async {
         var profile = Profile.fromMap(e.data());
-        var pro = await _contactReceiver(profile);
+        var pro = await _lastMessageReceiver(profile);
         return pro;
       }).toList();
 
@@ -91,14 +91,14 @@ class NyariosRepository {
     }
   }
 
-  Future<Profile> _contactReceiver(Profile profile) async {
-    var contact = await FirebaseFirestore.instance
-        .collection('contacts')
+  Future<Profile> _lastMessageReceiver(Profile profile) async {
+    var lastMessage = await FirebaseFirestore.instance
+        .collection('lastMessage')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .get();
 
-    var roomId = contact.docs.where((element) {
+    var roomId = lastMessage.docs.where((element) {
       var uid = profile.uid ?? "";
       return element['receiverId'] == uid;
     }).toList();
@@ -194,13 +194,13 @@ class NyariosRepository {
 
     var updatedMessages = await loadChats(roomId);
     var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    updateRecentContact(true, true, profile, selectedMessage.message!, roomId,
+    updateLastMessage(true, true, profile, selectedMessage.message!, roomId,
         sendDateTime: selectedMessage.sendDatetime);
-    updateRecentContact(false, true, profile, selectedMessage.message!, roomId,
+    updateLastMessage(false, true, profile, selectedMessage.message!, roomId,
         sendDateTime: selectedMessage.sendDatetime);
   }
 
-  void updateRecentContact(
+  void updateLastMessage(
     bool fromSender,
     bool update,
     Profile profile,
@@ -210,7 +210,7 @@ class NyariosRepository {
   }) {
     if (update) {
       FirebaseFirestore.instance
-          .collection('contacts')
+          .collection('lastMessage')
           .doc(fromSender ? StorageServices.to.userId : profile.uid)
           .collection('receiver')
           .doc(fromSender ? profile.uid : StorageServices.to.userId)
@@ -220,7 +220,7 @@ class NyariosRepository {
       });
     } else {
       FirebaseFirestore.instance
-          .collection('contacts')
+          .collection('lastMessage')
           .doc(fromSender ? StorageServices.to.userId : profile.uid)
           .collection('receiver')
           .doc(fromSender ? profile.uid : StorageServices.to.userId)

@@ -5,7 +5,7 @@ import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../../data/model/chat.dart';
 import '../../../services/storage_services.dart';
-import '../../home/widgets/chat_contact_item.dart';
+import '../../home/widgets/last_message_item.dart';
 import '../nyarios_search_controller.dart';
 
 class SearchResults extends StatelessWidget {
@@ -16,9 +16,9 @@ class SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.filterContact.isEmpty && controller.filterChat.isEmpty) {
+      if (controller.filterLastMessage.isEmpty && controller.filterChat.isEmpty) {
         return Center(
-          child: Text(controller.type == 'contacts'
+          child: Text(controller.type == 'lastMessage'
               ? "empty_contact".tr
               : "empty_chat".tr),
         );
@@ -30,9 +30,9 @@ class SearchResults extends StatelessWidget {
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 85),
                 itemBuilder: (context, index) {
-                  if (controller.type == 'contacts') {
-                    return ChatContactItem(
-                        contact: controller.filterContact[index]);
+                  if (controller.type == 'lastMessage') {
+                    return LastMessageItem(
+                        lastMessage: controller.filterLastMessage[index]);
                   } else {
                     return _chatSearchItem(
                       controller.filterChat[index],
@@ -40,8 +40,8 @@ class SearchResults extends StatelessWidget {
                     );
                   }
                 },
-                itemCount: controller.type == 'contacts'
-                    ? controller.filterContact.length
+                itemCount: controller.type == 'lastMessage'
+                    ? controller.filterLastMessage.length
                     : controller.filterChat.length,
               ),
             ),
@@ -63,7 +63,7 @@ class SearchResults extends StatelessWidget {
               Text(chat.senderId == StorageServices.to.userId
                   ? 'you'.tr
                   : controller.user),
-              Text(_contactLastChat(chat.sendDatetime)),
+              Text(_lastMessageDate(chat.sendDatetime)),
             ],
           ),
           Padding(
@@ -82,7 +82,7 @@ class SearchResults extends StatelessWidget {
     );
   }
 
-  String _contactLastChat(int? datetime) {
+  String _lastMessageDate(int? datetime) {
     var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
     var today = DateTime.now();
 

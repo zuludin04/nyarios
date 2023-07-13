@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../core/widgets/custom_indicator.dart';
 import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
-import 'widgets/chat_contact_item.dart';
+import 'widgets/last_message_item.dart';
 import 'widgets/custom_sticky_bar.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
               child: SizedBox(height: 10),
             ),
             StreamBuilder(
-              stream: repository.loadUserContacts(),
+              stream: repository.loadUsersLastMessages(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return SliverFillRemaining(
@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) =>
-                        ChatContactItem(contact: snapshot.data![index]),
+                        LastMessageItem(lastMessage: snapshot.data![index]),
                     childCount: snapshot.data!.length,
                   ),
                 );
