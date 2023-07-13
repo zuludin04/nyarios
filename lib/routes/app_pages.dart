@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nyarios/ui/qrcode/qr_code_profile_screen.dart';
 
 import '../ui/auth/signin_screen.dart';
 import '../ui/chat/chatting_screen.dart';
@@ -62,6 +63,10 @@ class AppPages {
       name: AppRoutes.search,
       page: () => const SearchScreen(),
       binding: SearchBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.qrCodeProfile,
+      page: () => const QrCodeProfileScreen(),
     ),
   ];
 }

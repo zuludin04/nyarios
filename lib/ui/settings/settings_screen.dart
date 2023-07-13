@@ -42,7 +42,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: const ProfileStreamWidget(type: 2),
                 description: const ProfileStreamWidget(type: 3),
                 onPressed: (context) => Get.toNamed(AppRoutes.profileEdit),
-              )
+              ),
+              SettingsTile(
+                title: Text('My QR Code'),
+                leading: const Icon(Icons.qr_code_2),
+                onPressed: (context) => Get.toNamed(AppRoutes.qrCodeProfile),
+              ),
             ],
           ),
           SettingsSection(
