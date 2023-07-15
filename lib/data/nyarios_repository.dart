@@ -282,4 +282,29 @@ class NyariosRepository {
         .doc(profileId)
         .update({'photo': url});
   }
+
+  Future<void> saveNewFriend(Profile profile) async {
+    var friend = await FirebaseFirestore.instance
+        .collection('contact')
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .doc(profile.uid)
+        .get();
+    if (!friend.exists) {
+      FirebaseFirestore.instance
+          .collection('contact')
+          .doc(StorageServices.to.userId)
+          .collection('friends')
+          .doc(profile.uid)
+          .set(profile.toMap());
+    }
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> loadSavedFriend() {
+    return FirebaseFirestore.instance
+        .collection('contact')
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .snapshots();
+  }
 }
