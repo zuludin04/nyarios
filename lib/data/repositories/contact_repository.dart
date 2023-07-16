@@ -8,22 +8,24 @@ class ContactRepository {
       FirebaseFirestore.instance.collection('contact');
   ProfileRepository profileRepository = ProfileRepository();
 
-  Future<void> saveNewFriend(Profile profile) async {
+  Future<void> saveNewFriend(
+      Profile profile, String roomId, bool fromSender) async {
     var friend = await contactReference
-        .doc(StorageServices.to.userId)
+        .doc(fromSender ? StorageServices.to.userId : profile.uid)
         .collection('friends')
-        .doc(profile.uid)
+        .doc(fromSender ? profile.uid : StorageServices.to.userId)
         .get();
     if (!friend.exists) {
       FirebaseFirestore.instance
           .collection('contact')
-          .doc(StorageServices.to.userId)
+          .doc(fromSender ? StorageServices.to.userId : profile.uid)
           .collection('friends')
-          .doc(profile.uid)
+          .doc(fromSender ? profile.uid : StorageServices.to.userId)
           .set({
-        'profileId': profile.uid,
+        'profileId': fromSender ? profile.uid : StorageServices.to.userId,
         'blocked': false,
-        'alreadyAdded': false,
+        'alreadyAdded': fromSender,
+        'roomId': roomId,
       });
     }
   }
@@ -32,6 +34,7 @@ class ContactRepository {
     var lastMessages = await contactReference
         .doc(StorageServices.to.userId)
         .collection('friends')
+        .where('alreadyAdded', isEqualTo: true)
         .get();
 
     var list = lastMessages.docs.map((e) async {

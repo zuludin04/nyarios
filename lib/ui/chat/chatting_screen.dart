@@ -392,16 +392,16 @@ class _ChattingScreenState extends State<ChattingScreen> {
       // create new room
       var roomId = const Uuid().v4();
 
-      repository.updateLastMessage(true, false, profile.uid!, message, roomId);
-      repository.updateLastMessage(false, false, profile.uid!, message, roomId);
+      repository.updateLastMessage(true, false, profile.uid!, message);
+      repository.updateLastMessage(false, false, profile.uid!, message);
 
       repository.sendNewMessage(roomId, chat);
 
       selectedRoomId = roomId;
       setState(() {});
     } else {
-      repository.updateLastMessage(true, true, profile.uid!, message, '');
-      repository.updateLastMessage(false, true, profile.uid!, message, '');
+      repository.updateLastMessage(true, true, profile.uid!, message);
+      repository.updateLastMessage(false, true, profile.uid!, message);
 
       repository.sendNewMessage(selectedRoomId, chat);
     }

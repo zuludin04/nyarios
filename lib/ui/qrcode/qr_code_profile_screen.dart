@@ -9,6 +9,7 @@ import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class QrCodeProfileScreen extends StatelessWidget {
   const QrCodeProfileScreen({super.key});
@@ -144,7 +145,11 @@ class QrCodeProfileScreen extends StatelessWidget {
                       onPressed: () {
                         Get.back();
                         var profile = snapshot.data!;
-                        ContactRepository().saveNewFriend(profile);
+                        var roomId = const Uuid().v4();
+                        ContactRepository()
+                            .saveNewFriend(profile, roomId, true);
+                        ContactRepository()
+                            .saveNewFriend(profile, roomId, false);
                         Get.toNamed(AppRoutes.chatting, arguments: profile);
                       },
                       child: const Text('Add'),

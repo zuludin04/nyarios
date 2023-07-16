@@ -55,8 +55,7 @@ class ChatRepository {
     bool fromSender,
     bool update,
     String profileId,
-    String message,
-    String roomId, {
+    String message, {
     int? sendDateTime,
   }) {
     if (update) {
@@ -76,7 +75,6 @@ class ChatRepository {
           .set({
         'message': message,
         'receiverId': fromSender ? profileId : StorageServices.to.userId,
-        'roomId': roomId,
         'sendDatetime': DateTime.now().millisecondsSinceEpoch,
       });
     }
