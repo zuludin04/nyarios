@@ -112,16 +112,16 @@ class NyariosRepository {
     return profile;
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadUserChatsByRoomId(
-    String? roomId,
-  ) {
-    return FirebaseFirestore.instance
-        .collection('room')
-        .doc(roomId)
-        .collection('messages')
-        .orderBy('sendDatetime')
-        .snapshots();
-  }
+  // Stream<QuerySnapshot<Map<String, dynamic>>> loadUserChatsByRoomId(
+  //   String? roomId,
+  // ) {
+  //   return FirebaseFirestore.instance
+  //       .collection('room')
+  //       .doc(roomId)
+  //       .collection('messages')
+  //       .orderBy('sendDatetime')
+  //       .snapshots();
+  // }
 
   Future<List<Chat>> loadChats(String? roomId) async {
     var chats = await FirebaseFirestore.instance
@@ -157,82 +157,82 @@ class NyariosRepository {
     }
   }
 
-  void sendNewMessage(
-    String? roomId,
-    String message,
-    String type,
-    String url,
-    String fileSize,
-  ) {
-    CollectionReference newMessage = FirebaseFirestore.instance
-        .collection('room')
-        .doc(roomId)
-        .collection('messages');
+  // void sendNewMessage(
+  //   String? roomId,
+  //   String message,
+  //   String type,
+  //   String url,
+  //   String fileSize,
+  // ) {
+  //   CollectionReference newMessage = FirebaseFirestore.instance
+  //       .collection('room')
+  //       .doc(roomId)
+  //       .collection('messages');
+  //
+  //   Chat chat = Chat(
+  //     message: message,
+  //     sendDatetime: DateTime.now().millisecondsSinceEpoch,
+  //     senderId: StorageServices.to.userId,
+  //     type: type,
+  //     url: url,
+  //     fileSize: fileSize,
+  //   );
+  //
+  //   newMessage.add(chat.toMap());
+  // }
 
-    Chat chat = Chat(
-      message: message,
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      senderId: StorageServices.to.userId,
-      type: type,
-      url: url,
-      fileSize: fileSize,
-    );
+  // Future<void> batchDelete(
+  //     String roomId, List<Chat> chatMessages, Profile profile) async {
+  //   CollectionReference messages = FirebaseFirestore.instance
+  //       .collection('room')
+  //       .doc(roomId)
+  //       .collection('messages');
+  //
+  //   for (var message in chatMessages) {
+  //     messages.doc(message.messageId).delete();
+  //   }
+  //
+  //   var updatedMessages = await loadChats(roomId);
+  //   var selectedMessage = updatedMessages[updatedMessages.length - 1];
+  //   updateLastMessage(true, true, profile, selectedMessage.message!, roomId,
+  //       sendDateTime: selectedMessage.sendDatetime);
+  //   updateLastMessage(false, true, profile, selectedMessage.message!, roomId,
+  //       sendDateTime: selectedMessage.sendDatetime);
+  // }
 
-    newMessage.add(chat.toMap());
-  }
-
-  Future<void> batchDelete(
-      String roomId, List<Chat> chatMessages, Profile profile) async {
-    CollectionReference messages = FirebaseFirestore.instance
-        .collection('room')
-        .doc(roomId)
-        .collection('messages');
-
-    for (var message in chatMessages) {
-      messages.doc(message.messageId).delete();
-    }
-
-    var updatedMessages = await loadChats(roomId);
-    var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    updateLastMessage(true, true, profile, selectedMessage.message!, roomId,
-        sendDateTime: selectedMessage.sendDatetime);
-    updateLastMessage(false, true, profile, selectedMessage.message!, roomId,
-        sendDateTime: selectedMessage.sendDatetime);
-  }
-
-  void updateLastMessage(
-    bool fromSender,
-    bool update,
-    Profile profile,
-    String message,
-    String roomId, {
-    int? sendDateTime,
-  }) {
-    if (update) {
-      FirebaseFirestore.instance
-          .collection('lastMessage')
-          .doc(fromSender ? StorageServices.to.userId : profile.uid)
-          .collection('receiver')
-          .doc(fromSender ? profile.uid : StorageServices.to.userId)
-          .update({
-        'message': message,
-        'sendDatetime': sendDateTime ?? DateTime.now().millisecondsSinceEpoch,
-      });
-    } else {
-      FirebaseFirestore.instance
-          .collection('lastMessage')
-          .doc(fromSender ? StorageServices.to.userId : profile.uid)
-          .collection('receiver')
-          .doc(fromSender ? profile.uid : StorageServices.to.userId)
-          .set({
-        'message': message,
-        'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
-        'roomId': roomId,
-        'sendDatetime': DateTime.now().millisecondsSinceEpoch,
-        'block': false,
-      });
-    }
-  }
+  // void updateLastMessage(
+  //   bool fromSender,
+  //   bool update,
+  //   Profile profile,
+  //   String message,
+  //   String roomId, {
+  //   int? sendDateTime,
+  // }) {
+  //   if (update) {
+  //     FirebaseFirestore.instance
+  //         .collection('lastMessage')
+  //         .doc(fromSender ? StorageServices.to.userId : profile.uid)
+  //         .collection('receiver')
+  //         .doc(fromSender ? profile.uid : StorageServices.to.userId)
+  //         .update({
+  //       'message': message,
+  //       'sendDatetime': sendDateTime ?? DateTime.now().millisecondsSinceEpoch,
+  //     });
+  //   } else {
+  //     FirebaseFirestore.instance
+  //         .collection('lastMessage')
+  //         .doc(fromSender ? StorageServices.to.userId : profile.uid)
+  //         .collection('receiver')
+  //         .doc(fromSender ? profile.uid : StorageServices.to.userId)
+  //         .set({
+  //       'message': message,
+  //       'receiverId': fromSender ? profile.uid : StorageServices.to.userId,
+  //       'roomId': roomId,
+  //       'sendDatetime': DateTime.now().millisecondsSinceEpoch,
+  //       'block': false,
+  //     });
+  //   }
+  // }
 
   Future<bool> checkIfUserExist(String userId) async {
     var doc = await profileReference.doc(userId).get();

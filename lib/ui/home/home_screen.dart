@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 
 import '../../core/widgets/custom_indicator.dart';
-import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import 'widgets/custom_sticky_bar.dart';
 import 'widgets/last_message_item.dart';
@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var repository = NyariosRepository();
+    var repository = ChatRepository();
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(

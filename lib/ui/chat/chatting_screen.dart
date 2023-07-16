@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:uuid/uuid.dart';
 
@@ -17,7 +18,6 @@ import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/toolbar.dart';
 import '../../data/model/chat.dart';
 import '../../data/model/profile.dart';
-import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 import 'widgets/chat_item.dart';
@@ -30,7 +30,7 @@ class ChattingScreen extends StatefulWidget {
 }
 
 class _ChattingScreenState extends State<ChattingScreen> {
-  final repository = NyariosRepository();
+  final repository = ChatRepository();
   final TextEditingController _messageEditingController =
       TextEditingController();
 
@@ -44,7 +44,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   @override
   void initState() {
-    selectedRoomId = profile.roomId;
     super.initState();
   }
 
@@ -380,22 +379,31 @@ class _ChattingScreenState extends State<ChattingScreen> {
     String url = "",
     String fileSize = "",
   }) async {
+    Chat chat = Chat(
+      message: message,
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      senderId: StorageServices.to.userId,
+      type: type,
+      url: url,
+      fileSize: fileSize,
+    );
+
     if (selectedRoomId == null) {
       // create new room
       var roomId = const Uuid().v4();
 
-      repository.updateLastMessage(true, false, profile, message, roomId);
-      repository.updateLastMessage(false, false, profile, message, roomId);
+      repository.updateLastMessage(true, false, profile.uid!, message, roomId);
+      repository.updateLastMessage(false, false, profile.uid!, message, roomId);
 
-      repository.sendNewMessage(roomId, message, type, url, fileSize);
+      repository.sendNewMessage(roomId, chat);
 
       selectedRoomId = roomId;
       setState(() {});
     } else {
-      repository.updateLastMessage(true, true, profile, message, '');
-      repository.updateLastMessage(false, true, profile, message, '');
+      repository.updateLastMessage(true, true, profile.uid!, message, '');
+      repository.updateLastMessage(false, true, profile.uid!, message, '');
 
-      repository.sendNewMessage(selectedRoomId, message, type, url, fileSize);
+      repository.sendNewMessage(selectedRoomId, chat);
     }
   }
 
