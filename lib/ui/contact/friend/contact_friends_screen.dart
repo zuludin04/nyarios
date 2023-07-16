@@ -15,7 +15,7 @@ class ContactFriends extends StatelessWidget {
     var repository = ContactRepository();
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('profile'.tr),
+      appBar: Toolbar.defaultToolbar('Contact'),
       body: FutureBuilder<List<Profile>>(
         future: repository.loadSavedFriends(),
         builder: (context, snapshot) {
