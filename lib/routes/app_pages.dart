@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nyarios/ui/contact/friend/contact_friends_screen.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_screen.dart';
 
 import '../ui/auth/signin_screen.dart';
@@ -29,6 +30,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.signIn,
       page: () => const SignInScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.contactFriend,
+      page: () => const ContactFriends(),
     ),
     GetPage(
       name: AppRoutes.home,

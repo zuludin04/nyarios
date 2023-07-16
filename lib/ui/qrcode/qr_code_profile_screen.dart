@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/data/nyarios_repository.dart';
+import 'package:nyarios/data/repositories/contact_repository.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -114,7 +115,7 @@ class QrCodeProfileScreen extends StatelessWidget {
     Get.dialog(
       AlertDialog(
         content: FutureBuilder<Profile>(
-          future: NyariosRepository().loadSingleProfile(barcode),
+          future: ProfileRepository().loadSingleProfile(barcode),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -143,7 +144,7 @@ class QrCodeProfileScreen extends StatelessWidget {
                       onPressed: () {
                         Get.back();
                         var profile = snapshot.data!;
-                        NyariosRepository().saveNewFriend(profile);
+                        ContactRepository().saveNewFriend(profile);
                         Get.toNamed(AppRoutes.chatting, arguments: profile);
                       },
                       child: const Text('Add'),

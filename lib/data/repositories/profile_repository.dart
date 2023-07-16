@@ -16,4 +16,10 @@ class ProfileRepository {
     var doc = await profileReference.doc(userId).get();
     return doc.exists;
   }
+
+  Future<Profile> loadSingleProfile(String? uid) async {
+    var ref =
+        await FirebaseFirestore.instance.collection('profile').doc(uid).get();
+    return Profile.fromMap(ref.data()!);
+  }
 }

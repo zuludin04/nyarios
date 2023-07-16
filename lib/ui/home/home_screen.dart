@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import '../../core/widgets/custom_indicator.dart';
 import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
-import 'widgets/last_message_item.dart';
 import 'widgets/custom_sticky_bar.dart';
+import 'widgets/last_message_item.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRoutes.profile),
+        onPressed: () => Get.toNamed(AppRoutes.contactFriend),
         child: const Icon(Icons.edit, color: Colors.white),
       ),
       body: SafeArea(
@@ -69,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                         const Icon(Icons.speaker_notes_off, size: 80),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => Get.toNamed(AppRoutes.profile),
+                          onPressed: () => Get.toNamed(AppRoutes.contactFriend),
                           child: Text('start_conversation'.tr),
                         ),
                       ],

@@ -6,6 +6,7 @@ abstract class AppRoutes {
   static const splash = '/';
   static const home = '/home';
   static const signIn = '/sign_in';
+  static const contactFriend = '/contact_friend';
   static const chatting = '/chatting';
   static const language = '/language';
   static const settings = '/settings';
