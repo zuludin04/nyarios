@@ -4,8 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 
-import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 
@@ -20,7 +21,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  final repository = NyariosRepository();
+  final repository = ProfileRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -124,17 +125,21 @@ class _SignInScreenState extends State<SignInScreen> {
             );
           },
         );
-        var id = user?.uid ?? "";
-        var name = user?.displayName ?? "";
-        var photo = user?.photoURL ?? "";
-        var email = user?.email ?? "";
-
         StorageServices.to.alreadyLogin = true;
-        StorageServices.to.userId = id;
-        StorageServices.to.userName = name;
-        StorageServices.to.email = email;
+        StorageServices.to.userId = user?.uid ?? "";
+        StorageServices.to.userName = user?.displayName ?? "";
+        StorageServices.to.email = user?.email ?? "";
 
-        repository.saveUserProfile(id, name, photo, email);
+        var profile = Profile(
+          uid: user?.uid,
+          name: user?.displayName,
+          photo: user?.photoURL,
+          status: 'Hey there! Let\'s be friend',
+          email: user?.email,
+          visibility: true,
+        );
+
+        repository.saveUserProfile(profile);
 
         Get.offAllNamed(AppRoutes.home);
       }

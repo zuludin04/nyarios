@@ -104,9 +104,9 @@ class NyariosRepository {
     }).toList();
 
     if (roomId.isNotEmpty) {
-      profile.roomId = roomId[0]['roomId'];
+      // profile.roomId = roomId[0]['roomId'];
     } else {
-      profile.roomId = null;
+      // profile.roomId = null;
     }
 
     return profile;
@@ -230,25 +230,6 @@ class NyariosRepository {
         'roomId': roomId,
         'sendDatetime': DateTime.now().millisecondsSinceEpoch,
         'block': false,
-      });
-    }
-  }
-
-  Future<void> saveUserProfile(
-    String id,
-    String name,
-    String photo,
-    String email,
-  ) async {
-    var exist = await checkIfUserExist(id);
-    if (!exist) {
-      FirebaseFirestore.instance.collection('profile').doc(id).set({
-        'id': id,
-        'name': name,
-        'photo': photo,
-        'email': email,
-        'visibility': true,
-        'status': 'Hey there! Let\' be friend',
       });
     }
   }
