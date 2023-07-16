@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
@@ -10,7 +11,9 @@ class ChatRepository {
       FirebaseFirestore.instance.collection('room');
   final CollectionReference chatReference =
       FirebaseFirestore.instance.collection('chat');
+
   final ProfileRepository profileRepository = ProfileRepository();
+  final ContactRepository contactRepository = ContactRepository();
 
   Stream<QuerySnapshot<Map<String, dynamic>>> loadUserChatsByRoomId(
       String? roomId) {
@@ -32,11 +35,20 @@ class ChatRepository {
 
     await for (var snapshot in lastMessageStream) {
       for (var doc in snapshot.docs) {
-        var lastMessage = LastMessage.fromMap(doc.data());
-        var profile =
-            await profileRepository.loadSingleProfile(lastMessage.receiverId);
-        lastMessage.name = profile.name;
-        lastMessage.photo = profile.photo;
+        var message = doc.data()['message'];
+        var sendDateTime = doc.data()['sendDatetime'];
+        var receiverId = doc.data()['receiverId'];
+        var profile = await profileRepository.loadSingleProfile(receiverId);
+        var friend = await contactRepository.loadSingleFriend(receiverId);
+
+        var lastMessage = LastMessage(
+          message: message,
+          sendDatetime: sendDateTime,
+          receiverId: receiverId,
+          profile: profile,
+          friend: friend,
+        );
+
         lastMessages.clear();
         lastMessages.add(lastMessage);
       }
@@ -47,37 +59,24 @@ class ChatRepository {
   void sendNewMessage(String? roomId, Chat chat) {
     CollectionReference newMessage =
         roomReference.doc(roomId).collection('messages');
-
     newMessage.add(chat.toMap());
   }
 
   void updateLastMessage(
     bool fromSender,
-    bool update,
     String profileId,
     String message, {
     int? sendDateTime,
   }) {
-    if (update) {
-      chatReference
-          .doc(fromSender ? StorageServices.to.userId : profileId)
-          .collection('receiver')
-          .doc(fromSender ? profileId : StorageServices.to.userId)
-          .update({
-        'message': message,
-        'sendDatetime': sendDateTime ?? DateTime.now().millisecondsSinceEpoch,
-      });
-    } else {
-      chatReference
-          .doc(fromSender ? StorageServices.to.userId : profileId)
-          .collection('receiver')
-          .doc(fromSender ? profileId : StorageServices.to.userId)
-          .set({
-        'message': message,
-        'receiverId': fromSender ? profileId : StorageServices.to.userId,
-        'sendDatetime': DateTime.now().millisecondsSinceEpoch,
-      });
-    }
+    chatReference
+        .doc(fromSender ? StorageServices.to.userId : profileId)
+        .collection('receiver')
+        .doc(fromSender ? profileId : StorageServices.to.userId)
+        .set({
+      'message': message,
+      'receiverId': fromSender ? profileId : StorageServices.to.userId,
+      'sendDatetime': DateTime.now().millisecondsSinceEpoch,
+    });
   }
 
   Future<void> batchDelete(

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/routes/app_pages.dart';
 
 class FriendItem extends StatelessWidget {
-  final Profile profile;
+  final LastMessage lastMessage;
 
-  const FriendItem({super.key, required this.profile});
+  const FriendItem({super.key, required this.lastMessage});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: profile),
+      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: lastMessage),
       child: Column(
         children: [
           Container(
@@ -21,7 +21,7 @@ class FriendItem extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: Image.network(
-                    profile.photo ?? "",
+                    lastMessage.profile?.photo ?? "",
                     width: 40,
                     height: 40,
                   ),
@@ -33,13 +33,13 @@ class FriendItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        profile.name ?? "",
+                        lastMessage.profile?.name ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(profile.status ?? ""),
+                      Text(lastMessage.profile?.status ?? ""),
                     ],
                   ),
                 ),

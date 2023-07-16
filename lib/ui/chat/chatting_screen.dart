@@ -10,14 +10,13 @@ import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/toolbar.dart';
 import '../../data/model/chat.dart';
-import '../../data/model/profile.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 import 'widgets/chat_item.dart';
@@ -34,8 +33,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final TextEditingController _messageEditingController =
       TextEditingController();
 
-  Profile profile = Get.arguments;
-  String? selectedRoomId;
+  LastMessage lastMassage = Get.arguments;
 
   List<Chat> selectedChat = [];
   bool selectionMode = false;
@@ -52,7 +50,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
         selectedChat.isEmpty
-            ? profile.name ?? ""
+            ? lastMassage.profile?.name ?? ""
             : "${selectedChat.length} ${"selected_chat".tr}",
         leading: selectedChat.isEmpty
             ? null
@@ -66,10 +64,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 icon: const Icon(Icons.close),
               ),
         stream: true,
-        uid: profile.uid,
+        uid: lastMassage.profile?.uid,
         onTapTitle: () => Get.toNamed(
           AppRoutes.contactDetail,
-          arguments: profile,
+          arguments: lastMassage,
         ),
         elevation: 0,
         actions: !selectionMode
@@ -92,15 +90,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     if (value == 0) {
                       Get.toNamed(
                         AppRoutes.contactDetail,
-                        arguments: profile,
+                        arguments: lastMassage,
                       );
                     } else if (value == 1) {
                       Get.toNamed(
                         AppRoutes.search,
                         arguments: {
                           'type': 'chats',
-                          'roomId': selectedRoomId,
-                          'user': profile.name,
+                          'roomId': lastMassage.friend?.roomId,
+                          'user': lastMassage.profile?.name,
                         },
                       );
                     }
@@ -122,7 +120,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
           ),
           Expanded(
             child: StreamBuilder(
-              stream: repository.loadUserChatsByRoomId(selectedRoomId),
+              stream:
+                  repository.loadUserChatsByRoomId(lastMassage.friend?.roomId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('something_went_wrong'.tr));
@@ -338,7 +337,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
       IconButton(
         onPressed: () {
           repository
-              .batchDelete(selectedRoomId!, selectedChat, profile)
+              .batchDelete(lastMassage.friend!.roomId!, selectedChat,
+                  lastMassage.profile!)
               .then((value) {
             setState(() {
               selectedChat.clear();
@@ -369,7 +369,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         .format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
     var user = chat.senderId == StorageServices.to.userId
         ? StorageServices.to.userName
-        : profile.name;
+        : lastMassage.profile?.name;
     return "[$date] $user: ${chat.message}\n";
   }
 
@@ -388,23 +388,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
       fileSize: fileSize,
     );
 
-    if (selectedRoomId == null) {
-      // create new room
-      var roomId = const Uuid().v4();
+    repository.updateLastMessage(true, lastMassage.profile!.uid!, message);
+    repository.updateLastMessage(false, lastMassage.profile!.uid!, message);
 
-      repository.updateLastMessage(true, false, profile.uid!, message);
-      repository.updateLastMessage(false, false, profile.uid!, message);
-
-      repository.sendNewMessage(roomId, chat);
-
-      selectedRoomId = roomId;
-      setState(() {});
-    } else {
-      repository.updateLastMessage(true, true, profile.uid!, message);
-      repository.updateLastMessage(false, true, profile.uid!, message);
-
-      repository.sendNewMessage(selectedRoomId, chat);
-    }
+    repository.sendNewMessage(lastMassage.friend?.roomId, chat);
   }
 
   void _pickImage(bool fromGallery) async {
@@ -517,7 +504,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         .collection('lastMessage')
         .doc(StorageServices.to.userId)
         .collection('receiver')
-        .doc(profile.uid)
+        .doc(lastMassage.profile!.uid)
         .snapshots();
 
     lastMessage.listen((event) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/ui/contact/friend/friend_item.dart';
@@ -16,7 +16,7 @@ class ContactFriends extends StatelessWidget {
 
     return Scaffold(
       appBar: Toolbar.defaultToolbar('Contact'),
-      body: FutureBuilder<List<Profile>>(
+      body: FutureBuilder<List<LastMessage>>(
         future: repository.loadSavedFriends(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -46,7 +46,7 @@ class ContactFriends extends StatelessWidget {
 
           return ListView.builder(
             itemBuilder: (context, index) =>
-                FriendItem(profile: snapshot.data![index]),
+                FriendItem(lastMessage: snapshot.data![index]),
             itemCount: snapshot.data!.length,
           );
         },

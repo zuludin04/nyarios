@@ -1,5 +1,3 @@
-import 'last_message.dart';
-
 class Profile {
   String? uid;
   String? name;
@@ -36,14 +34,6 @@ class Profile {
       status: map['status'] != null ? map['status'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
       visibility: map['visibility'] != null ? map['visibility'] as bool : null,
-    );
-  }
-
-  factory Profile.fromContact(LastMessage contact) {
-    return Profile(
-      uid: contact.receiverId,
-      name: contact.name,
-      photo: contact.photo,
     );
   }
 }

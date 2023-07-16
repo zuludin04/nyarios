@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/model/last_message.dart';
-import '../../../data/model/profile.dart';
 import '../../../routes/app_pages.dart';
 
 class LastMessageItem extends StatelessWidget {
@@ -14,10 +13,7 @@ class LastMessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(
-        AppRoutes.chatting,
-        arguments: Profile.fromContact(lastMessage),
-      ),
+      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: lastMessage),
       child: Column(
         children: [
           Container(
@@ -27,7 +23,7 @@ class LastMessageItem extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: Image.network(
-                    lastMessage.photo ?? "",
+                    lastMessage.profile?.photo ?? "",
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
@@ -40,7 +36,7 @@ class LastMessageItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        lastMessage.name ?? "",
+                        lastMessage.profile?.name ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
