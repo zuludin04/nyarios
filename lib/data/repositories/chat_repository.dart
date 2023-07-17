@@ -81,20 +81,31 @@ class ChatRepository {
 
   Future<void> batchDelete(
       String roomId, List<Chat> chatMessages, Profile profile) async {
-    // CollectionReference messages = FirebaseFirestore.instance
-    //     .collection('room')
-    //     .doc(roomId)
-    //     .collection('messages');
-    //
-    // for (var message in chatMessages) {
-    //   messages.doc(message.messageId).delete();
-    // }
-    //
-    // var updatedMessages = await loadChats(roomId);
-    // var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    // updateLastMessage(true, true, profile, selectedMessage.message!, roomId,
-    //     sendDateTime: selectedMessage.sendDatetime);
-    // updateLastMessage(false, true, profile, selectedMessage.message!, roomId,
-    //     sendDateTime: selectedMessage.sendDatetime);
+    CollectionReference messages = FirebaseFirestore.instance
+        .collection('room')
+        .doc(roomId)
+        .collection('messages');
+
+    for (var message in chatMessages) {
+      messages.doc(message.messageId).delete();
+    }
+
+    var updatedMessages = await loadChats(roomId);
+    var selectedMessage = updatedMessages[updatedMessages.length - 1];
+    updateLastMessage(true, profile.uid!, selectedMessage.message!,
+        sendDateTime: selectedMessage.sendDatetime);
+    updateLastMessage(false, profile.uid!, selectedMessage.message!,
+        sendDateTime: selectedMessage.sendDatetime);
+  }
+
+  Future<List<Chat>> loadChats(String? roomId) async {
+    var chats = await FirebaseFirestore.instance
+        .collection('room')
+        .doc(roomId)
+        .collection('messages')
+        .orderBy('sendDatetime')
+        .get();
+
+    return chats.docs.map((e) => Chat.fromMap(e.data(), "")).toList();
   }
 }

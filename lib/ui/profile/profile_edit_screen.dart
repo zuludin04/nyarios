@@ -4,10 +4,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/toolbar.dart';
-import '../../data/nyarios_repository.dart';
 import '../../services/storage_services.dart';
 import 'widgets/profile_info_widget.dart';
 
@@ -19,7 +19,7 @@ class ProfileEditScreen extends StatefulWidget {
 }
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
-  final NyariosRepository repository = NyariosRepository();
+  final ProfileRepository repository = ProfileRepository();
   String uploadIndicator = '0';
   bool upload = false;
 

@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 
 import '../../data/model/chat.dart';
 import '../../data/model/profile.dart';
-import '../../data/nyarios_repository.dart';
 
 class ContactMediaController extends GetxController {
   final Profile profile = Get.arguments;
-  final repository = NyariosRepository();
+  final repository = ChatRepository();
 
   var mediaChats = <Chat>[];
   var loading = false;

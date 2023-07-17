@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../data/model/profile.dart';
-import '../../data/nyarios_repository.dart';
 import '../../services/storage_services.dart';
 import 'contact_media_tab.dart';
 
@@ -80,14 +80,14 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                       ),
                     ),
                     FutureBuilder(
-                      future: NyariosRepository().loadUserStatus(profile.uid),
+                      future: ProfileRepository().loadUserStatus(profile.uid),
                       builder: (context, snapshot) {
                         return Text(snapshot.data ?? "");
                       },
                     ),
                     const SizedBox(height: 16),
                     StreamBuilder(
-                      stream: NyariosRepository().getOnlineStatus(profile.uid),
+                      stream: ProfileRepository().getOnlineStatus(profile.uid),
                       builder: (context, snapshot) {
                         bool online =
                             snapshot.data?.data()?["visibility"] ?? false;

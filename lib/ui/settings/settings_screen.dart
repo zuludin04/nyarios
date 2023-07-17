@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../../core/widgets/toolbar.dart';
-import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 
@@ -125,7 +125,7 @@ class ProfileStreamWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: NyariosRepository().loadStreamProfile(StorageServices.to.userId),
+      stream: ProfileRepository().loadStreamProfile(StorageServices.to.userId),
       builder: (context, snapshot) {
         if (type == 1) {
           return snapshot.data?.photo == null

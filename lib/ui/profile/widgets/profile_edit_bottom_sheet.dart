@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 
-import '../../../data/nyarios_repository.dart';
 import '../../../services/storage_services.dart';
 
 class ProfileEditBottomSheet extends StatefulWidget {
@@ -20,7 +20,7 @@ class ProfileEditBottomSheet extends StatefulWidget {
 
 class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
   final TextEditingController _textEditingController = TextEditingController();
-  final NyariosRepository _repository = NyariosRepository();
+  final ProfileRepository _repository = ProfileRepository();
 
   @override
   Widget build(BuildContext context) {

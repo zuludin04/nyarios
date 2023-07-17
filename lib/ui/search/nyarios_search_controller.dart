@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 
 import '../../data/model/chat.dart';
 import '../../data/model/last_message.dart';
-import '../../data/nyarios_repository.dart';
 
 class NyariosSearchController extends GetxController {
-  final repository = NyariosRepository();
+  final repository = ChatRepository();
 
   String type = Get.arguments['type'];
   String roomId = Get.arguments['roomId'];

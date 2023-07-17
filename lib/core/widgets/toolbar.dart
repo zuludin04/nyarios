@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 
-import '../../data/nyarios_repository.dart';
 import '../../services/storage_services.dart';
 
 class Toolbar {
@@ -43,7 +43,7 @@ class Toolbar {
   ) {
     if (stream) {
       return StreamBuilder(
-        stream: NyariosRepository().getOnlineStatus(uid),
+        stream: ProfileRepository().getOnlineStatus(uid),
         builder: (context, snapshot) {
           bool online = snapshot.data?.data()?["visibility"] ?? false;
           return Visibility(

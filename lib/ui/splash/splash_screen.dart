@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/data/repositories/profile_repository.dart';
 
-import '../../data/nyarios_repository.dart';
 import '../../routes/app_pages.dart';
 import '../../services/language_service.dart';
 import '../../services/storage_services.dart';
@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with WidgetsBindingObserver {
-  final NyariosRepository repository = NyariosRepository();
+  final ProfileRepository repository = ProfileRepository();
 
   @override
   void initState() {
