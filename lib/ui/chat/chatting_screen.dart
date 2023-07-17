@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
+import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/custom_indicator.dart';
@@ -39,9 +40,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
   bool selectionMode = false;
   String uploadIndicator = '0';
   bool upload = false;
+  late bool alreadyAdded;
 
   @override
   void initState() {
+    alreadyAdded = lastMassage.friend!.alreadyAdded!;
     super.initState();
   }
 
@@ -119,14 +122,25 @@ class _ChattingScreenState extends State<ChattingScreen> {
             ),
           ),
           Visibility(
-            visible: !lastMassage.friend!.alreadyAdded!,
+            visible: !alreadyAdded,
             child: Container(
               color: Colors.white,
               padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _friendNotAddedAction(() {}, Icons.add, 'Add Friend'),
+                  _friendNotAddedAction(
+                    () {
+                      var repo = ContactRepository();
+                      repo.saveNewFriend(lastMassage.profile!,
+                          lastMassage.friend!.roomId!, true);
+                      setState(() {
+                        alreadyAdded = !alreadyAdded;
+                      });
+                    },
+                    Icons.add,
+                    'Add Friend',
+                  ),
                   _friendNotAddedAction(() {}, Icons.block_rounded, 'Block'),
                 ],
               ),

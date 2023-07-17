@@ -18,8 +18,7 @@ class ContactRepository {
         .doc(fromSender ? profile.uid : StorageServices.to.userId)
         .get();
     if (!friend.exists) {
-      FirebaseFirestore.instance
-          .collection('contact')
+      contactReference
           .doc(fromSender ? StorageServices.to.userId : profile.uid)
           .collection('friends')
           .doc(fromSender ? profile.uid : StorageServices.to.userId)
@@ -28,6 +27,14 @@ class ContactRepository {
         'blocked': false,
         'alreadyAdded': fromSender,
         'roomId': roomId,
+      });
+    } else {
+      contactReference
+          .doc(fromSender ? StorageServices.to.userId : profile.uid)
+          .collection('friends')
+          .doc(fromSender ? profile.uid : StorageServices.to.userId)
+          .update({
+        'alreadyAdded': fromSender,
       });
     }
   }
