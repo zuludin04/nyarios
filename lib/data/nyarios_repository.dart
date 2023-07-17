@@ -12,57 +12,6 @@ class NyariosRepository {
   final CollectionReference roomReference =
       FirebaseFirestore.instance.collection('room');
 
-  Future<List<Profile>> loadAllProfiles() async {
-    var lastMessages = await FirebaseFirestore.instance
-        .collection('lastMessage')
-        .doc(StorageServices.to.userId)
-        .collection('receiver')
-        .get();
-
-    if (lastMessages.size == 0) {
-      var profiles = await FirebaseFirestore.instance
-          .collection('profile')
-          .where('id', isNotEqualTo: StorageServices.to.userId)
-          .get();
-
-      return profiles.docs.map((e) => Profile.fromMap(e.data())).toList();
-    } else {
-      var profiles = await FirebaseFirestore.instance
-          .collection('profile')
-          .where('id', isNotEqualTo: StorageServices.to.userId)
-          .get();
-
-      var list = profiles.docs.map((e) async {
-        var profile = Profile.fromMap(e.data());
-        var pro = await _lastMessageReceiver(profile);
-        return pro;
-      }).toList();
-
-      return Future.wait(list);
-    }
-  }
-
-  Future<Profile> _lastMessageReceiver(Profile profile) async {
-    var lastMessage = await FirebaseFirestore.instance
-        .collection('lastMessage')
-        .doc(StorageServices.to.userId)
-        .collection('receiver')
-        .get();
-
-    var roomId = lastMessage.docs.where((element) {
-      var uid = profile.uid ?? "";
-      return element['receiverId'] == uid;
-    }).toList();
-
-    if (roomId.isNotEmpty) {
-      // profile.roomId = roomId[0]['roomId'];
-    } else {
-      // profile.roomId = null;
-    }
-
-    return profile;
-  }
-
   Future<List<Chat>> loadChats(String? roomId) async {
     var chats = await FirebaseFirestore.instance
         .collection('room')

@@ -9,7 +9,6 @@ import '../ui/contact/contact_media_binding.dart';
 import '../ui/home/home_screen.dart';
 import '../ui/language/language_setting_screen.dart';
 import '../ui/profile/profile_edit_screen.dart';
-import '../ui/profile/profile_screen.dart';
 import '../ui/search/search_binding.dart';
 import '../ui/search/search_screen.dart';
 import '../ui/settings/settings_screen.dart';
@@ -50,10 +49,6 @@ class AppPages {
     GetPage(
       name: AppRoutes.language,
       page: () => const LanguageSettingScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.profile,
-      page: () => const ProfileScreen(),
     ),
     GetPage(
       name: AppRoutes.profileEdit,

@@ -10,7 +10,6 @@ abstract class AppRoutes {
   static const chatting = '/chatting';
   static const language = '/language';
   static const settings = '/settings';
-  static const profile = '/profile';
   static const profileEdit = '/profile_edit';
   static const contactDetail = '/contact_detail';
   static const search = '/search';
