@@ -22,7 +22,7 @@ You can try this app by clicking this link below.
 
 ## Future Implementation
 
-- [ ]  Add friend with QR Code
+- [x]  Add friend with QR Code
 - [ ]  Group message
 - [ ]  Forward, Reply, and Star message
 - [ ]  Block user/friend
