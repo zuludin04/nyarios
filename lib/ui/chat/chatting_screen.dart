@@ -118,6 +118,21 @@ class _ChattingScreenState extends State<ChattingScreen> {
               lineHeight: 3,
             ),
           ),
+          Visibility(
+            visible: !lastMassage.friend!.alreadyAdded!,
+            child: Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _friendNotAddedAction(() {}, Icons.add, 'Add Friend'),
+                  _friendNotAddedAction(() {}, Icons.block_rounded, 'Block'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           Expanded(
             child: StreamBuilder(
               stream:
@@ -312,6 +327,19 @@ class _ChattingScreenState extends State<ChattingScreen> {
             size: 32,
           ),
           Text(title.toLowerCase().tr),
+        ],
+      ),
+    );
+  }
+
+  Widget _friendNotAddedAction(Function() onTap, IconData icon, String title) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Icon(icon),
+          const SizedBox(height: 5),
+          Text(title),
         ],
       ),
     );
