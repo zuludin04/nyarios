@@ -132,27 +132,28 @@ class _ChattingScreenState extends State<ChattingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _friendNotAddedAction(
-                    () {
-                      chatRepo.saveNewFriend(lastMassage.profile!,
-                          lastMassage.friend!.roomId!, true);
-                      setState(() {
-                        alreadyAdded = !alreadyAdded;
-                      });
-                    },
-                    Icons.add,
-                    'Add Friend',
-                  ),
+                  if (!blocked)
+                    _friendNotAddedAction(
+                      () {
+                        chatRepo.saveNewFriend(lastMassage.profile!,
+                            lastMassage.friend!.roomId!, true);
+                        setState(() {
+                          alreadyAdded = !alreadyAdded;
+                        });
+                      },
+                      Icons.add,
+                      'Add Friend',
+                    ),
                   _friendNotAddedAction(
                     () {
                       chatRepo.changeBlockStatus(
-                          lastMassage.profile?.uid, true);
+                          lastMassage.profile?.uid, !blocked);
                       setState(() {
                         blocked = !blocked;
                       });
                     },
                     Icons.block_rounded,
-                    'Block',
+                    blocked ? 'Unblock' : 'Block',
                   ),
                 ],
               ),
