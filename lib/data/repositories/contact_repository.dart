@@ -65,4 +65,14 @@ class ContactRepository {
         .get();
     return Friend.fromMap(ref.data()!);
   }
+
+  Future<void> changeBlockStatus(String? profileId, bool blocked) async {
+    contactReference
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .doc(profileId)
+        .update({
+      'blocked': blocked,
+    });
+  }
 }
