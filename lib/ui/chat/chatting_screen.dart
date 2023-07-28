@@ -30,8 +30,8 @@ class ChattingScreen extends StatefulWidget {
 }
 
 class _ChattingScreenState extends State<ChattingScreen> {
-  final repository = ChatRepository();
-  final chatRepo = ContactRepository();
+  final chatRepo = ChatRepository();
+  final contactRepo = ContactRepository();
   final TextEditingController _messageEditingController =
       TextEditingController();
 
@@ -90,23 +90,37 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         value: 1,
                         child: Text('search'.tr),
                       ),
+                      PopupMenuItem(
+                        value: 2,
+                        child: Text(blocked ? 'unblock'.tr : 'block'.tr),
+                      ),
                     ];
                   },
                   onSelected: (value) {
-                    if (value == 0) {
-                      Get.toNamed(
-                        AppRoutes.contactDetail,
-                        arguments: lastMassage,
-                      );
-                    } else if (value == 1) {
-                      Get.toNamed(
-                        AppRoutes.search,
-                        arguments: {
-                          'type': 'chats',
-                          'roomId': lastMassage.friend?.roomId,
-                          'user': lastMassage.profile?.name,
-                        },
-                      );
+                    switch (value) {
+                      case 0:
+                        Get.toNamed(
+                          AppRoutes.contactDetail,
+                          arguments: lastMassage,
+                        );
+                        break;
+                      case 1:
+                        Get.toNamed(
+                          AppRoutes.search,
+                          arguments: {
+                            'type': 'chats',
+                            'roomId': lastMassage.friend?.roomId,
+                            'user': lastMassage.profile?.name,
+                          },
+                        );
+                        break;
+                      case 2:
+                        contactRepo.changeBlockStatus(
+                            lastMassage.profile?.uid, !blocked);
+                        setState(() {
+                          blocked = !blocked;
+                        });
+                        break;
                     }
                   },
                 )
@@ -135,7 +149,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   if (!blocked)
                     _friendNotAddedAction(
                       () {
-                        chatRepo.saveNewFriend(lastMassage.profile!,
+                        contactRepo.saveNewFriend(lastMassage.profile!,
                             lastMassage.friend!.roomId!, true);
                         setState(() {
                           alreadyAdded = !alreadyAdded;
@@ -146,7 +160,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     ),
                   _friendNotAddedAction(
                     () {
-                      chatRepo.changeBlockStatus(
+                      contactRepo.changeBlockStatus(
                           lastMassage.profile?.uid, !blocked);
                       setState(() {
                         blocked = !blocked;
@@ -163,7 +177,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
           Expanded(
             child: StreamBuilder(
               stream:
-                  repository.loadUserChatsByRoomId(lastMassage.friend?.roomId),
+                  chatRepo.loadUserChatsByRoomId(lastMassage.friend?.roomId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('something_went_wrong'.tr));
@@ -408,7 +422,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       ),
       IconButton(
         onPressed: () {
-          repository
+          chatRepo
               .batchDelete(lastMassage.friend!.roomId!, selectedChat,
                   lastMassage.profile!)
               .then((value) {
@@ -460,10 +474,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
       fileSize: fileSize,
     );
 
-    repository.updateLastMessage(true, lastMassage.profile!.uid!, message);
-    repository.updateLastMessage(false, lastMassage.profile!.uid!, message);
+    chatRepo.updateLastMessage(true, lastMassage.profile!.uid!, message);
+    chatRepo.updateLastMessage(false, lastMassage.profile!.uid!, message);
 
-    repository.sendNewMessage(lastMassage.friend?.roomId, chat);
+    chatRepo.sendNewMessage(lastMassage.friend?.roomId, chat);
   }
 
   void _pickImage(bool fromGallery) async {
