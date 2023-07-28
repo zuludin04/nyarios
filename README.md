@@ -25,7 +25,7 @@ You can try this app by clicking this link below.
 - [x]  Add friend with QR Code
 - [ ]  Group message
 - [ ]  Forward, Reply, and Star message
-- [ ]  Block user/friend
+- [x]  Block user/friend
 - [ ]  Show delivery read status
 - [ ]  Show how many unread messages
 - [ ]  Voice message
