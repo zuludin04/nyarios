@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nyarios/ui/contact/block/contact_block_screen.dart';
 import 'package:nyarios/ui/contact/friend/contact_friends_screen.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_screen.dart';
 
@@ -67,6 +68,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.qrCodeProfile,
       page: () => const QrCodeProfileScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.contactBlock,
+      page: () => const ContactBlockScreen(),
     ),
   ];
 }

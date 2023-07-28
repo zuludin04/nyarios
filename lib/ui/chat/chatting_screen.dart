@@ -115,11 +115,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         );
                         break;
                       case 2:
-                        contactRepo.changeBlockStatus(
-                            lastMassage.profile?.uid, !blocked);
                         setState(() {
                           blocked = !blocked;
                         });
+                        contactRepo.changeBlockStatus(
+                            lastMassage.profile?.uid, blocked);
                         break;
                     }
                   },
@@ -160,11 +160,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     ),
                   _friendNotAddedAction(
                     () {
-                      contactRepo.changeBlockStatus(
-                          lastMassage.profile?.uid, !blocked);
                       setState(() {
                         blocked = !blocked;
                       });
+                      contactRepo.changeBlockStatus(
+                          lastMassage.profile?.uid, blocked);
                     },
                     Icons.block_rounded,
                     blocked ? 'Unblock' : 'Block',

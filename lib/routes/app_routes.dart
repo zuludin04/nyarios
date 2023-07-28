@@ -14,4 +14,5 @@ abstract class AppRoutes {
   static const contactDetail = '/contact_detail';
   static const search = '/search';
   static const qrCodeProfile = '/qr_code_profile';
+  static const contactBlock = '/contact_block';
 }

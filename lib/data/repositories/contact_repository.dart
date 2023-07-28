@@ -75,4 +75,21 @@ class ContactRepository {
       'blocked': blocked,
     });
   }
+
+  Future<List<LastMessage>> loadBlockedUser() async {
+    var lastMessages = await contactReference
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .where('blocked', isEqualTo: true)
+        .get();
+
+    var list = lastMessages.docs.map((e) async {
+      var profileId = e.data()['profileId'];
+      var profile = await profileRepository.loadSingleProfile(profileId);
+      var friend = await loadSingleFriend(profileId);
+      return LastMessage(friend: friend, profile: profile);
+    }).toList();
+
+    return Future.wait(list);
+  }
 }
