@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 
 import '../../core/widgets/toolbar.dart';
-import '../../data/model/profile.dart';
 import '../../services/storage_services.dart';
 import 'contact_media_tab.dart';
 
@@ -16,7 +16,7 @@ class ContactDetailScreen extends StatefulWidget {
 
 class _ContactDetailScreenState extends State<ContactDetailScreen>
     with SingleTickerProviderStateMixin {
-  final Profile profile = Get.arguments;
+  final LastMessage lastMessage = Get.arguments;
 
   late TabController tabController;
 
@@ -63,7 +63,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            profile.photo!,
+                            lastMessage.profile!.photo!,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -73,21 +73,23 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      profile.name!,
+                      lastMessage.profile!.name!,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     FutureBuilder(
-                      future: ProfileRepository().loadUserStatus(profile.uid),
+                      future: ProfileRepository()
+                          .loadUserStatus(lastMessage.profile!.uid),
                       builder: (context, snapshot) {
                         return Text(snapshot.data ?? "");
                       },
                     ),
                     const SizedBox(height: 16),
                     StreamBuilder(
-                      stream: ProfileRepository().getOnlineStatus(profile.uid),
+                      stream: ProfileRepository()
+                          .getOnlineStatus(lastMessage.profile!.uid),
                       builder: (context, snapshot) {
                         bool online =
                             snapshot.data?.data()?["visibility"] ?? false;

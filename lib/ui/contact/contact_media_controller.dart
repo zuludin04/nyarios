@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
+import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 
 import '../../data/model/chat.dart';
-import '../../data/model/profile.dart';
 
 class ContactMediaController extends GetxController {
-  final Profile profile = Get.arguments;
+  final LastMessage lastMessage = Get.arguments;
   final repository = ChatRepository();
 
   var mediaChats = <Chat>[];
@@ -15,7 +15,7 @@ class ContactMediaController extends GetxController {
   Future<void> loadChats(String type) async {
     loading = true;
 
-    var chats = await repository.loadChats('profile.roomId');
+    var chats = await repository.loadChats(lastMessage.profile?.uid);
 
     mediaChats = chats.where((e) => e.type == type).toList();
     empty = mediaChats.isEmpty;
