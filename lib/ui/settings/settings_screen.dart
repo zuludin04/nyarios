@@ -44,7 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onPressed: (context) => Get.toNamed(AppRoutes.profileEdit),
               ),
               SettingsTile(
-                title: const Text('My QR Code'),
+                title: Text('qr_code'.tr),
                 leading: const Icon(Icons.qr_code_2),
                 onPressed: (context) => Get.toNamed(AppRoutes.qrCodeProfile),
               ),
@@ -77,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: Text("privacy".tr),
             tiles: [
               SettingsTile(
-                title: Text('block'.tr),
+                title: Text('blocked_friend'.tr),
                 leading: const Icon(Icons.app_blocking),
                 onPressed: (context) => Get.toNamed(AppRoutes.contactBlock),
               ),

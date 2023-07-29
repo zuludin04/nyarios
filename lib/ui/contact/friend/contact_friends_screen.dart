@@ -15,7 +15,7 @@ class ContactFriends extends StatelessWidget {
     var repository = ContactRepository();
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Contact'),
+      appBar: Toolbar.defaultToolbar('contact'.tr),
       body: FutureBuilder<List<LastMessage>>(
         future: repository.loadSavedFriends(),
         builder: (context, snapshot) {
@@ -33,11 +33,11 @@ class ContactFriends extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.person_off, size: 80),
-                  const Text('Kamu Belum Memiliki Teman'),
+                  Text('no_friend'.tr),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => Get.toNamed(AppRoutes.qrCodeProfile),
-                    child: Text('Tambah Teman'.tr),
+                    child: Text('add_friend'.tr),
                   ),
                 ],
               ),

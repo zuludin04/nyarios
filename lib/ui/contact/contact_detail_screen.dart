@@ -100,16 +100,12 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
+                              color: Colors.grey,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
                               online ? "Online" : "Offline",
-                              style: TextStyle(
-                                color: StorageServices.to.darkMode
-                                    ? Colors.white70
-                                    : Colors.black54,
-                              ),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         );

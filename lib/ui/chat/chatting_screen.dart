@@ -140,7 +140,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
           Visibility(
             visible: !alreadyAdded,
             child: Container(
-              color: Colors.white,
+              color: Get.theme.colorScheme.background,
               padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -155,7 +155,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         });
                       },
                       Icons.add,
-                      'Add Friend',
+                      'add_friend'.tr,
                     ),
                   _friendNotAddedAction(
                     () {
@@ -166,7 +166,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           lastMassage.profile?.uid, blocked);
                     },
                     Icons.block_rounded,
-                    blocked ? 'Unblock' : 'Block',
+                    blocked ? 'unblock'.tr : 'block'.tr,
                   ),
                 ],
               ),
@@ -193,12 +193,12 @@ class _ChattingScreenState extends State<ChattingScreen> {
           ),
           blocked
               ? Container(
-                  color: Colors.white,
+                  color: Get.theme.colorScheme.background,
                   padding: const EdgeInsets.all(16),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'User is Blocked',
-                      style: TextStyle(
+                      'user_blocked'.tr,
+                      style: const TextStyle(
                         fontWeight: FontWeight.w300,
                         fontSize: 16,
                       ),
@@ -378,10 +378,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 32,
-          ),
+          Icon(icon, size: 32),
           Text(title.toLowerCase().tr),
         ],
       ),

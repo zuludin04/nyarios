@@ -14,7 +14,7 @@ class ContactBlockScreen extends StatelessWidget {
     var repository = ContactRepository();
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Blocked User'),
+      appBar: Toolbar.defaultToolbar('blocked_friend'.tr),
       body: FutureBuilder<List<LastMessage>>(
         future: repository.loadBlockedUser(),
         builder: (context, snapshot) {
@@ -27,12 +27,12 @@ class ContactBlockScreen extends StatelessWidget {
           }
 
           if (snapshot.data!.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.person_off, size: 80),
-                  Text('Belum Ada Teman Yang Diblokir'),
+                  const Icon(Icons.person_off, size: 80),
+                  Text('empty_blocked_friend'.tr),
                 ],
               ),
             );

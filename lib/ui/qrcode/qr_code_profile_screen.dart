@@ -18,33 +18,40 @@ class QrCodeProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar("My QR Code"),
+      appBar: Toolbar.defaultToolbar("qr_code".tr),
       body: Column(
         children: [
           const SizedBox(height: 32),
           Center(
             child: Container(
-              decoration: BoxDecoration(border: Border.all()),
+              decoration: BoxDecoration(
+                border: Border.all(color: Get.theme.colorScheme.onPrimary),
+              ),
               child: QrImageView(
                 data: StorageServices.to.userId,
                 version: QrVersions.auto,
                 size: 200,
                 padding: const EdgeInsets.all(16),
+                dataModuleStyle: QrDataModuleStyle(
+                  dataModuleShape: QrDataModuleShape.square,
+                  color: Get.theme.colorScheme.onPrimary,
+                ),
+                eyeStyle: QrEyeStyle(
+                  eyeShape: QrEyeShape.square,
+                  color: Get.theme.colorScheme.onPrimary,
+                ),
               ),
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Show or send this QR code to\nfriends to let them add you',
-            textAlign: TextAlign.center,
-          ),
+          Text('scan_qr_message'.tr, textAlign: TextAlign.center),
           const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _qrActions('Copy Link', Icons.copy),
-              _qrActions('Share', Icons.share_outlined),
-              _qrActions('Save', Icons.download),
+              _qrActions('copy_link'.tr, Icons.copy),
+              _qrActions('share'.tr, Icons.share_outlined),
+              _qrActions('save'.tr, Icons.download),
             ],
           ),
           const Spacer(),
@@ -55,16 +62,18 @@ class QrCodeProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.black26),
+                border: Border.all(
+                  color: Get.theme.colorScheme.onPrimary.withOpacity(0.4),
+                ),
                 borderRadius: BorderRadius.circular(5),
               ),
               alignment: Alignment.center,
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.qr_code_scanner),
-                  SizedBox(width: 8),
-                  Text('Scan QR Code'),
+                  const Icon(Icons.qr_code_scanner),
+                  const SizedBox(width: 8),
+                  Text('scan_qr_code'.tr),
                 ],
               ),
             ),
@@ -163,7 +172,7 @@ class QrCodeProfileScreen extends StatelessWidget {
                               arguments: lastMessage);
                         }
                       },
-                      child: const Text('Add'),
+                      child: Text('add_friend'.tr),
                     ),
                   ),
                 ],
