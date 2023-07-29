@@ -29,6 +29,7 @@ You can try this app by clicking this link below.
 - [ ]  Show delivery read status
 - [ ]  Show how many unread messages
 - [ ]  Voice message
+- [ ]  Video and Call message
 
 ## Contact
 
