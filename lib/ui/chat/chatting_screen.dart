@@ -46,8 +46,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   @override
   void initState() {
-    alreadyAdded = lastMassage.friend!.alreadyAdded!;
-    blocked = lastMassage.friend!.blocked!;
+    alreadyAdded = true;
+    blocked = false;
     super.initState();
   }
 
@@ -109,7 +109,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           AppRoutes.search,
                           arguments: {
                             'type': 'chats',
-                            'roomId': lastMassage.friend?.roomId,
+                            'roomId': lastMassage.roomId,
                             'user': lastMassage.profile?.name,
                           },
                         );
@@ -150,7 +150,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     _friendNotAddedAction(
                       () {
                         contactRepo.saveNewFriend(lastMassage.profile!,
-                            lastMassage.friend!.roomId!, true);
+                            lastMassage.roomId!, true);
                         setState(() {
                           alreadyAdded = !alreadyAdded;
                         });
@@ -177,7 +177,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
           Expanded(
             child: StreamBuilder(
               stream:
-                  chatRepo.loadUserChatsByRoomId(lastMassage.friend?.roomId),
+                  chatRepo.loadUserChatsByRoomId(lastMassage.roomId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('something_went_wrong'.tr));
@@ -423,7 +423,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       IconButton(
         onPressed: () {
           chatRepo
-              .batchDelete(lastMassage.friend!.roomId!, selectedChat,
+              .batchDelete(lastMassage.roomId!, selectedChat,
                   lastMassage.profile!)
               .then((value) {
             setState(() {
@@ -477,7 +477,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     chatRepo.updateLastMessage(true, lastMassage.profile!.uid!, message);
     chatRepo.updateLastMessage(false, lastMassage.profile!.uid!, message);
 
-    chatRepo.sendNewMessage(lastMassage.friend?.roomId, chat);
+    chatRepo.sendNewMessage(lastMassage.roomId, chat);
   }
 
   void _pickImage(bool fromGallery) async {

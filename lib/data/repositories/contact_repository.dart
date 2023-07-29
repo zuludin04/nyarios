@@ -50,20 +50,20 @@ class ContactRepository {
       var profileId = e.data()['profileId'];
       var profile = await profileRepository.loadSingleProfile(profileId);
       var friend = await loadSingleFriend(profileId);
-      return LastMessage(friend: friend, profile: profile);
+      return LastMessage(roomId: friend?.roomId, profile: profile);
     }).toList();
 
     return Future.wait(list);
   }
 
-  Future<Friend> loadSingleFriend(String? uid) async {
+  Future<Friend?> loadSingleFriend(String? uid) async {
     var ref = await FirebaseFirestore.instance
         .collection('contact')
         .doc(StorageServices.to.userId)
         .collection('friends')
         .doc(uid)
         .get();
-    return Friend.fromMap(ref.data()!);
+    return ref.data() == null ? null : Friend.fromMap(ref.data()!);
   }
 
   Future<void> changeBlockStatus(String? profileId, bool blocked) async {
@@ -87,7 +87,7 @@ class ContactRepository {
       var profileId = e.data()['profileId'];
       var profile = await profileRepository.loadSingleProfile(profileId);
       var friend = await loadSingleFriend(profileId);
-      return LastMessage(friend: friend, profile: profile);
+      return LastMessage(roomId: friend?.roomId, profile: profile);
     }).toList();
 
     return Future.wait(list);

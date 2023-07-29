@@ -46,7 +46,7 @@ class ChatRepository {
           sendDatetime: sendDateTime,
           receiverId: receiverId,
           profile: profile,
-          friend: friend,
+          roomId: friend?.roomId,
         );
 
         lastMessages.clear();
