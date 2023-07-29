@@ -51,7 +51,6 @@ class QrCodeProfileScreen extends StatelessWidget {
             children: [
               _qrActions('copy_link'.tr, Icons.copy),
               _qrActions('share'.tr, Icons.share_outlined),
-              _qrActions('save'.tr, Icons.download),
             ],
           ),
           const Spacer(),
