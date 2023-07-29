@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
+import 'package:nyarios/data/repositories/contact_repository.dart';
 
 import '../../data/model/chat.dart';
 import '../../data/model/last_message.dart';
 
 class NyariosSearchController extends GetxController {
   final repository = ChatRepository();
+  final contactRepo = ContactRepository();
 
   String type = Get.arguments['type'];
   String roomId = Get.arguments['roomId'];
@@ -30,15 +32,15 @@ class NyariosSearchController extends GetxController {
   }
 
   void searchLastMessage(String term) {
-    // if (term.isNotEmpty) {
-    //   var filter = lastMessages
-    //       .where((element) =>
-    //           element.name!.toLowerCase().contains(term.toLowerCase()))
-    //       .toList();
-    //   filterLastMessage.value = filter;
-    // } else {
-    //   filterLastMessage.value = lastMessages;
-    // }
+    if (term.isNotEmpty) {
+      var filter = lastMessages
+          .where((element) =>
+              element.profile!.name!.toLowerCase().contains(term.toLowerCase()))
+          .toList();
+      filterLastMessage.value = filter;
+    } else {
+      filterLastMessage.value = lastMessages;
+    }
   }
 
   void searchChat(String term) {
@@ -57,9 +59,9 @@ class NyariosSearchController extends GetxController {
   }
 
   void loadLastMessages() async {
-    // var lastMessages = await repository.loadLastMessages();
-    // filterLastMessage.value = lastMessages;
-    // this.lastMessages.value = lastMessages;
+    var lastMessages = await contactRepo.loadSavedFriends();
+    filterLastMessage.value = lastMessages;
+    this.lastMessages.value = lastMessages;
   }
 
   void loadChats() async {
