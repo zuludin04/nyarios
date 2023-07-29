@@ -41,14 +41,13 @@ class _ChattingScreenState extends State<ChattingScreen> {
   bool selectionMode = false;
   String uploadIndicator = '0';
   bool upload = false;
-  late bool alreadyAdded;
-  late bool blocked;
+  bool alreadyAdded = false;
+  bool blocked = false;
 
   @override
   void initState() {
-    alreadyAdded = true;
-    blocked = false;
     super.initState();
+    loadFriendData();
   }
 
   @override
@@ -149,8 +148,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   if (!blocked)
                     _friendNotAddedAction(
                       () {
-                        contactRepo.saveNewFriend(lastMassage.profile!,
-                            lastMassage.roomId!, true);
+                        contactRepo.saveNewFriend(
+                            lastMassage.profile!, lastMassage.roomId!, true);
                         setState(() {
                           alreadyAdded = !alreadyAdded;
                         });
@@ -176,8 +175,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
           const SizedBox(height: 16),
           Expanded(
             child: StreamBuilder(
-              stream:
-                  chatRepo.loadUserChatsByRoomId(lastMassage.roomId),
+              stream: chatRepo.loadUserChatsByRoomId(lastMassage.roomId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('something_went_wrong'.tr));
@@ -423,8 +421,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
       IconButton(
         onPressed: () {
           chatRepo
-              .batchDelete(lastMassage.roomId!, selectedChat,
-                  lastMassage.profile!)
+              .batchDelete(
+                  lastMassage.roomId!, selectedChat, lastMassage.profile!)
               .then((value) {
             setState(() {
               selectedChat.clear();
@@ -596,6 +594,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
     lastMessage.listen((event) {
       var message = event.data()!['message'];
       debugPrint('current message $message');
+    });
+  }
+
+  Future<void> loadFriendData() async {
+    var friend = await contactRepo.loadSingleFriend(lastMassage.profile?.uid);
+    setState(() {
+      alreadyAdded = friend!.alreadyAdded!;
+      blocked = friend.blocked!;
     });
   }
 }
