@@ -10,6 +10,7 @@ import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share/share.dart';
 import 'package:uuid/uuid.dart';
 
 class QrCodeProfileScreen extends StatelessWidget {
@@ -49,8 +50,25 @@ class QrCodeProfileScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _qrActions('copy_link'.tr, Icons.copy),
-              _qrActions('share'.tr, Icons.share_outlined),
+              _qrActions(
+                'copy_link'.tr,
+                Icons.copy,
+                () {
+                  Clipboard.setData(const ClipboardData(text: ""));
+                  Get.rawSnackbar(message: "copy_clipboard".tr);
+                },
+              ),
+              _qrActions(
+                'share'.tr,
+                Icons.share_outlined,
+                () {
+                  Share.share(
+                    "babca",
+                    subject: "share_qr_code".tr,
+                    sharePositionOrigin: const Rect.fromLTWH(30, 30, 30, 30),
+                  );
+                },
+              ),
             ],
           ),
           const Spacer(),
@@ -82,13 +100,16 @@ class QrCodeProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _qrActions(String title, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon),
-        const SizedBox(height: 4),
-        Text(title),
-      ],
+  Widget _qrActions(String title, IconData icon, Function() onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Icon(icon),
+          const SizedBox(height: 4),
+          Text(title),
+        ],
+      ),
     );
   }
 

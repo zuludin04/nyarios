@@ -45,6 +45,8 @@ const Map<String, String> idID = {
   "save": "Simpan",
   "scan_qr_code": "Pindai Kode QR",
   "scan_qr_message": "Gunakan kode QR atau tautan\nuntuk berteman dengan akun lain",
+  "copy_clipboard": "Disalin ke Clipboard",
+  "share_qr_code": "Bagikan Kode QR",
 };
 
 const Map<String, String> enUS = {
@@ -94,4 +96,6 @@ const Map<String, String> enUS = {
   "save": "Save",
   "scan_qr_code": "Scan QR Code",
   "scan_qr_message": "Show or send this QR code to\nfriends to let them add you",
+  "copy_clipboard": "Copied to Clipboard",
+  "share_qr_code": "Share QR Code",
 };
