@@ -18,7 +18,6 @@ import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/toolbar.dart';
-import '../../data/model/chat.dart';
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 import 'widgets/chat_item.dart';
@@ -39,7 +38,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   Contact contact = Get.arguments;
 
-  List<Chat> selectedChat = [];
+  List<Message> selectedChat = [];
   bool selectionMode = false;
   String uploadIndicator = '0';
   bool upload = false;
@@ -170,7 +169,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
           const SizedBox(height: 16),
           Expanded(
             child: StreamBuilder(
-              stream: chatRepo.loadUserChatsByRoomId(contact.chatId),
+              stream: messageRepo.loadChatMessages(contact.chatId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('something_went_wrong'.tr));
@@ -181,7 +180,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 }
 
                 return _buildChatMessages(snapshot.data!.docs
-                    .map((e) => Chat.fromMap(e.data(), e.id))
+                    .map((e) => Message.fromMap(e.data()))
                     .toList());
               },
             ),
@@ -304,20 +303,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Widget _buildChatMessages(List<Chat> chats) {
-    return GroupedListView<Chat, DateTime>(
+  Widget _buildChatMessages(List<Message> chats) {
+    return GroupedListView<Message, DateTime>(
       physics: const BouncingScrollPhysics(),
       elements: chats,
       order: GroupedListOrder.DESC,
       reverse: true,
       floatingHeader: true,
       useStickyGroupSeparators: true,
-      groupBy: (Chat chat) {
+      groupBy: (Message chat) {
         var date = DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!);
         return DateTime(date.year, date.month, date.day);
       },
       groupHeaderBuilder: _createGroupHeader,
-      itemBuilder: (_, Chat chat) => ChatItem(
+      itemBuilder: (_, Message chat) => ChatItem(
         chat: chat,
         isSelected: selectedChat.contains(chat),
         onSelect: () {
@@ -336,7 +335,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Widget _createGroupHeader(Chat chat) {
+  Widget _createGroupHeader(Message chat) {
     return SizedBox(
       height: 40,
       child: Align(
@@ -440,10 +439,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
     }
   }
 
-  String _copiedMessage(Chat chat) {
+  String _copiedMessage(Message chat) {
     var date = DateFormat("MM/dd, hh:mm a")
         .format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
-    var user = chat.senderId == StorageServices.to.userId
+    var user = chat.chatId == StorageServices.to.userId
         ? StorageServices.to.userName
         : contact.profileName;
     return "[$date] $user: ${chat.message}\n";

@@ -6,6 +6,17 @@ class MessageRepository {
       FirebaseFirestore.instance.collection('message');
 
   void sendNewMessage(Message message) {
-    messageReference.add(message.toMap());
+    messageReference
+        .doc(message.chatId)
+        .collection('messages')
+        .add(message.toMap());
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> loadChatMessages(String? roomId) {
+    return messageReference
+        .doc(roomId)
+        .collection('messages')
+        .orderBy('sendDatetime')
+        .snapshots();
   }
 }

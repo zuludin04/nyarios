@@ -4,15 +4,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../data/model/chat.dart';
-import '../../../services/storage_services.dart';
-
 class ChatItem extends StatefulWidget {
-  final Chat chat;
+  final Message chat;
   final bool isSelected;
   final bool selectionMode;
   final Function onSelect;
@@ -80,7 +79,7 @@ class _ChatItemState extends State<ChatItem> {
       child: Stack(
         children: [
           Align(
-            alignment: widget.chat.senderId != StorageServices.to.userId
+            alignment: widget.chat.chatId == StorageServices.to.userId
                 ? Alignment.centerLeft
                 : Alignment.centerRight,
             child: Container(
@@ -88,26 +87,21 @@ class _ChatItemState extends State<ChatItem> {
               margin: EdgeInsets.only(
                 top: 8,
                 bottom: 8,
-                left:
-                    widget.chat.senderId != StorageServices.to.userId ? 16 : 75,
+                left: widget.chat.chatId == StorageServices.to.userId ? 16 : 75,
                 right:
-                    widget.chat.senderId != StorageServices.to.userId ? 75 : 16,
+                    widget.chat.chatId == StorageServices.to.userId ? 75 : 16,
               ),
               decoration: BoxDecoration(
-                color: widget.chat.senderId != StorageServices.to.userId
+                color: widget.chat.chatId == StorageServices.to.userId
                     ? Colors.grey
                     : const Color(0xffb3404a),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(10),
                   topRight: const Radius.circular(10),
                   bottomLeft: Radius.circular(
-                      widget.chat.senderId != StorageServices.to.userId
-                          ? 0
-                          : 10),
+                      widget.chat.chatId == StorageServices.to.userId ? 0 : 10),
                   bottomRight: Radius.circular(
-                      widget.chat.senderId != StorageServices.to.userId
-                          ? 10
-                          : 0),
+                      widget.chat.chatId == StorageServices.to.userId ? 10 : 0),
                 ),
                 boxShadow: const [
                   BoxShadow(
@@ -192,7 +186,7 @@ class _ChatItemState extends State<ChatItem> {
       case 'file':
         return Container(
           decoration: BoxDecoration(
-            color: widget.chat.senderId != StorageServices.to.userId
+            color: widget.chat.chatId == StorageServices.to.userId
                 ? Colors.black.withOpacity(0.1)
                 : Colors.red.withOpacity(0.3),
             borderRadius: BorderRadius.circular(10),
@@ -205,7 +199,7 @@ class _ChatItemState extends State<ChatItem> {
                 center: const Icon(Icons.attach_file),
                 percent: double.parse(downloadIndicator) / 100,
                 lineWidth: 2,
-                progressColor: widget.chat.senderId != StorageServices.to.userId
+                progressColor: widget.chat.chatId != StorageServices.to.userId
                     ? Colors.black
                     : Colors.red,
               ),
