@@ -41,13 +41,7 @@ class ChatRepository {
         var profile = await profileRepository.loadSingleProfile(receiverId);
         var friend = await contactRepository.loadSingleFriend(receiverId);
 
-        var lastMessage = LastMessage(
-          message: message,
-          sendDatetime: sendDateTime,
-          receiverId: receiverId,
-          profile: profile,
-          roomId: friend?.roomId,
-        );
+        var lastMessage = LastMessage();
 
         lastMessages.clear();
         lastMessages.add(lastMessage);
@@ -62,21 +56,12 @@ class ChatRepository {
     newMessage.add(chat.toMap());
   }
 
-  void updateLastMessage(
-    bool fromSender,
-    String profileId,
-    String message, {
-    int? sendDateTime,
-  }) {
+  void updateLastMessage(bool fromSender, LastMessage lastMessage) {
     chatReference
-        .doc(fromSender ? StorageServices.to.userId : profileId)
+        .doc(fromSender ? StorageServices.to.userId : lastMessage.profileId)
         .collection('receiver')
-        .doc(fromSender ? profileId : StorageServices.to.userId)
-        .set({
-      'message': message,
-      'receiverId': fromSender ? profileId : StorageServices.to.userId,
-      'sendDatetime': DateTime.now().millisecondsSinceEpoch,
-    });
+        .doc(fromSender ? lastMessage.profileId : StorageServices.to.userId)
+        .set(lastMessage.toMap());
   }
 
   Future<void> batchDelete(
@@ -92,10 +77,10 @@ class ChatRepository {
 
     var updatedMessages = await loadChats(roomId);
     var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    updateLastMessage(true, profile.uid!, selectedMessage.message!,
-        sendDateTime: selectedMessage.sendDatetime);
-    updateLastMessage(false, profile.uid!, selectedMessage.message!,
-        sendDateTime: selectedMessage.sendDatetime);
+    // updateLastMessage(true, profile.uid!, selectedMessage.message!,
+    //     sendDateTime: selectedMessage.sendDatetime);
+    // updateLastMessage(false, profile.uid!, selectedMessage.message!,
+    //     sendDateTime: selectedMessage.sendDatetime);
   }
 
   Future<List<Chat>> loadChats(String? roomId) async {
@@ -108,4 +93,6 @@ class ChatRepository {
 
     return chats.docs.map((e) => Chat.fromMap(e.data(), "")).toList();
   }
+
+  Future<void> updateChatLastMessage(LastMessage message) async {}
 }

@@ -15,7 +15,7 @@ class ContactMediaController extends GetxController {
   Future<void> loadChats(String type) async {
     loading = true;
 
-    var chats = await repository.loadChats(lastMessage.profile?.uid);
+    var chats = await repository.loadChats(lastMessage.profileId);
 
     mediaChats = chats.where((e) => e.type == type).toList();
     empty = mediaChats.isEmpty;

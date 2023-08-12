@@ -63,7 +63,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            lastMessage.profile!.photo!,
+                            lastMessage.profileImage!,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -73,7 +73,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      lastMessage.profile!.name!,
+                      lastMessage.profileName!,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     ),
                     FutureBuilder(
                       future: ProfileRepository()
-                          .loadUserStatus(lastMessage.profile!.uid),
+                          .loadUserStatus(lastMessage.profileId),
                       builder: (context, snapshot) {
                         return Text(snapshot.data ?? "");
                       },
@@ -89,7 +89,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     const SizedBox(height: 16),
                     StreamBuilder(
                       stream: ProfileRepository()
-                          .getOnlineStatus(lastMessage.profile!.uid),
+                          .getOnlineStatus(lastMessage.profileId),
                       builder: (context, snapshot) {
                         bool online =
                             snapshot.data?.data()?["visibility"] ?? false;

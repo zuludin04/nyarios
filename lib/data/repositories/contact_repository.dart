@@ -52,7 +52,7 @@ class ContactRepository {
       var profileId = e.data()['profileId'];
       var profile = await profileRepository.loadSingleProfile(profileId);
       var friend = await loadSingleFriend(profileId);
-      return LastMessage(roomId: friend?.roomId, profile: profile);
+      return LastMessage();
     }).toList();
 
     return Future.wait(list);
@@ -89,7 +89,7 @@ class ContactRepository {
       var profileId = e.data()['profileId'];
       var profile = await profileRepository.loadSingleProfile(profileId);
       var friend = await loadSingleFriend(profileId);
-      return LastMessage(roomId: friend?.roomId, profile: profile);
+      return LastMessage();
     }).toList();
 
     return Future.wait(list);

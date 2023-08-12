@@ -10,6 +10,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
@@ -464,8 +465,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
       chatId: contact.chatId!,
     );
 
-    // chatRepo.updateLastMessage(true, contact.profile!.uid!, message);
-    // chatRepo.updateLastMessage(false, contact.profile!.uid!, message);
+    LastMessage chat = LastMessage(
+      profileImage: contact.profileImage,
+      profileName: contact.profileName,
+      profileId: contact.profileId,
+      lastMessage: message,
+      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
+      blocked: blocked,
+      alreadyFriend: alreadyAdded,
+      chatId: contact.chatId,
+      type: 'dm',
+    );
+
+    chatRepo.updateLastMessage(true, chat);
+    chatRepo.updateLastMessage(false, chat);
     //
     messageRepo.sendNewMessage(newMessage);
   }
