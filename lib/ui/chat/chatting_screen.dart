@@ -461,7 +461,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       sendDatetime: DateTime.now().millisecondsSinceEpoch,
       url: url,
       fileSize: fileSize,
-      profileId: contact.profileId!,
+      profileId: StorageServices.to.userId,
       chatId: contact.chatId!,
     );
 

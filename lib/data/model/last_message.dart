@@ -1,3 +1,5 @@
+import 'package:nyarios/services/storage_services.dart';
+
 class LastMessage {
   String? profileImage;
   String? profileName;
@@ -21,11 +23,11 @@ class LastMessage {
     this.type,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(bool fromSender) {
     return <String, dynamic>{
       'profileImage': profileImage,
-      'profileName': profileName,
-      'profileId': profileId,
+      'profileName': fromSender ? profileName : StorageServices.to.userName,
+      'profileId': fromSender ? profileId : StorageServices.to.userId,
       'lastMessage': lastMessage,
       'lastMessageSent': lastMessageSent,
       'blocked': blocked,

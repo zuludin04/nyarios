@@ -43,7 +43,7 @@ class ChatRepository {
         .doc(fromSender ? StorageServices.to.userId : lastMessage.profileId)
         .collection('receiver')
         .doc(fromSender ? lastMessage.profileId : StorageServices.to.userId)
-        .set(lastMessage.toMap());
+        .set(lastMessage.toMap(fromSender));
   }
 
   Future<void> batchDelete(
