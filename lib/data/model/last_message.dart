@@ -27,7 +27,7 @@ class LastMessage {
       'profileName': profileName,
       'profileId': profileId,
       'lastMessage': lastMessage,
-      'lastMessageSent': lastMessage,
+      'lastMessageSent': lastMessageSent,
       'blocked': blocked,
       'alreadyFriend': alreadyFriend,
       'chatId': chatId,

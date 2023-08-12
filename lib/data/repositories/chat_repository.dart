@@ -24,30 +24,12 @@ class ChatRepository {
         .snapshots();
   }
 
-  Stream<List<LastMessage>> loadUsersLastMessages() async* {
-    var lastMessageStream = chatReference
+  Stream<QuerySnapshot<Map<String, dynamic>>> loadUsersLastMessages() {
+    return chatReference
         .doc(StorageServices.to.userId)
         .collection('receiver')
-        .orderBy('sendDatetime', descending: true)
+        .orderBy('lastMessageSent', descending: true)
         .snapshots();
-
-    var lastMessages = <LastMessage>[];
-
-    await for (var snapshot in lastMessageStream) {
-      for (var doc in snapshot.docs) {
-        var message = doc.data()['message'];
-        var sendDateTime = doc.data()['sendDatetime'];
-        var receiverId = doc.data()['receiverId'];
-        var profile = await profileRepository.loadSingleProfile(receiverId);
-        var friend = await contactRepository.loadSingleFriend(receiverId);
-
-        var lastMessage = LastMessage();
-
-        lastMessages.clear();
-        lastMessages.add(lastMessage);
-      }
-      yield lastMessages;
-    }
   }
 
   void sendNewMessage(String? roomId, Chat chat) {
