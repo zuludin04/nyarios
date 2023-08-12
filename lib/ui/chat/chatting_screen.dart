@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:clipboard/clipboard.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +9,11 @@ import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/data/model/last_message.dart';
+import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
+import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/custom_indicator.dart';
@@ -32,10 +33,11 @@ class ChattingScreen extends StatefulWidget {
 class _ChattingScreenState extends State<ChattingScreen> {
   final chatRepo = ChatRepository();
   final contactRepo = ContactRepository();
+  final messageRepo = MessageRepository();
   final TextEditingController _messageEditingController =
       TextEditingController();
 
-  LastMessage lastMassage = Get.arguments;
+  Contact contact = Get.arguments;
 
   List<Chat> selectedChat = [];
   bool selectionMode = false;
@@ -45,17 +47,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
   bool blocked = false;
 
   @override
-  void initState() {
-    super.initState();
-    loadFriendData();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
         selectedChat.isEmpty
-            ? lastMassage.profile?.name ?? ""
+            ? contact.profileName ?? ""
             : "${selectedChat.length} ${"selected_chat".tr}",
         leading: selectedChat.isEmpty
             ? null
@@ -69,10 +65,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 icon: const Icon(Icons.close),
               ),
         stream: true,
-        uid: lastMassage.profile?.uid,
+        uid: contact.profileId,
         onTapTitle: () => Get.toNamed(
           AppRoutes.contactDetail,
-          arguments: lastMassage,
+          arguments: contact,
         ),
         elevation: 0,
         actions: !selectionMode
@@ -100,7 +96,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       case 0:
                         Get.toNamed(
                           AppRoutes.contactDetail,
-                          arguments: lastMassage,
+                          arguments: contact,
                         );
                         break;
                       case 1:
@@ -108,8 +104,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           AppRoutes.search,
                           arguments: {
                             'type': 'chats',
-                            'roomId': lastMassage.roomId,
-                            'user': lastMassage.profile?.name,
+                            'roomId': contact.chatId,
+                            'user': contact.profileName,
                           },
                         );
                         break;
@@ -118,7 +114,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           blocked = !blocked;
                         });
                         contactRepo.changeBlockStatus(
-                            lastMassage.profile?.uid, blocked);
+                            contact.profileId, blocked);
                         break;
                     }
                   },
@@ -138,7 +134,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             ),
           ),
           Visibility(
-            visible: !alreadyAdded,
+            visible: !contact.alreadyFriend!,
             child: Container(
               color: Get.theme.colorScheme.background,
               padding: const EdgeInsets.all(16),
@@ -162,8 +158,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       setState(() {
                         blocked = !blocked;
                       });
-                      contactRepo.changeBlockStatus(
-                          lastMassage.profile?.uid, blocked);
+                      contactRepo.changeBlockStatus(contact.profileId, blocked);
                     },
                     Icons.block_rounded,
                     blocked ? 'unblock'.tr : 'block'.tr,
@@ -175,7 +170,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
           const SizedBox(height: 16),
           Expanded(
             child: StreamBuilder(
-              stream: chatRepo.loadUserChatsByRoomId(lastMassage.roomId),
+              stream: chatRepo.loadUserChatsByRoomId(contact.chatId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('something_went_wrong'.tr));
@@ -417,15 +412,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
       ),
       IconButton(
         onPressed: () {
-          chatRepo
-              .batchDelete(
-                  lastMassage.roomId!, selectedChat, lastMassage.profile!)
-              .then((value) {
-            setState(() {
-              selectedChat.clear();
-              selectionMode = false;
-            });
-          });
+          // chatRepo
+          //     .batchDelete(
+          //         contact.roomId!, selectedChat, contact.profile!)
+          //     .then((value) {
+          //   setState(() {
+          //     selectedChat.clear();
+          //     selectionMode = false;
+          //   });
+          // });
         },
         icon: const Icon(Icons.delete),
       ),
@@ -450,7 +445,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         .format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
     var user = chat.senderId == StorageServices.to.userId
         ? StorageServices.to.userName
-        : lastMassage.profile?.name;
+        : contact.profileName;
     return "[$date] $user: ${chat.message}\n";
   }
 
@@ -460,19 +455,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
     String url = "",
     String fileSize = "",
   }) async {
-    Chat chat = Chat(
+    Message newMessage = Message(
       message: message,
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      senderId: StorageServices.to.userId,
       type: type,
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
       url: url,
       fileSize: fileSize,
+      profileId: contact.profileId!,
+      chatId: contact.chatId!,
     );
 
-    chatRepo.updateLastMessage(true, lastMassage.profile!.uid!, message);
-    chatRepo.updateLastMessage(false, lastMassage.profile!.uid!, message);
-
-    chatRepo.sendNewMessage(lastMassage.roomId, chat);
+    // chatRepo.updateLastMessage(true, contact.profile!.uid!, message);
+    // chatRepo.updateLastMessage(false, contact.profile!.uid!, message);
+    //
+    messageRepo.sendNewMessage(newMessage);
   }
 
   void _pickImage(bool fromGallery) async {
@@ -578,27 +574,5 @@ class _ChattingScreenState extends State<ChattingScreen> {
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     var i = (log(bytes) / log(1024)).floor();
     return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
-  }
-
-  void listenDocumentChange() {
-    var lastMessage = FirebaseFirestore.instance
-        .collection('lastMessage')
-        .doc(StorageServices.to.userId)
-        .collection('receiver')
-        .doc(lastMassage.profile!.uid)
-        .snapshots();
-
-    lastMessage.listen((event) {
-      var message = event.data()!['message'];
-      debugPrint('current message $message');
-    });
-  }
-
-  Future<void> loadFriendData() async {
-    var friend = await contactRepo.loadSingleFriend(lastMassage.profile?.uid);
-    setState(() {
-      alreadyAdded = friend!.alreadyAdded!;
-      blocked = friend.blocked!;
-    });
   }
 }
