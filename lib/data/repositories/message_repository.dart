@@ -19,4 +19,14 @@ class MessageRepository {
         .orderBy('sendDatetime')
         .snapshots();
   }
+
+  Future<List<Message>> loadMessageMedia(String? roomId) async {
+    var chats = await messageReference
+        .doc(roomId)
+        .collection('messages')
+        .orderBy('sendDatetime')
+        .get();
+
+    return chats.docs.map((e) => Message.fromMap(e.data())).toList();
+  }
 }

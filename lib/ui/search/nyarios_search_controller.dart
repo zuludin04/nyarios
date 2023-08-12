@@ -51,9 +51,9 @@ class NyariosSearchController extends GetxController {
           .where((element) =>
               element.message!.toLowerCase().contains(term.toLowerCase()))
           .toList();
-      filterChat.value = filter;
+      // filterChat.value = filter;
     } else {
-      filterChat.value = chats;
+      // filterChat.value = chats;
       this.term = '';
     }
   }
@@ -66,7 +66,7 @@ class NyariosSearchController extends GetxController {
 
   void loadChats() async {
     var chats = await repository.loadChats(roomId);
-    filterChat.value = chats;
-    this.chats.value = chats;
+    // filterChat.value = chats;
+    // this.chats.value = chats;
   }
 }

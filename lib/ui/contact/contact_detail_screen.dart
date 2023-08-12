@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/last_message.dart';
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 
 import '../../core/widgets/toolbar.dart';
@@ -16,7 +16,7 @@ class ContactDetailScreen extends StatefulWidget {
 
 class _ContactDetailScreenState extends State<ContactDetailScreen>
     with SingleTickerProviderStateMixin {
-  final LastMessage lastMessage = Get.arguments;
+  final Contact lastMessage = Get.arguments;
 
   late TabController tabController;
 

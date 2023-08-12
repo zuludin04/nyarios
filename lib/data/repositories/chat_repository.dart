@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/last_message.dart';
+import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
@@ -65,15 +66,14 @@ class ChatRepository {
     //     sendDateTime: selectedMessage.sendDatetime);
   }
 
-  Future<List<Chat>> loadChats(String? roomId) async {
-    var chats = await FirebaseFirestore.instance
-        .collection('room')
+  Future<List<Message>> loadChats(String? roomId) async {
+    var chats = await roomReference
         .doc(roomId)
         .collection('messages')
         .orderBy('sendDatetime')
         .get();
 
-    return chats.docs.map((e) => Chat.fromMap(e.data(), "")).toList();
+    return chats.docs.map((e) => Message.fromMap(e.data())).toList();
   }
 
   Future<void> updateChatLastMessage(LastMessage message) async {}

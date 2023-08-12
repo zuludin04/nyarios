@@ -1,24 +1,23 @@
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/last_message.dart';
-import 'package:nyarios/data/repositories/chat_repository.dart';
-
-import '../../data/model/chat.dart';
+import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/data/repositories/message_repository.dart';
 
 class ContactMediaController extends GetxController {
-  final LastMessage lastMessage = Get.arguments;
-  final repository = ChatRepository();
+  final Contact lastMessage = Get.arguments;
+  final repository = MessageRepository();
 
-  var mediaChats = <Chat>[];
+  var mediaMessages = <Message>[];
   var loading = false;
   var empty = false;
 
   Future<void> loadChats(String type) async {
     loading = true;
 
-    var chats = await repository.loadChats(lastMessage.profileId);
+    var chats = await repository.loadMessageMedia(lastMessage.chatId);
 
-    mediaChats = chats.where((e) => e.type == type).toList();
-    empty = mediaChats.isEmpty;
+    mediaMessages = chats.where((e) => e.type == type).toList();
+    empty = mediaMessages.isEmpty;
     loading = false;
 
     update([type]);

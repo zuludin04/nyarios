@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/data/model/message.dart';
 
 import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/empty_widget.dart';
@@ -42,21 +43,21 @@ class _ContactMediaTabState extends State<ContactMediaTab>
         } else {
           return ListView.builder(
             itemBuilder: (context, index) {
-              var chat = controller.mediaChats[index];
+              var message = controller.mediaMessages[index];
               if (widget.type == "file") {
-                return _buildDocItem(chat);
+                return _buildDocItem(message);
               } else {
-                return _buildMediaItem(chat);
+                return _buildMediaItem(message);
               }
             },
-            itemCount: controller.mediaChats.length,
+            itemCount: controller.mediaMessages.length,
           );
         }
       },
     );
   }
 
-  Widget _buildDocItem(Chat chat) {
+  Widget _buildDocItem(Message message) {
     return Column(
       children: [
         Padding(
@@ -69,13 +70,13 @@ class _ContactMediaTabState extends State<ContactMediaTab>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    chat.message ?? "",
+                    message.message ?? "",
                     style: const TextStyle(fontSize: 16),
                   ),
                   Text(
                     DateFormat("dd/MM/yyyy").format(
                       DateTime.fromMillisecondsSinceEpoch(
-                          chat.sendDatetime ?? 0),
+                          message.sendDatetime ?? 0),
                     ),
                   ),
                 ],
@@ -88,7 +89,7 @@ class _ContactMediaTabState extends State<ContactMediaTab>
     );
   }
 
-  Widget _buildMediaItem(Chat chat) {
+  Widget _buildMediaItem(Message message) {
     return Column(
       children: [
         Padding(
@@ -97,7 +98,7 @@ class _ContactMediaTabState extends State<ContactMediaTab>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Image.network(
-                chat.url ?? "",
+                message.url ?? "",
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,
@@ -106,7 +107,7 @@ class _ContactMediaTabState extends State<ContactMediaTab>
               Text(
                 DateFormat("dd/MM/yyyy").format(
                     DateTime.fromMillisecondsSinceEpoch(
-                        chat.sendDatetime ?? 0)),
+                        message.sendDatetime ?? 0)),
               )
             ],
           ),
