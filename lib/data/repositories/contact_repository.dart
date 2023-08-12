@@ -30,6 +30,17 @@ class ContactRepository {
     return doc.exists;
   }
 
+  Future<List<Contact>> loadContacts() async {
+    var results = await contactReference
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .where('alreadyFriend', isEqualTo: true)
+        .where('blocked', isEqualTo: false)
+        .get();
+
+    return results.docs.map((e) => Contact.fromMap(e.data())).toList();
+  }
+
   Future<List<LastMessage>> loadSavedFriends() async {
     var lastMessages = await contactReference
         .doc(StorageServices.to.userId)

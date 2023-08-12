@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/ui/contact/friend/friend_item.dart';
@@ -39,8 +40,7 @@ class ContactBlockScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            itemBuilder: (context, index) =>
-                FriendItem(lastMessage: snapshot.data![index]),
+            itemBuilder: (context, index) => FriendItem(contact: Contact()),
             itemCount: snapshot.data!.length,
           );
         },
