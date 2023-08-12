@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/friend.dart';
 import 'package:nyarios/data/model/last_message.dart';
-import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
@@ -10,33 +10,24 @@ class ContactRepository {
       FirebaseFirestore.instance.collection('contact');
   ProfileRepository profileRepository = ProfileRepository();
 
-  Future<void> saveNewFriend(
-      Profile profile, String roomId, bool fromSender) async {
-    var friend = await contactReference
-        .doc(fromSender ? StorageServices.to.userId : profile.uid)
-        .collection('friends')
-        .doc(fromSender ? profile.uid : StorageServices.to.userId)
-        .get();
-    if (!friend.exists) {
+  Future<void> saveContact(Contact contact, String profileId) async {
+    var exist = await checkIfContactExist(profileId);
+    if (!exist) {
       contactReference
-          .doc(fromSender ? StorageServices.to.userId : profile.uid)
+          .doc(StorageServices.to.userId)
           .collection('friends')
-          .doc(fromSender ? profile.uid : StorageServices.to.userId)
-          .set({
-        'profileId': fromSender ? profile.uid : StorageServices.to.userId,
-        'blocked': false,
-        'alreadyAdded': fromSender,
-        'roomId': roomId,
-      });
-    } else {
-      contactReference
-          .doc(fromSender ? StorageServices.to.userId : profile.uid)
-          .collection('friends')
-          .doc(fromSender ? profile.uid : StorageServices.to.userId)
-          .update({
-        'alreadyAdded': fromSender,
-      });
+          .doc(profileId)
+          .set(contact.toMap());
     }
+  }
+
+  Future<bool> checkIfContactExist(String userId) async {
+    var doc = await contactReference
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .doc(userId)
+        .get();
+    return doc.exists;
   }
 
   Future<List<LastMessage>> loadSavedFriends() async {

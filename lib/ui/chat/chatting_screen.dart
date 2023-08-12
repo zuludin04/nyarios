@@ -148,11 +148,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   if (!blocked)
                     _friendNotAddedAction(
                       () {
-                        contactRepo.saveNewFriend(
-                            lastMassage.profile!, lastMassage.roomId!, true);
-                        setState(() {
-                          alreadyAdded = !alreadyAdded;
-                        });
+                        // contactRepo.saveNewFriend(
+                        //     lastMassage.profile!, lastMassage.roomId!, true);
+                        // setState(() {
+                        //   alreadyAdded = !alreadyAdded;
+                        // });
                       },
                       Icons.add,
                       'add_friend'.tr,

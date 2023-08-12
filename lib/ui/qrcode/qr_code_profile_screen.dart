@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/data/model/last_message.dart';
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
@@ -176,21 +176,18 @@ class QrCodeProfileScreen extends StatelessWidget {
                         Get.back();
                         var repo = ContactRepository();
                         var profile = snapshot.data!;
-                        var friend = await repo.loadSingleFriend(profile.uid);
-                        if (friend == null) {
-                          var roomId = const Uuid().v4();
-                          repo.saveNewFriend(profile, roomId, true);
-                          repo.saveNewFriend(profile, roomId, false);
-                          var lastMessage =
-                              LastMessage(profile: profile, roomId: roomId);
-                          Get.toNamed(AppRoutes.chatting,
-                              arguments: lastMessage);
-                        } else {
-                          var lastMessage = LastMessage(
-                              profile: profile, roomId: friend.roomId);
-                          Get.toNamed(AppRoutes.chatting,
-                              arguments: lastMessage);
-                        }
+                        var roomId = const Uuid().v4();
+                        var contact = Contact(
+                          profileImage: profile.photo!,
+                          profileName: profile.name!,
+                          profileStatus: profile.status!,
+                          alreadyFriend: true,
+                          blocked: false,
+                          chatId: roomId,
+                        );
+                        repo.saveContact(contact, profile.uid!);
+
+                        Get.toNamed(AppRoutes.chatting);
                       },
                       child: Text('add_friend'.tr),
                     ),
