@@ -25,7 +25,7 @@ class LastMessage {
 
   Map<String, dynamic> toMap(bool fromSender) {
     return <String, dynamic>{
-      'profileImage': profileImage,
+      'profileImage': fromSender ? profileImage : StorageServices.to.userImage,
       'profileName': fromSender ? profileName : StorageServices.to.userName,
       'profileId': fromSender ? profileId : StorageServices.to.userId,
       'lastMessage': lastMessage,

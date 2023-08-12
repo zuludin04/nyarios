@@ -26,6 +26,11 @@ class StorageServices extends GetxService {
     _storage.write('USER_NAME', value);
   }
 
+  String get userImage => _storage.read('USER_IMAGE') ?? '';
+  set userImage(String value) {
+    _storage.write('USER_IMAGE', value);
+  }
+
   String get email => _storage.read('USER_EMAIL') ?? '';
   set email(String value) {
     _storage.write('USER_EMAIL', value);

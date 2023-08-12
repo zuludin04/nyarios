@@ -118,6 +118,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 .child('nyarios/profile/${StorageServices.to.userId}.jpg')
                 .getDownloadURL();
             repository.updateImageProfile(StorageServices.to.userId, url);
+            StorageServices.to.userImage = url;
             setState(() {
               upload = false;
             });
