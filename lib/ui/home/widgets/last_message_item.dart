@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/data/model/contact.dart';
 
 import '../../../data/model/last_message.dart';
 import '../../../routes/app_pages.dart';
@@ -13,7 +14,10 @@ class LastMessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: lastMessage),
+      onTap: () => Get.toNamed(
+        AppRoutes.chatting,
+        arguments: Contact.fromLastMessage(lastMessage),
+      ),
       child: Column(
         children: [
           Container(

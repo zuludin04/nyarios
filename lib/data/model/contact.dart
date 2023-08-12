@@ -1,3 +1,5 @@
+import 'package:nyarios/data/model/last_message.dart';
+
 class Contact {
   String? profileImage;
   String? profileName;
@@ -42,6 +44,17 @@ class Contact {
       alreadyFriend:
           map['alreadyFriend'] != null ? map['alreadyFriend'] as bool : null,
       blocked: map['blocked'] != null ? map['blocked'] as bool : null,
+    );
+  }
+
+  factory Contact.fromLastMessage(LastMessage message) {
+    return Contact(
+      profileImage: message.profileImage,
+      profileName: message.profileName,
+      profileId: message.profileId,
+      chatId: message.chatId,
+      alreadyFriend: message.alreadyFriend,
+      blocked: message.blocked,
     );
   }
 }
