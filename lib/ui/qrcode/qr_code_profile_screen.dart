@@ -181,6 +181,7 @@ class QrCodeProfileScreen extends StatelessWidget {
                           profileImage: profile.photo!,
                           profileName: profile.name!,
                           profileStatus: profile.status!,
+                          profileId: profile.uid!,
                           alreadyFriend: true,
                           blocked: false,
                           chatId: roomId,
