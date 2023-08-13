@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/contact.dart';
-import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/ui/contact/friend/friend_item.dart';
 
@@ -16,8 +15,8 @@ class ContactBlockScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: Toolbar.defaultToolbar('blocked_friend'.tr),
-      body: FutureBuilder<List<LastMessage>>(
-        future: repository.loadBlockedUser(),
+      body: FutureBuilder<List<Contact>>(
+        future: repository.loadContacts(true),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('something_went_wrong'.tr));
@@ -40,7 +39,8 @@ class ContactBlockScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            itemBuilder: (context, index) => FriendItem(contact: Contact()),
+            itemBuilder: (context, index) =>
+                FriendItem(contact: snapshot.data![index]),
             itemCount: snapshot.data!.length,
           );
         },

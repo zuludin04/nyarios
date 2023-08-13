@@ -31,7 +31,8 @@ class ContactRepository {
   }
 
   Future<Contact?> loadSingleContact(String? profileId) async {
-    var ref = await contactReference.doc(StorageServices.to.userId)
+    var ref = await contactReference
+        .doc(StorageServices.to.userId)
         .collection('friends')
         .doc(profileId)
         .get();
@@ -39,12 +40,20 @@ class ContactRepository {
     return ref.data() == null ? null : Contact.fromJson(ref.data()!);
   }
 
-  Future<List<Contact>> loadContacts() async {
+  Future<void> changeBlockStatus(String? profileId, bool blocked) async {
+    contactReference
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .doc(profileId)
+        .update({'blocked': blocked});
+  }
+
+  Future<List<Contact>> loadContacts(bool blocked) async {
     var results = await contactReference
         .doc(StorageServices.to.userId)
         .collection('friends')
         .where('alreadyFriend', isEqualTo: true)
-        .where('blocked', isEqualTo: false)
+        .where('blocked', isEqualTo: blocked)
         .get();
 
     var contacts = results.docs.map((e) async {
@@ -81,16 +90,6 @@ class ContactRepository {
         .doc(uid)
         .get();
     return ref.data() == null ? null : Friend.fromMap(ref.data()!);
-  }
-
-  Future<void> changeBlockStatus(String? profileId, bool blocked) async {
-    contactReference
-        .doc(StorageServices.to.userId)
-        .collection('friends')
-        .doc(profileId)
-        .update({
-      'blocked': blocked,
-    });
   }
 
   Future<List<LastMessage>> loadBlockedUser() async {

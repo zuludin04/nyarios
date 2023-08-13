@@ -17,7 +17,7 @@ class ContactFriends extends StatelessWidget {
     return Scaffold(
       appBar: Toolbar.defaultToolbar('contact'.tr),
       body: FutureBuilder<List<Contact>>(
-        future: repository.loadContacts(),
+        future: repository.loadContacts(false),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('something_went_wrong'.tr));
