@@ -38,6 +38,16 @@ class Contact {
     );
   }
 
+  factory Contact.fromJson(Map<String, dynamic> map) {
+    return Contact(
+      profileId: map['profileId'] != null ? map['profileId'] as String : null,
+      chatId: map['chatId'] != null ? map['chatId'] as String : null,
+      alreadyFriend:
+      map['alreadyFriend'] != null ? map['alreadyFriend'] as bool : null,
+      blocked: map['blocked'] != null ? map['blocked'] as bool : null,
+    );
+  }
+
   factory Contact.fromLastMessage(LastMessage message) {
     return Contact(
       profileId: message.profileId,

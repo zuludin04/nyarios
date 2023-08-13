@@ -43,8 +43,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
   bool selectionMode = false;
   String uploadIndicator = '0';
   bool upload = false;
-  bool alreadyAdded = false;
+
+  bool alreadyAdded = true;
   bool blocked = false;
+
+  @override
+  void initState() {
+    loadFriendBlockStatus();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,11 +151,17 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   if (!blocked)
                     _friendNotAddedAction(
                       () {
-                        // contactRepo.saveNewFriend(
-                        //     lastMassage.profile!, lastMassage.roomId!, true);
-                        // setState(() {
-                        //   alreadyAdded = !alreadyAdded;
-                        // });
+                        var contact = Contact(
+                          profileId: this.contact.profileId,
+                          chatId: this.contact.chatId,
+                          blocked: blocked,
+                          alreadyFriend: true,
+                        );
+                        contactRepo.saveContact(
+                            contact, this.contact.profileId!);
+                        setState(() {
+                          alreadyAdded = !alreadyAdded;
+                        });
                       },
                       Icons.add,
                       'add_friend'.tr,
@@ -582,5 +595,13 @@ class _ChattingScreenState extends State<ChattingScreen> {
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     var i = (log(bytes) / log(1024)).floor();
     return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
+  }
+
+  void loadFriendBlockStatus() async {
+    var contact = await contactRepo.loadSingleContact(this.contact.profileId);
+    setState(() {
+      blocked = contact?.blocked ?? false;
+      alreadyAdded = contact?.alreadyFriend ?? false;
+    });
   }
 }

@@ -30,6 +30,15 @@ class ContactRepository {
     return doc.exists;
   }
 
+  Future<Contact?> loadSingleContact(String? profileId) async {
+    var ref = await contactReference.doc(StorageServices.to.userId)
+        .collection('friends')
+        .doc(profileId)
+        .get();
+
+    return ref.data() == null ? null : Contact.fromJson(ref.data()!);
+  }
+
   Future<List<Contact>> loadContacts() async {
     var results = await contactReference
         .doc(StorageServices.to.userId)
