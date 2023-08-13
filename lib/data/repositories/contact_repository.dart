@@ -38,7 +38,13 @@ class ContactRepository {
         .where('blocked', isEqualTo: false)
         .get();
 
-    return results.docs.map((e) => Contact.fromMap(e.data())).toList();
+    var contacts = results.docs.map((e) async {
+      var profileId = e.data()['profileId'];
+      var profile = await profileRepository.loadSingleProfile(profileId);
+      return Contact.fromMap(e.data(), profile);
+    }).toList();
+
+    return Future.wait(contacts);
   }
 
   Future<List<LastMessage>> loadSavedFriends() async {

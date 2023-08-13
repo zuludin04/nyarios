@@ -63,7 +63,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            lastMessage.profileImage!,
+                            lastMessage.profile!.photo!,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -73,7 +73,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      lastMessage.profileName!,
+                      lastMessage.profile!.name!,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

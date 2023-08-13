@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/last_message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 
 import '../../core/widgets/custom_indicator.dart';
@@ -62,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                   );
                 }
 
-                if (snapshot.data!.size == 0) {
+                if (snapshot.data!.isEmpty) {
                   return SliverFillRemaining(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -80,11 +79,9 @@ class HomeScreen extends StatelessWidget {
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => LastMessageItem(
-                      lastMessage: LastMessage.fromMap(
-                          snapshot.data!.docs[index].data()),
-                    ),
-                    childCount: snapshot.data!.size,
+                    (context, index) =>
+                        LastMessageItem(lastMessage: snapshot.data![index]),
+                    childCount: snapshot.data!.length,
                   ),
                 );
               },

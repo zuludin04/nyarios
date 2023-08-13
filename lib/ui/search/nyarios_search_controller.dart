@@ -35,7 +35,7 @@ class NyariosSearchController extends GetxController {
     if (term.isNotEmpty) {
       var filter = lastMessages
           .where((element) =>
-              element.profileName!.toLowerCase().contains(term.toLowerCase()))
+              element.profile!.name!.toLowerCase().contains(term.toLowerCase()))
           .toList();
       filterLastMessage.value = filter;
     } else {

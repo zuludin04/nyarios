@@ -51,7 +51,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
         selectedChat.isEmpty
-            ? contact.profileName ?? ""
+            ? contact.profile?.name ?? ""
             : "${selectedChat.length} ${"selected_chat".tr}",
         leading: selectedChat.isEmpty
             ? null
@@ -105,7 +105,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           arguments: {
                             'type': 'chats',
                             'roomId': contact.chatId,
-                            'user': contact.profileName,
+                            'user': contact.profile?.name,
                           },
                         );
                         break;
@@ -445,7 +445,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         .format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
     var user = chat.chatId == StorageServices.to.userId
         ? StorageServices.to.userName
-        : contact.profileName;
+        : contact.profile?.name;
     return "[$date] $user: ${chat.message}\n";
   }
 
@@ -466,13 +466,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
 
     LastMessage chat = LastMessage(
-      profileImage: contact.profileImage,
-      profileName: contact.profileName,
       profileId: contact.profileId,
       lastMessage: message,
       lastMessageSent: DateTime.now().millisecondsSinceEpoch,
-      blocked: blocked,
-      alreadyFriend: alreadyAdded,
       chatId: contact.chatId,
       type: 'dm',
     );

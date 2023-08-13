@@ -1,29 +1,25 @@
 import 'package:nyarios/data/model/last_message.dart';
 
+import 'profile.dart';
+
 class Contact {
-  String? profileImage;
-  String? profileName;
-  String? profileStatus;
   String? profileId;
   String? chatId;
   bool? blocked;
   bool? alreadyFriend;
 
+  Profile? profile;
+
   Contact({
-    this.profileImage,
-    this.profileName,
-    this.profileStatus,
     this.profileId,
     this.chatId,
     this.blocked,
     this.alreadyFriend,
+    this.profile,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'profileImage': profileImage,
-      'profileName': profileName,
-      'profileStatus': profileStatus,
       'profileId': profileId,
       'chatId': chatId,
       'blocked': blocked,
@@ -31,30 +27,21 @@ class Contact {
     };
   }
 
-  factory Contact.fromMap(Map<String, dynamic> map) {
+  factory Contact.fromMap(Map<String, dynamic> map, Profile profile) {
     return Contact(
-      profileImage:
-          map['profileImage'] != null ? map['profileImage'] as String : null,
-      profileName:
-          map['profileName'] != null ? map['profileName'] as String : null,
-      profileStatus:
-          map['profileStatus'] != null ? map['profileStatus'] as String : null,
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
       alreadyFriend:
           map['alreadyFriend'] != null ? map['alreadyFriend'] as bool : null,
       blocked: map['blocked'] != null ? map['blocked'] as bool : null,
+      profile: profile,
     );
   }
 
   factory Contact.fromLastMessage(LastMessage message) {
     return Contact(
-      profileImage: message.profileImage,
-      profileName: message.profileName,
       profileId: message.profileId,
       chatId: message.chatId,
-      alreadyFriend: message.alreadyFriend,
-      blocked: message.blocked,
     );
   }
 }

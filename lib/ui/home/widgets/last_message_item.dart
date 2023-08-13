@@ -27,7 +27,7 @@ class LastMessageItem extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: Image.network(
-                    lastMessage.profileImage ?? "",
+                    lastMessage.profile?.photo ?? "",
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
@@ -40,7 +40,7 @@ class LastMessageItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        lastMessage.profileName ?? "",
+                        lastMessage.profile?.name ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

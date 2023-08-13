@@ -21,7 +21,7 @@ class FriendItem extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(40),
                   child: Image.network(
-                    contact.profileImage ?? "",
+                    contact.profile?.photo ?? "",
                     width: 40,
                     height: 40,
                   ),
@@ -33,13 +33,13 @@ class FriendItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        contact.profileName ?? "",
+                        contact.profile?.name ?? "",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(contact.profileStatus ?? ""),
+                      Text(contact.profile?.status ?? ""),
                     ],
                   ),
                 ),

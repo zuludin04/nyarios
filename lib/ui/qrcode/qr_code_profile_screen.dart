@@ -178,9 +178,6 @@ class QrCodeProfileScreen extends StatelessWidget {
                         var profile = snapshot.data!;
                         var roomId = const Uuid().v4();
                         var contact = Contact(
-                          profileImage: profile.photo!,
-                          profileName: profile.name!,
-                          profileStatus: profile.status!,
                           profileId: profile.uid!,
                           alreadyFriend: true,
                           blocked: false,
