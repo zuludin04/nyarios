@@ -5,7 +5,6 @@ import 'package:nyarios/data/model/message.dart';
 
 import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/empty_widget.dart';
-import '../../data/model/chat.dart';
 import 'contact_media_controller.dart';
 
 class ContactMediaTab extends StatefulWidget {

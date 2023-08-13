@@ -1,12 +1,12 @@
 import 'package:get/get.dart';
-import 'package:nyarios/data/repositories/chat_repository.dart';
+import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
+import 'package:nyarios/data/repositories/message_repository.dart';
 
 import '../../data/model/chat.dart';
-import '../../data/model/last_message.dart';
 
 class NyariosSearchController extends GetxController {
-  final repository = ChatRepository();
+  final repository = MessageRepository();
   final contactRepo = ContactRepository();
 
   String type = Get.arguments['type'];
@@ -15,11 +15,11 @@ class NyariosSearchController extends GetxController {
 
   String term = '';
 
-  var filterLastMessage = <LastMessage>[].obs;
-  var lastMessages = <LastMessage>[].obs;
+  var filterLastMessage = <Chat>[].obs;
+  var lastMessages = <Chat>[].obs;
 
-  var filterChat = <Chat>[].obs;
-  var chats = <Chat>[].obs;
+  var filterChat = <Message>[].obs;
+  var chats = <Message>[].obs;
 
   @override
   void onInit() {
@@ -59,7 +59,7 @@ class NyariosSearchController extends GetxController {
   }
 
   void loadLastMessages() async {
-    var lastMessages = await contactRepo.loadSavedFriends();
+    var lastMessages = <Chat>[];
     filterLastMessage.value = lastMessages;
     this.lastMessages.value = lastMessages;
   }

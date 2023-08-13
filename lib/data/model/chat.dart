@@ -1,63 +1,45 @@
+import 'package:nyarios/services/storage_services.dart';
+
+import 'profile.dart';
+
 class Chat {
-  String? messageId;
-  String? message;
-  int? sendDatetime;
-  String? senderId;
+  String? profileId;
+  String? lastMessage;
+  int? lastMessageSent;
+  String? chatId;
   String? type;
-  String? url;
-  String? fileSize;
+
+  Profile? profile;
 
   Chat({
-    this.messageId,
-    this.message,
-    this.sendDatetime,
-    this.senderId,
+    this.profileId,
+    this.lastMessage,
+    this.lastMessageSent,
+    this.chatId,
     this.type,
-    this.url,
-    this.fileSize,
+    this.profile,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(bool fromSender) {
     return <String, dynamic>{
-      'message': message,
-      'sendDatetime': sendDatetime,
-      'senderId': senderId,
+      'profileId': fromSender ? profileId : StorageServices.to.userId,
+      'lastMessage': lastMessage,
+      'lastMessageSent': lastMessageSent,
+      'chatId': chatId,
       'type': type,
-      'url': url,
-      'fileSize': fileSize,
     };
   }
 
-  factory Chat.fromMap(Map<String, dynamic> map, String messageId) {
+  factory Chat.fromMap(Map<String, dynamic> map, Profile profile) {
     return Chat(
-      messageId: messageId,
-      message: map['message'] != null ? map['message'] as String : null,
-      sendDatetime:
-          map['sendDatetime'] != null ? map['sendDatetime'] as int : null,
-      senderId: map['senderId'] != null ? map['senderId'] as String : null,
+      profileId: map['profileId'] != null ? map['profileId'] as String : null,
+      lastMessage:
+          map['lastMessage'] != null ? map['lastMessage'] as String : null,
+      lastMessageSent:
+          map['lastMessageSent'] != null ? map['lastMessageSent'] as int : null,
+      chatId: map['chatId'] != null ? map['chatId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
-      url: map['url'] != null ? map['url'] as String : null,
-      fileSize: map['fileSize'] != null ? map['fileSize'] as String : null,
+      profile: profile,
     );
-  }
-
-  @override
-  bool operator ==(covariant Chat other) {
-    if (identical(this, other)) return true;
-
-    return other.message == message &&
-        other.sendDatetime == sendDatetime &&
-        other.senderId == senderId &&
-        other.type == type &&
-        other.url == url;
-  }
-
-  @override
-  int get hashCode {
-    return message.hashCode ^
-        sendDatetime.hashCode ^
-        senderId.hashCode ^
-        type.hashCode ^
-        url.hashCode;
   }
 }

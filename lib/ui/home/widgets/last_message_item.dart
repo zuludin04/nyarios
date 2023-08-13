@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/data/model/contact.dart';
 
-import '../../../data/model/last_message.dart';
+import '../../../data/model/chat.dart';
 import '../../../routes/app_pages.dart';
 
 class LastMessageItem extends StatelessWidget {
-  final LastMessage lastMessage;
+  final Chat lastMessage;
 
   const LastMessageItem({super.key, required this.lastMessage});
 

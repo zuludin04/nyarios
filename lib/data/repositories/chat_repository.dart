@@ -1,45 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/data/model/chat.dart';
-import 'package:nyarios/data/model/last_message.dart';
-import 'package:nyarios/data/model/message.dart';
-import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class ChatRepository {
-  final CollectionReference roomReference =
-      FirebaseFirestore.instance.collection('room');
   final CollectionReference chatReference =
       FirebaseFirestore.instance.collection('chat');
 
   final ProfileRepository profileRepository = ProfileRepository();
-  final ContactRepository contactRepository = ContactRepository();
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadUserChatsByRoomId(
-      String? roomId) {
-    return roomReference
-        .doc(roomId)
-        .collection('messages')
-        .orderBy('sendDatetime')
-        .snapshots();
-  }
-
-  Stream<List<LastMessage>> loadUsersLastMessages() async* {
-    var recentMesssageStream = chatReference
+  Stream<List<Chat>> loadRecentChat() async* {
+    var recentChatStream = chatReference
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .orderBy('lastMessageSent', descending: true)
         .snapshots();
 
-    var lastMessages = <LastMessage>[];
+    var lastMessages = <Chat>[];
 
-    await for (var snapshot in recentMesssageStream) {
+    await for (var snapshot in recentChatStream) {
       for (var doc in snapshot.docs) {
         var receiverId = doc.data()['profileId'];
         var profile = await profileRepository.loadSingleProfile(receiverId);
 
-        var lastMessage = LastMessage.fromMap(doc.data(), profile);
+        var lastMessage = Chat.fromMap(doc.data(), profile);
 
         lastMessages.clear();
         lastMessages.add(lastMessage);
@@ -48,48 +32,11 @@ class ChatRepository {
     }
   }
 
-  void sendNewMessage(String? roomId, Chat chat) {
-    CollectionReference newMessage =
-        roomReference.doc(roomId).collection('messages');
-    newMessage.add(chat.toMap());
-  }
-
-  void updateLastMessage(bool fromSender, LastMessage lastMessage) {
+  void updateRecentChat(bool fromSender, Chat lastMessage) {
     chatReference
         .doc(fromSender ? StorageServices.to.userId : lastMessage.profileId)
         .collection('receiver')
         .doc(fromSender ? lastMessage.profileId : StorageServices.to.userId)
         .set(lastMessage.toMap(fromSender));
   }
-
-  Future<void> batchDelete(
-      String roomId, List<Chat> chatMessages, Profile profile) async {
-    CollectionReference messages = FirebaseFirestore.instance
-        .collection('room')
-        .doc(roomId)
-        .collection('messages');
-
-    for (var message in chatMessages) {
-      messages.doc(message.messageId).delete();
-    }
-
-    var updatedMessages = await loadChats(roomId);
-    var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    // updateLastMessage(true, profile.uid!, selectedMessage.message!,
-    //     sendDateTime: selectedMessage.sendDatetime);
-    // updateLastMessage(false, profile.uid!, selectedMessage.message!,
-    //     sendDateTime: selectedMessage.sendDatetime);
-  }
-
-  Future<List<Message>> loadChats(String? roomId) async {
-    var chats = await roomReference
-        .doc(roomId)
-        .collection('messages')
-        .orderBy('sendDatetime')
-        .get();
-
-    return chats.docs.map((e) => Message.fromMap(e.data())).toList();
-  }
-
-  Future<void> updateChatLastMessage(LastMessage message) async {}
 }

@@ -1,4 +1,4 @@
-import 'package:nyarios/data/model/last_message.dart';
+import 'package:nyarios/data/model/chat.dart';
 
 import 'profile.dart';
 
@@ -48,7 +48,7 @@ class Contact {
     );
   }
 
-  factory Contact.fromLastMessage(LastMessage message) {
+  factory Contact.fromLastMessage(Chat message) {
     return Contact(
       profileId: message.profileId,
       chatId: message.chatId,

@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
               child: SizedBox(height: 10),
             ),
             StreamBuilder(
-              stream: repository.loadUsersLastMessages(),
+              stream: repository.loadRecentChat(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return SliverFillRemaining(

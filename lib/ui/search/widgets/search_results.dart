@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/data/model/message.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
-import '../../../data/model/chat.dart';
 import '../../../services/storage_services.dart';
 import '../../home/widgets/last_message_item.dart';
 import '../nyarios_search_controller.dart';
@@ -16,7 +16,8 @@ class SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.filterLastMessage.isEmpty && controller.filterChat.isEmpty) {
+      if (controller.filterLastMessage.isEmpty &&
+          controller.filterChat.isEmpty) {
         return Center(
           child: Text(controller.type == 'lastMessage'
               ? "empty_contact".tr
@@ -51,7 +52,7 @@ class SearchResults extends StatelessWidget {
     });
   }
 
-  Widget _chatSearchItem(Chat chat, String term) {
+  Widget _chatSearchItem(Message chat, String term) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -60,7 +61,7 @@ class SearchResults extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(chat.senderId == StorageServices.to.userId
+              Text(chat.profileId == StorageServices.to.userId
                   ? 'you'.tr
                   : controller.user),
               Text(_lastMessageDate(chat.sendDatetime)),
