@@ -42,6 +42,7 @@ class Contact {
     return Contact(
       profileId: message.profileId,
       chatId: message.chatId,
+      profile: message.profile,
     );
   }
 }

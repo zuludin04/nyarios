@@ -134,7 +134,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
             ),
           ),
           Visibility(
-            visible: !contact.alreadyFriend!,
+            visible: !alreadyAdded,
             child: Container(
               color: Get.theme.colorScheme.background,
               padding: const EdgeInsets.all(16),
