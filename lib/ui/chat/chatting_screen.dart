@@ -91,6 +91,11 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         value: 0,
                         child: Text('view_contact'.tr),
                       ),
+                      if (type != 'dm')
+                        const PopupMenuItem(
+                          value: 3,
+                          child: Text('Add Member'),
+                        ),
                       PopupMenuItem(
                         value: 1,
                         child: Text('search'.tr),
@@ -127,6 +132,12 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         });
                         contactRepo.changeBlockStatus(
                             contact.profileId, blocked);
+                        break;
+                      case 3:
+                        Get.toNamed(AppRoutes.groupMemberPick, arguments: {
+                          'source': 'add',
+                          'group': contact.group,
+                        });
                         break;
                     }
                   },

@@ -22,4 +22,8 @@ class GroupRepository {
         FirebaseFirestore.instance.collection('group').doc(uid).snapshots();
     yield* profile.map((event) => Group.fromJson(event.data()!));
   }
+
+  Future<void> addGroupMember(String groupId, List<String> members) async {
+    await contactReference.doc(groupId).update({'members': members});
+  }
 }
