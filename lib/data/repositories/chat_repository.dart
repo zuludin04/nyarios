@@ -12,33 +12,12 @@ class ChatRepository {
   final ProfileRepository profileRepository = ProfileRepository();
   final GroupRepository groupRepository = GroupRepository();
 
-  Stream<List<Chat>> loadRecentChat() async* {
-    var recentChatStream = chatReference
+  Stream<QuerySnapshot<Map<String, dynamic>>> loadRecentChat() async* {
+    yield* chatReference
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .orderBy('lastMessageSent', descending: true)
         .snapshots();
-
-    var lastMessages = <Chat>[];
-
-    await for (var snapshot in recentChatStream) {
-      for (var doc in snapshot.docs) {
-        var receiverId = doc.data()['profileId'];
-        var type = doc.data()['type'];
-
-        var lastMessage = Chat();
-        if (type == 'dm') {
-          var profile = await profileRepository.loadSingleProfile(receiverId);
-          lastMessage = Chat.fromMapProfile(doc.data(), profile);
-        } else {
-          var group = await groupRepository.loadSingleGroup(receiverId);
-          lastMessage = Chat.fromMapGroup(doc.data(), group);
-        }
-
-        lastMessages.add(lastMessage);
-      }
-      yield lastMessages;
-    }
   }
 
   void updateRecentChat(bool fromSender, Chat lastMessage) {

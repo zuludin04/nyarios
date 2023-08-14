@@ -68,4 +68,16 @@ class Chat {
       group: group,
     );
   }
+
+  factory Chat.fromMap(Map<String, dynamic> map) {
+    return Chat(
+      profileId: map['profileId'] != null ? map['profileId'] as String : null,
+      lastMessage:
+          map['lastMessage'] != null ? map['lastMessage'] as String : null,
+      lastMessageSent:
+          map['lastMessageSent'] != null ? map['lastMessageSent'] as int : null,
+      chatId: map['chatId'] != null ? map['chatId'] as String : null,
+      type: map['type'] != null ? map['type'] as String : null,
+    );
+  }
 }

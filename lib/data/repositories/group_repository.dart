@@ -16,4 +16,10 @@ class GroupRepository {
         await FirebaseFirestore.instance.collection('group').doc(groupId).get();
     return Group.fromJson(ref.data()!);
   }
+
+  Stream<Group> loadStreamGroup(String uid) async* {
+    var profile =
+        FirebaseFirestore.instance.collection('group').doc(uid).snapshots();
+    yield* profile.map((event) => Group.fromJson(event.data()!));
+  }
 }
