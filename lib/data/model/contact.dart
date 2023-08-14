@@ -1,5 +1,6 @@
 import 'package:nyarios/data/model/chat.dart';
 
+import 'group.dart';
 import 'profile.dart';
 
 class Contact {
@@ -9,6 +10,7 @@ class Contact {
   bool? alreadyFriend;
 
   Profile? profile;
+  Group? group;
 
   Contact({
     this.profileId,
@@ -16,6 +18,7 @@ class Contact {
     this.blocked,
     this.alreadyFriend,
     this.profile,
+    this.group,
   });
 
   Map<String, dynamic> toMap() {
@@ -49,10 +52,18 @@ class Contact {
   }
 
   factory Contact.fromLastMessage(Chat message) {
-    return Contact(
-      profileId: message.profileId,
-      chatId: message.chatId,
-      profile: message.profile,
-    );
+    if (message.type == 'dm') {
+      return Contact(
+        profileId: message.profileId,
+        chatId: message.chatId,
+        profile: message.profile,
+      );
+    } else {
+      return Contact(
+        profileId: message.profileId,
+        chatId: message.chatId,
+        group: message.group,
+      );
+    }
   }
 }

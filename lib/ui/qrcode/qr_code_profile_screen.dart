@@ -185,7 +185,8 @@ class QrCodeProfileScreen extends StatelessWidget {
                         );
                         repo.saveContact(contact, profile.uid!);
 
-                        Get.toNamed(AppRoutes.chatting);
+                        Get.toNamed(AppRoutes.chatting,
+                            arguments: {'contact': contact, 'type': 'dm'});
                       },
                       child: Text('add_friend'.tr),
                     ),

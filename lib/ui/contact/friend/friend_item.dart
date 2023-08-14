@@ -11,7 +11,8 @@ class FriendItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.chatting, arguments: contact),
+      onTap: () => Get.toNamed(AppRoutes.chatting,
+          arguments: {'contact': contact, 'type': 'dm'}),
       child: Column(
         children: [
           Container(

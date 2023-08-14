@@ -9,8 +9,8 @@ import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/chat.dart';
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
@@ -37,7 +37,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final TextEditingController _messageEditingController =
       TextEditingController();
 
-  Contact contact = Get.arguments;
+  Contact contact = Get.arguments['contact'];
+  String type = Get.arguments['type'];
 
   List<Message> selectedChat = [];
   bool selectionMode = false;
@@ -58,7 +59,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
         selectedChat.isEmpty
-            ? contact.profile?.name ?? ""
+            ? type == 'dm'
+                ? contact.profile?.name ?? ""
+                : contact.group?.name ?? ""
             : "${selectedChat.length} ${"selected_chat".tr}",
         leading: selectedChat.isEmpty
             ? null
@@ -112,7 +115,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           arguments: {
                             'type': 'chats',
                             'roomId': contact.chatId,
-                            'user': contact.profile?.name,
+                            'user': type == 'dm'
+                                ? contact.profile?.name ?? ""
+                                : contact.group?.name ?? "",
                           },
                         );
                         break;
@@ -458,7 +463,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
         .format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
     var user = chat.chatId == StorageServices.to.userId
         ? StorageServices.to.userName
-        : contact.profile?.name;
+        : type == 'dm'
+            ? contact.profile?.name ?? ""
+            : contact.group?.name ?? "";
     return "[$date] $user: ${chat.message}\n";
   }
 
@@ -479,16 +486,20 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
 
     Chat chat = Chat(
-      profileId: contact.profileId,
+      profileId: this.type == 'dm' ? contact.profileId : contact.group?.groupId,
       lastMessage: message,
       lastMessageSent: DateTime.now().millisecondsSinceEpoch,
       chatId: contact.chatId,
-      type: 'dm',
+      type: this.type,
     );
 
-    chatRepo.updateRecentChat(true, chat);
-    chatRepo.updateRecentChat(false, chat);
-    //
+    if (this.type == 'dm') {
+      chatRepo.updateRecentChat(true, chat);
+      chatRepo.updateRecentChat(false, chat);
+    } else {
+      chatRepo.updateGroupRecentChat(contact.group!, chat);
+    }
+
     messageRepo.sendNewMessage(newMessage);
   }
 

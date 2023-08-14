@@ -14,10 +14,12 @@ class LastMessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(
-        AppRoutes.chatting,
-        arguments: Contact.fromLastMessage(lastMessage),
-      ),
+      onTap: () {
+        Get.toNamed(AppRoutes.chatting, arguments: {
+          'contact': Contact.fromLastMessage(lastMessage),
+          'type': lastMessage.type,
+        });
+      },
       child: Column(
         children: [
           Container(
