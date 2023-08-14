@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/custom_indicator.dart';
+import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/ui/contact/contact_media_controller.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../services/storage_services.dart';
@@ -19,10 +23,12 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
   final Contact lastMessage = Get.arguments;
 
   late TabController tabController;
+  late bool detailGroup;
 
   @override
   void initState() {
-    tabController = TabController(length: 2, vsync: this);
+    detailGroup = lastMessage.group != null;
+    tabController = TabController(length: detailGroup ? 3 : 2, vsync: this);
     super.initState();
   }
 
@@ -63,7 +69,9 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            lastMessage.profile!.photo!,
+                            detailGroup
+                                ? lastMessage.group!.photo!
+                                : lastMessage.profile!.photo!,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -73,44 +81,41 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      lastMessage.profile!.name!,
+                      detailGroup
+                          ? lastMessage.group!.name!
+                          : lastMessage.profile!.name!,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    FutureBuilder(
-                      future: ProfileRepository()
-                          .loadUserStatus(lastMessage.profileId),
-                      builder: (context, snapshot) {
-                        return Text(snapshot.data ?? "");
-                      },
-                    ),
+                    _detailInfo(),
                     const SizedBox(height: 16),
-                    StreamBuilder(
-                      stream: ProfileRepository()
-                          .getOnlineStatus(lastMessage.profileId),
-                      builder: (context, snapshot) {
-                        bool online =
-                            snapshot.data?.data()?["visibility"] ?? false;
-                        return Visibility(
-                          visible: snapshot.connectionState ==
-                                  ConnectionState.active &&
-                              online,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(10),
+                    if (!detailGroup)
+                      StreamBuilder(
+                        stream: ProfileRepository()
+                            .getOnlineStatus(lastMessage.profileId),
+                        builder: (context, snapshot) {
+                          bool online =
+                              snapshot.data?.data()?["visibility"] ?? false;
+                          return Visibility(
+                            visible: snapshot.connectionState ==
+                                    ConnectionState.active &&
+                                online,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                online ? "Online" : "Offline",
+                                style: const TextStyle(color: Colors.white),
+                              ),
                             ),
-                            child: Text(
-                              online ? "Online" : "Offline",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        );
-                      },
-                    )
+                          );
+                        },
+                      )
                   ],
                 ),
               ),
@@ -126,6 +131,17 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                   unselectedLabelColor: const Color(0xffBDBDBD),
                   controller: tabController,
                   tabs: [
+                    if (detailGroup)
+                      Container(
+                        color: Get.theme.colorScheme.background,
+                        width: double.infinity,
+                        child: Tab(
+                          icon: Text(
+                            'Members'.tr,
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ),
                     Container(
                       color: Get.theme.colorScheme.background,
                       width: double.infinity,
@@ -154,13 +170,27 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
         },
         body: TabBarView(
           controller: tabController,
-          children: const [
-            ContactMediaTab(type: "image"),
-            ContactMediaTab(type: "file"),
+          children: [
+            if (detailGroup) GroupMembersTab(group: lastMessage.group!),
+            const ContactMediaTab(type: "image"),
+            const ContactMediaTab(type: "file"),
           ],
         ),
       ),
     );
+  }
+
+  Widget _detailInfo() {
+    if (detailGroup) {
+      return Text('${lastMessage.group!.members!.length} members');
+    } else {
+      return FutureBuilder(
+        future: ProfileRepository().loadUserStatus(lastMessage.profileId),
+        builder: (context, snapshot) {
+          return Text(snapshot.data ?? "");
+        },
+      );
+    }
   }
 }
 
@@ -187,5 +217,80 @@ class SliverPersistentHeaderDelegateImpl
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return false;
+  }
+}
+
+class GroupMembersTab extends StatefulWidget {
+  final Group group;
+
+  const GroupMembersTab({super.key, required this.group});
+
+  @override
+  State<GroupMembersTab> createState() => _GroupMembersTabState();
+}
+
+class _GroupMembersTabState extends State<GroupMembersTab>
+    with AutomaticKeepAliveClientMixin {
+  final ContactMediaController controller = Get.find();
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    controller.loadMembers(widget.group);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return GetBuilder<ContactMediaController>(
+      builder: (controller) {
+        if (controller.loading) {
+          return const Center(child: CustomIndicator());
+        } else if (controller.empty) {
+          return Center(child: EmptyWidget(message: 'empty_member'.tr));
+        } else {
+          return ListView.builder(
+            itemBuilder: (context, index) {
+              var profile = controller.profiles[index];
+              print("member name ${profile.name}");
+              return Column(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: Image.network(
+                            profile.photo ?? "",
+                            width: 40,
+                            height: 40,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            profile.name ?? "",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+            itemCount: controller.profiles.length,
+          );
+        }
+      },
+    );
   }
 }
