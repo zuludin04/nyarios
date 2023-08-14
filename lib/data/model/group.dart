@@ -30,7 +30,7 @@ class Group {
     return Group(
       name: map['name'] != null ? map['name'] as String : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
-      // members: map['members'] != null ? map['members'] as List<String> : null,
+      members: List.from(map['members']),
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
       groupId: map['groupId'] != null ? map['groupId'] as String : null,
       adminId: map['adminId'] != null ? map['adminId'] as String : null,
