@@ -23,7 +23,7 @@ You can try this app by clicking this link below.
 ## Future Implementation
 
 - [x]  Add friend with QR Code
-- [ ]  Group message
+- [x]  Group message
 - [ ]  Forward, Reply, and Star message
 - [x]  Block user/friend\
 - [ ]  Voice message
