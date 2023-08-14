@@ -23,7 +23,7 @@ class GroupRepository {
     yield* profile.map((event) => Group.fromJson(event.data()!));
   }
 
-  Future<void> addGroupMember(String groupId, List<String> members) async {
+  Future<void> updateGroupMember(String groupId, List<String> members) async {
     await contactReference.doc(groupId).update({'members': members});
   }
 }

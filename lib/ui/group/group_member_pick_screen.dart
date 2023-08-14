@@ -48,7 +48,7 @@ class _GroupMemberPickScreenState extends State<GroupMemberPickScreen> {
             members.addAll(group.members!);
             group.members = members;
 
-            groupRepo.addGroupMember(group.groupId!, members).then((value) {
+            groupRepo.updateGroupMember(group.groupId!, members).then((value) {
               chatRepo.updateGroupRecentChat(group, chat);
               Get.back();
             });

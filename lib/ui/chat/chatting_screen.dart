@@ -14,6 +14,7 @@ import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
+import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -100,10 +101,16 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         value: 1,
                         child: Text('search'.tr),
                       ),
-                      PopupMenuItem(
-                        value: 2,
-                        child: Text(blocked ? 'unblock'.tr : 'block'.tr),
-                      ),
+                      if (type == 'dm')
+                        PopupMenuItem(
+                          value: 2,
+                          child: Text(blocked ? 'unblock'.tr : 'block'.tr),
+                        ),
+                      if (type != 'dm')
+                        const PopupMenuItem(
+                          value: 4,
+                          child: Text('Leave Group'),
+                        ),
                     ];
                   },
                   onSelected: (value) {
@@ -137,6 +144,27 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         Get.toNamed(AppRoutes.groupMemberPick, arguments: {
                           'source': 'add',
                           'group': contact.group,
+                        });
+                        break;
+                      case 4:
+                        Chat chat = Chat(
+                          profileId: contact.group?.groupId,
+                          lastMessage:
+                              '${StorageServices.to.userName} left group',
+                          lastMessageSent:
+                              DateTime.now().millisecondsSinceEpoch,
+                          chatId: contact.chatId,
+                          type: type,
+                        );
+                        chatRepo
+                            .updateGroupRecentChat(contact.group!, chat)
+                            .then((value) async {
+                          contact.group!.members!
+                              .remove(StorageServices.to.userId);
+                          await GroupRepository().updateGroupMember(
+                              contact.group!.groupId!, contact.group!.members!);
+                          await chatRepo.deleteGroupChat(contact.group!.groupId!);
+                          Get.back();
                         });
                         break;
                     }

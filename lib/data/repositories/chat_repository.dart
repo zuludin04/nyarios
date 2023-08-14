@@ -37,4 +37,12 @@ class ChatRepository {
           .set(chat.toMapGroup());
     }
   }
+
+  Future<void> deleteGroupChat(String groupId) async {
+    await chatReference
+        .doc(StorageServices.to.userId)
+        .collection('receiver')
+        .doc(groupId)
+        .delete();
+  }
 }
