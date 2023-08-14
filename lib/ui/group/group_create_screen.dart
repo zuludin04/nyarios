@@ -6,8 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
@@ -203,11 +205,28 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
                   'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg')
               .getDownloadURL();
           group.photo = url;
-          await _groupRepo.createGroupChat(group);
-          Get.back();
+          _groupRepo.createGroupChat(group).then((value) async {
+            await _updateGroupRecentMessage(group);
+            Get.back();
+          });
           break;
       }
     });
+  }
+
+  Future<void> _updateGroupRecentMessage(Group group) async {
+    var repo = ChatRepository();
+
+    var chat = Chat(
+      profileId: group.groupId,
+      lastMessage:
+          '${StorageServices.to.userName} created group "${group.name}"',
+      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
+      chatId: group.chatId,
+      type: 'group',
+    );
+
+    await repo.updateGroupRecentChat(group, chat);
   }
 
   void _pickImage(bool fromGallery) async {

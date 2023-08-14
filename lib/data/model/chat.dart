@@ -1,5 +1,6 @@
 import 'package:nyarios/services/storage_services.dart';
 
+import 'group.dart';
 import 'profile.dart';
 
 class Chat {
@@ -10,6 +11,7 @@ class Chat {
   String? type;
 
   Profile? profile;
+  Group? group;
 
   Chat({
     this.profileId,
@@ -18,6 +20,7 @@ class Chat {
     this.chatId,
     this.type,
     this.profile,
+    this.group,
   });
 
   Map<String, dynamic> toMap(bool fromSender) {
@@ -30,7 +33,17 @@ class Chat {
     };
   }
 
-  factory Chat.fromMap(Map<String, dynamic> map, Profile profile) {
+  Map<String, dynamic> toMapGroup() {
+    return <String, dynamic>{
+      'profileId': profileId,
+      'lastMessage': lastMessage,
+      'lastMessageSent': lastMessageSent,
+      'chatId': chatId,
+      'type': type,
+    };
+  }
+
+  factory Chat.fromMapProfile(Map<String, dynamic> map, Profile profile) {
     return Chat(
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
       lastMessage:
@@ -40,6 +53,19 @@ class Chat {
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
       profile: profile,
+    );
+  }
+
+  factory Chat.fromMapGroup(Map<String, dynamic> map, Group group) {
+    return Chat(
+      profileId: map['profileId'] != null ? map['profileId'] as String : null,
+      lastMessage:
+          map['lastMessage'] != null ? map['lastMessage'] as String : null,
+      lastMessageSent:
+          map['lastMessageSent'] != null ? map['lastMessageSent'] as int : null,
+      chatId: map['chatId'] != null ? map['chatId'] as String : null,
+      type: map['type'] != null ? map['type'] as String : null,
+      group: group,
     );
   }
 }

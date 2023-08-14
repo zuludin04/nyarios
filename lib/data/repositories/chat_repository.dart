@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/data/model/chat.dart';
+import 'package:nyarios/data/model/group.dart';
+import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
@@ -8,6 +10,7 @@ class ChatRepository {
       FirebaseFirestore.instance.collection('chat');
 
   final ProfileRepository profileRepository = ProfileRepository();
+  final GroupRepository groupRepository = GroupRepository();
 
   Stream<List<Chat>> loadRecentChat() async* {
     var recentChatStream = chatReference
@@ -21,11 +24,17 @@ class ChatRepository {
     await for (var snapshot in recentChatStream) {
       for (var doc in snapshot.docs) {
         var receiverId = doc.data()['profileId'];
-        var profile = await profileRepository.loadSingleProfile(receiverId);
+        var type = doc.data()['type'];
 
-        var lastMessage = Chat.fromMap(doc.data(), profile);
+        var lastMessage = Chat();
+        if (type == 'dm') {
+          var profile = await profileRepository.loadSingleProfile(receiverId);
+          lastMessage = Chat.fromMapProfile(doc.data(), profile);
+        } else {
+          var group = await groupRepository.loadSingleGroup(receiverId);
+          lastMessage = Chat.fromMapGroup(doc.data(), group);
+        }
 
-        lastMessages.clear();
         lastMessages.add(lastMessage);
       }
       yield lastMessages;
@@ -38,5 +47,15 @@ class ChatRepository {
         .collection('receiver')
         .doc(fromSender ? lastMessage.profileId : StorageServices.to.userId)
         .set(lastMessage.toMap(fromSender));
+  }
+
+  Future<void> updateGroupRecentChat(Group group, Chat chat) async {
+    for (var element in group.members!) {
+      await chatReference
+          .doc(element)
+          .collection('receiver')
+          .doc(group.groupId)
+          .set(chat.toMapGroup());
+    }
   }
 }

@@ -10,4 +10,10 @@ class GroupRepository {
     group.groupId = groupId;
     await contactReference.doc(groupId).set(group.toMap());
   }
+
+  Future<Group> loadSingleGroup(String groupId) async {
+    var ref =
+        await FirebaseFirestore.instance.collection('group').doc(groupId).get();
+    return Group.fromJson(ref.data()!);
+  }
 }
