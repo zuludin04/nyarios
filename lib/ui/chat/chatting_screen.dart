@@ -1,13 +1,7 @@
-import 'dart:io';
-import 'dart:math';
-
 import 'package:clipboard/clipboard.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/contact.dart';
@@ -17,6 +11,7 @@ import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
+import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -37,8 +32,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final chatRepo = ChatRepository();
   final contactRepo = ContactRepository();
   final messageRepo = MessageRepository();
-  final TextEditingController _messageEditingController =
-      TextEditingController();
+
   final chattingController = Get.find<ChattingController>();
 
   Contact contact = Get.arguments['contact'];
@@ -200,125 +194,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
               },
             ),
           ),
-          GetBuilder<ChattingController>(
-            builder: (controller) {
-              return controller.blocked
-                  ? Container(
-                      color: Get.theme.colorScheme.background,
-                      padding: const EdgeInsets.all(16),
-                      child: Center(
-                        child: Text(
-                          'user_blocked'.tr,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    )
-                  : Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              boxShadow: const [
-                                BoxShadow(
-                                  offset: Offset(0, 0),
-                                  blurRadius: 1,
-                                  spreadRadius: 1,
-                                  color: Colors.black12,
-                                ),
-                              ],
-                            ),
-                            margin: const EdgeInsets.all(8),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: _messageEditingController,
-                                    keyboardType: TextInputType.multiline,
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      contentPadding: const EdgeInsets.all(16),
-                                      hintText: 'message'.tr,
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
-                                    focusNode: FocusNode(),
-                                    cursorColor: const Color(0xffb3404a),
-                                    textInputAction: TextInputAction.send,
-                                    onEditingComplete: () {},
-                                    onFieldSubmitted: (value) {
-                                      _sendMessage(value, 'text');
-                                      _messageEditingController.clear();
-                                    },
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Get.bottomSheet(
-                                      SizedBox(
-                                        height: 100,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            _pickFileMenu(
-                                                'File', Icons.attach_file),
-                                            _pickFileMenu(
-                                                'Gallery', Icons.image),
-                                          ],
-                                        ),
-                                      ),
-                                      backgroundColor:
-                                          Get.theme.colorScheme.background,
-                                    );
-                                  },
-                                  icon: const Icon(Icons.attach_file),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    _pickImage(false);
-                                  },
-                                  icon: const Icon(Icons.camera_alt),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            if (_messageEditingController.text.isNotEmpty) {
-                              _sendMessage(
-                                  _messageEditingController.text, 'text');
-                              _messageEditingController.clear();
-                            }
-                          },
-                          borderRadius: BorderRadius.circular(100),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xffb3404a),
-                            ),
-                            padding: const EdgeInsets.all(10),
-                            child: const Icon(
-                              Icons.send,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    );
-            },
-          ),
+          const ChatInputMessage(),
         ],
       ),
     );
@@ -379,27 +255,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Widget _pickFileMenu(String title, IconData icon) {
-    return InkWell(
-      onTap: () async {
-        Get.back();
-        if (title == 'Gallery') {
-          _pickImage(true);
-        } else {
-          _pickFile();
-        }
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(icon, size: 32),
-          Text(title.toLowerCase().tr),
-        ],
-      ),
-    );
-  }
-
   List<Widget> _selectedChatActions() {
     return [
       IconButton(
@@ -456,144 +311,5 @@ class _ChattingScreenState extends State<ChattingScreen> {
             ? contact.profile?.name ?? ""
             : contact.group?.name ?? "";
     return "[$date] $user: ${chat.message}\n";
-  }
-
-  void _sendMessage(
-    String message,
-    String type, {
-    String url = "",
-    String fileSize = "",
-  }) async {
-    Message newMessage = Message(
-      message: message,
-      type: type,
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      url: url,
-      fileSize: fileSize,
-      profileId: StorageServices.to.userId,
-      chatId: contact.chatId!,
-    );
-
-    Chat chat = Chat(
-      profileId: this.type == 'dm' ? contact.profileId : contact.group?.groupId,
-      lastMessage: message,
-      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
-      chatId: contact.chatId,
-      type: this.type,
-    );
-
-    if (this.type == 'dm') {
-      chatRepo.updateRecentChat(true, chat);
-      chatRepo.updateRecentChat(false, chat);
-    } else {
-      chatRepo.updateGroupRecentChat(contact.group!, chat);
-    }
-
-    messageRepo.sendNewMessage(newMessage);
-  }
-
-  void _pickImage(bool fromGallery) async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: fromGallery ? ImageSource.gallery : ImageSource.camera,
-      imageQuality: 50,
-    );
-
-    if (pickedFile != null) {
-      var file = File(pickedFile.path);
-      var storage = FirebaseStorage.instance.ref();
-      var uploadImage = storage
-          .child('nyarios/images/${pickedFile.name}')
-          .putFile(File(pickedFile.path));
-
-      setState(() {
-        upload = true;
-      });
-
-      uploadImage.snapshotEvents.listen((event) async {
-        switch (event.state) {
-          case TaskState.running:
-            final progress = event.bytesTransferred / event.totalBytes;
-            setState(() {
-              uploadIndicator = (progress * 100).toStringAsFixed(0);
-            });
-            break;
-          case TaskState.paused:
-            debugPrint("Upload is paused.");
-            break;
-          case TaskState.canceled:
-            debugPrint("Upload was canceled");
-            break;
-          case TaskState.error:
-            debugPrint("Upload was error");
-            break;
-          case TaskState.success:
-            var url = await storage
-                .child('nyarios/images/${pickedFile.name}')
-                .getDownloadURL();
-            var fileSize = await getFileSize(file);
-            _sendMessage(pickedFile.name, 'image',
-                url: url, fileSize: fileSize);
-            setState(() {
-              upload = false;
-            });
-            break;
-        }
-      });
-    }
-  }
-
-  void _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      var storage = FirebaseStorage.instance.ref();
-      var uploadImage = storage
-          .child('nyarios/files/${file.path.split("/").last}')
-          .putFile(File(file.path));
-
-      setState(() {
-        upload = true;
-      });
-
-      uploadImage.snapshotEvents.listen((event) async {
-        switch (event.state) {
-          case TaskState.running:
-            final progress = event.bytesTransferred / event.totalBytes;
-            setState(() {
-              uploadIndicator = (progress * 100).toStringAsFixed(0);
-            });
-            break;
-          case TaskState.paused:
-            debugPrint("Upload is paused.");
-            break;
-          case TaskState.canceled:
-            debugPrint("Upload was canceled");
-            break;
-          case TaskState.error:
-            debugPrint("Upload was error");
-            break;
-          case TaskState.success:
-            var url = await storage
-                .child('nyarios/files/${file.path.split("/").last}')
-                .getDownloadURL();
-            var fileSize = await getFileSize(file);
-            _sendMessage(result.files.single.name, 'file',
-                url: url, fileSize: fileSize);
-            setState(() {
-              upload = false;
-            });
-            break;
-        }
-      });
-    }
-  }
-
-  Future<String> getFileSize(File file) async {
-    int bytes = await file.length();
-    if (bytes <= 0) return "0 B";
-    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-    var i = (log(bytes) / log(1024)).floor();
-    return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
   }
 }
