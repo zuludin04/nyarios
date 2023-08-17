@@ -7,9 +7,7 @@ import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
-import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
-import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
@@ -30,8 +28,6 @@ class ChattingScreen extends StatefulWidget {
 
 class _ChattingScreenState extends State<ChattingScreen> {
   final chatRepo = ChatRepository();
-  final contactRepo = ContactRepository();
-  final messageRepo = MessageRepository();
 
   final chattingController = Get.find<ChattingController>();
 
@@ -40,11 +36,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   List<Message> selectedChat = [];
   bool selectionMode = false;
-  String uploadIndicator = '0';
-  bool upload = false;
-
-  bool alreadyAdded = true;
-  bool blocked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -165,20 +156,25 @@ class _ChattingScreenState extends State<ChattingScreen> {
       ),
       body: Column(
         children: [
-          Visibility(
-            visible: upload,
-            child: LinearPercentIndicator(
-              percent: double.parse(uploadIndicator) / 100,
-              progressColor: Colors.red,
-              padding: const EdgeInsets.all(0),
-              lineHeight: 3,
-            ),
+          GetBuilder<ChattingController>(
+            builder: (controller) {
+              return Visibility(
+                visible: controller.upload,
+                child: LinearPercentIndicator(
+                  percent: double.parse(controller.uploadProgress) / 100,
+                  progressColor: Colors.red,
+                  padding: const EdgeInsets.all(0),
+                  lineHeight: 3,
+                ),
+              );
+            },
           ),
           const ContactFriendInfo(),
           const SizedBox(height: 16),
           Expanded(
             child: StreamBuilder(
-              stream: messageRepo.loadChatMessages(contact.chatId),
+              stream: chattingController.messageRepo
+                  .loadChatMessages(contact.chatId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(child: Text('something_went_wrong'.tr));

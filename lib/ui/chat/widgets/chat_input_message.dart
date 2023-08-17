@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -171,41 +170,15 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
 
     if (pickedFile != null) {
       var file = File(pickedFile.path);
-      var storage = FirebaseStorage.instance.ref();
-      var uploadImage = storage
-          .child('nyarios/images/${pickedFile.name}')
-          .putFile(File(pickedFile.path));
+      var fileSize = await getFileSize(file);
 
-      uploadImage.snapshotEvents.listen((event) async {
-        switch (event.state) {
-          case TaskState.running:
-            final progress = event.bytesTransferred / event.totalBytes;
-            // setState(() {
-            //   uploadIndicator = (progress * 100).toStringAsFixed(0);
-            // });
-            break;
-          case TaskState.paused:
-            debugPrint("Upload is paused.");
-            break;
-          case TaskState.canceled:
-            debugPrint("Upload was canceled");
-            break;
-          case TaskState.error:
-            debugPrint("Upload was error");
-            break;
-          case TaskState.success:
-            var url = await storage
-                .child('nyarios/images/${pickedFile.name}')
-                .getDownloadURL();
-            var fileSize = await getFileSize(file);
-            controller.sendMessage(pickedFile.name, 'image',
-                url: url, fileSize: fileSize);
-            // setState(() {
-            //   upload = false;
-            // });
-            break;
-        }
-      });
+      controller.uploadSendFile(
+        'nyarios/images',
+        pickedFile.name,
+        fileSize,
+        File(pickedFile.path),
+        'image',
+      );
     }
   }
 
@@ -214,45 +187,15 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
 
     if (result != null) {
       File file = File(result.files.single.path!);
-      var storage = FirebaseStorage.instance.ref();
-      var uploadImage = storage
-          .child('nyarios/files/${file.path.split("/").last}')
-          .putFile(File(file.path));
+      var fileSize = await getFileSize(file);
 
-      // setState(() {
-      //   upload = true;
-      // });
-
-      uploadImage.snapshotEvents.listen((event) async {
-        switch (event.state) {
-          case TaskState.running:
-            final progress = event.bytesTransferred / event.totalBytes;
-            // setState(() {
-            //   uploadIndicator = (progress * 100).toStringAsFixed(0);
-            // });
-            break;
-          case TaskState.paused:
-            debugPrint("Upload is paused.");
-            break;
-          case TaskState.canceled:
-            debugPrint("Upload was canceled");
-            break;
-          case TaskState.error:
-            debugPrint("Upload was error");
-            break;
-          case TaskState.success:
-            var url = await storage
-                .child('nyarios/files/${file.path.split("/").last}')
-                .getDownloadURL();
-            var fileSize = await getFileSize(file);
-            controller.sendMessage(result.files.single.name, 'file',
-                url: url, fileSize: fileSize);
-            // setState(() {
-            //   upload = false;
-            // });
-            break;
-        }
-      });
+      controller.uploadSendFile(
+        'nyarios/files',
+        file.path.split("/").last,
+        fileSize,
+        File(file.path),
+        'file',
+      );
     }
   }
 

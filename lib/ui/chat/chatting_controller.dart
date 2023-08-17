@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/contact.dart';
@@ -17,6 +21,8 @@ class ChattingController extends GetxController {
 
   bool blocked = false;
   bool alreadyAdded = true;
+  bool upload = false;
+  String uploadProgress = "0";
 
   @override
   void onInit() {
@@ -50,11 +56,11 @@ class ChattingController extends GetxController {
   }
 
   void sendMessage(
-      String message,
-      String type, {
-        String url = "",
-        String fileSize = "",
-      }) async {
+    String message,
+    String type, {
+    String url = "",
+    String fileSize = "",
+  }) async {
     Message newMessage = Message(
       message: message,
       type: type,
@@ -81,5 +87,39 @@ class ChattingController extends GetxController {
     }
 
     messageRepo.sendNewMessage(newMessage);
+  }
+
+  void uploadSendFile(String path, String fileName, String fileSize, File file,
+      String type) async {
+    var storage = FirebaseStorage.instance.ref();
+    var uploadImage = storage.child('$path/$fileName').putFile(file);
+
+    upload = true;
+    update();
+
+    uploadImage.snapshotEvents.listen((event) async {
+      switch (event.state) {
+        case TaskState.running:
+          final progress = event.bytesTransferred / event.totalBytes;
+          uploadProgress = (progress * 100).toStringAsFixed(0);
+          update();
+          break;
+        case TaskState.paused:
+          debugPrint("Upload is paused.");
+          break;
+        case TaskState.canceled:
+          debugPrint("Upload was canceled");
+          break;
+        case TaskState.error:
+          debugPrint("Upload was error");
+          break;
+        case TaskState.success:
+          var url = await storage.child('$path/$fileName').getDownloadURL();
+          sendMessage(fileName, type, url: url, fileSize: fileSize);
+          upload = false;
+          update();
+          break;
+      }
+    });
   }
 }
