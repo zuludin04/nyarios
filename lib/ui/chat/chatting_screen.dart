@@ -5,7 +5,6 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
-import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
@@ -25,8 +24,6 @@ class ChattingScreen extends StatefulWidget {
 }
 
 class _ChattingScreenState extends State<ChattingScreen> {
-  final chatRepo = ChatRepository();
-
   final chattingController = Get.find<ChattingController>();
 
   Contact contact = Get.arguments['contact'];
