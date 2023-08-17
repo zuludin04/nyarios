@@ -10,14 +10,11 @@ class ContactRepository {
   ProfileRepository profileRepository = ProfileRepository();
 
   Future<void> saveContact(Contact contact, String profileId) async {
-    var exist = await checkIfContactExist(profileId);
-    if (!exist) {
-      contactReference
-          .doc(StorageServices.to.userId)
-          .collection('friends')
-          .doc(profileId)
-          .set(contact.toMap());
-    }
+    contactReference
+        .doc(StorageServices.to.userId)
+        .collection('friends')
+        .doc(profileId)
+        .set(contact.toMap());
   }
 
   Future<bool> checkIfContactExist(String userId) async {

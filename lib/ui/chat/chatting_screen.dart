@@ -16,6 +16,8 @@ import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
+import 'package:nyarios/ui/chat/chatting_controller.dart';
+import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/custom_indicator.dart';
@@ -37,6 +39,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
   final messageRepo = MessageRepository();
   final TextEditingController _messageEditingController =
       TextEditingController();
+  final chattingController = Get.find<ChattingController>();
 
   Contact contact = Get.arguments['contact'];
   String type = Get.arguments['type'];
@@ -48,12 +51,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
   bool alreadyAdded = true;
   bool blocked = false;
-
-  @override
-  void initState() {
-    loadFriendBlockStatus();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +160,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                               .remove(StorageServices.to.userId);
                           await GroupRepository().updateGroupMember(
                               contact.group!.groupId!, contact.group!.members!);
-                          await chatRepo.deleteGroupChat(contact.group!.groupId!);
+                          await chatRepo
+                              .deleteGroupChat(contact.group!.groupId!);
                           Get.back();
                         });
                         break;
@@ -184,46 +182,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
               lineHeight: 3,
             ),
           ),
-          Visibility(
-            visible: !alreadyAdded,
-            child: Container(
-              color: Get.theme.colorScheme.background,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  if (!blocked)
-                    _friendNotAddedAction(
-                      () {
-                        var contact = Contact(
-                          profileId: this.contact.profileId,
-                          chatId: this.contact.chatId,
-                          blocked: blocked,
-                          alreadyFriend: true,
-                        );
-                        contactRepo.saveContact(
-                            contact, this.contact.profileId!);
-                        setState(() {
-                          alreadyAdded = !alreadyAdded;
-                        });
-                      },
-                      Icons.add,
-                      'add_friend'.tr,
-                    ),
-                  _friendNotAddedAction(
-                    () {
-                      setState(() {
-                        blocked = !blocked;
-                      });
-                      contactRepo.changeBlockStatus(contact.profileId, blocked);
-                    },
-                    Icons.block_rounded,
-                    blocked ? 'unblock'.tr : 'block'.tr,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          const ContactFriendInfo(),
           const SizedBox(height: 16),
           Expanded(
             child: StreamBuilder(
@@ -437,19 +396,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
     );
   }
 
-  Widget _friendNotAddedAction(Function() onTap, IconData icon, String title) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Icon(icon),
-          const SizedBox(height: 5),
-          Text(title),
-        ],
-      ),
-    );
-  }
-
   List<Widget> _selectedChatActions() {
     return [
       IconButton(
@@ -645,13 +591,5 @@ class _ChattingScreenState extends State<ChattingScreen> {
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     var i = (log(bytes) / log(1024)).floor();
     return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
-  }
-
-  void loadFriendBlockStatus() async {
-    var contact = await contactRepo.loadSingleContact(this.contact.profileId);
-    setState(() {
-      blocked = contact?.blocked ?? false;
-      alreadyAdded = contact?.alreadyFriend ?? false;
-    });
   }
 }

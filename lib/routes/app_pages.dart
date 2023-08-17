@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nyarios/ui/chat/chatting_binding.dart';
 import 'package:nyarios/ui/contact/block/contact_block_screen.dart';
 import 'package:nyarios/ui/contact/friend/contact_friends_screen.dart';
 import 'package:nyarios/ui/group/group_create_screen.dart';
@@ -44,6 +45,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.chatting,
       page: () => const ChattingScreen(),
+      binding: ChattingBinding(),
     ),
     GetPage(
       name: AppRoutes.settings,
