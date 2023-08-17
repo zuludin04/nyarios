@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
-import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
@@ -127,26 +125,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         });
                         break;
                       case 4:
-                        Chat chat = Chat(
-                          profileId: contact.group?.groupId,
-                          lastMessage:
-                              '${StorageServices.to.userName} left group',
-                          lastMessageSent:
-                              DateTime.now().millisecondsSinceEpoch,
-                          chatId: contact.chatId,
-                          type: type,
-                        );
-                        chatRepo
-                            .updateGroupRecentChat(contact.group!, chat)
-                            .then((value) async {
-                          contact.group!.members!
-                              .remove(StorageServices.to.userId);
-                          await GroupRepository().updateGroupMember(
-                              contact.group!.groupId!, contact.group!.members!);
-                          await chatRepo
-                              .deleteGroupChat(contact.group!.groupId!);
-                          Get.back();
-                        });
+                        chattingController.leaveAndRemoveGroup();
                         break;
                     }
                   },
