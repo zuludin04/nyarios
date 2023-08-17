@@ -10,7 +10,7 @@ class ContactFriendInfo extends StatelessWidget {
     return GetBuilder<ChattingController>(
       builder: (controller) {
         return Visibility(
-          visible: !controller.alreadyAdded,
+          visible: !controller.alreadyAdded && controller.type == 'dm',
           child: Container(
             color: Get.theme.colorScheme.background,
             padding: const EdgeInsets.all(16),
