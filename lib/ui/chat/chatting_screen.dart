@@ -101,7 +101,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       if (type == 'dm')
                         PopupMenuItem(
                           value: 2,
-                          child: Text(blocked ? 'unblock'.tr : 'block'.tr),
+                          child: Text(chattingController.blocked
+                              ? 'unblock'.tr
+                              : 'block'.tr),
                         ),
                       if (type != 'dm')
                         const PopupMenuItem(
@@ -131,11 +133,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         );
                         break;
                       case 2:
-                        setState(() {
-                          blocked = !blocked;
-                        });
-                        contactRepo.changeBlockStatus(
-                            contact.profileId, blocked);
+                        chattingController.changeBlockStatus();
                         break;
                       case 3:
                         Get.toNamed(AppRoutes.groupMemberPick, arguments: {
@@ -202,119 +200,125 @@ class _ChattingScreenState extends State<ChattingScreen> {
               },
             ),
           ),
-          blocked
-              ? Container(
-                  color: Get.theme.colorScheme.background,
-                  padding: const EdgeInsets.all(16),
-                  child: Center(
-                    child: Text(
-                      'user_blocked'.tr,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                )
-              : Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          boxShadow: const [
-                            BoxShadow(
-                              offset: Offset(0, 0),
-                              blurRadius: 1,
-                              spreadRadius: 1,
-                              color: Colors.black12,
-                            ),
-                          ],
+          GetBuilder<ChattingController>(
+            builder: (controller) {
+              return controller.blocked
+                  ? Container(
+                      color: Get.theme.colorScheme.background,
+                      padding: const EdgeInsets.all(16),
+                      child: Center(
+                        child: Text(
+                          'user_blocked'.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 16,
+                          ),
                         ),
-                        margin: const EdgeInsets.all(8),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: _messageEditingController,
-                                keyboardType: TextInputType.multiline,
-                                maxLines: null,
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.all(16),
-                                  hintText: 'message'.tr,
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
+                      ),
+                    )
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              boxShadow: const [
+                                BoxShadow(
+                                  offset: Offset(0, 0),
+                                  blurRadius: 1,
+                                  spreadRadius: 1,
+                                  color: Colors.black12,
                                 ),
-                                focusNode: FocusNode(),
-                                cursorColor: const Color(0xffb3404a),
-                                textInputAction: TextInputAction.send,
-                                onEditingComplete: () {},
-                                onFieldSubmitted: (value) {
-                                  _sendMessage(value, 'text');
-                                  _messageEditingController.clear();
-                                },
-                              ),
+                              ],
                             ),
-                            IconButton(
-                              onPressed: () {
-                                Get.bottomSheet(
-                                  SizedBox(
-                                    height: 100,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        _pickFileMenu(
-                                            'File', Icons.attach_file),
-                                        _pickFileMenu('Gallery', Icons.image),
-                                      ],
+                            margin: const EdgeInsets.all(8),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _messageEditingController,
+                                    keyboardType: TextInputType.multiline,
+                                    maxLines: null,
+                                    decoration: InputDecoration(
+                                      contentPadding: const EdgeInsets.all(16),
+                                      hintText: 'message'.tr,
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      errorBorder: InputBorder.none,
+                                      disabledBorder: InputBorder.none,
                                     ),
+                                    focusNode: FocusNode(),
+                                    cursorColor: const Color(0xffb3404a),
+                                    textInputAction: TextInputAction.send,
+                                    onEditingComplete: () {},
+                                    onFieldSubmitted: (value) {
+                                      _sendMessage(value, 'text');
+                                      _messageEditingController.clear();
+                                    },
                                   ),
-                                  backgroundColor:
-                                      Get.theme.colorScheme.background,
-                                );
-                              },
-                              icon: const Icon(Icons.attach_file),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Get.bottomSheet(
+                                      SizedBox(
+                                        height: 100,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            _pickFileMenu(
+                                                'File', Icons.attach_file),
+                                            _pickFileMenu(
+                                                'Gallery', Icons.image),
+                                          ],
+                                        ),
+                                      ),
+                                      backgroundColor:
+                                          Get.theme.colorScheme.background,
+                                    );
+                                  },
+                                  icon: const Icon(Icons.attach_file),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    _pickImage(false);
+                                  },
+                                  icon: const Icon(Icons.camera_alt),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              onPressed: () {
-                                _pickImage(false);
-                              },
-                              icon: const Icon(Icons.camera_alt),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            if (_messageEditingController.text.isNotEmpty) {
+                              _sendMessage(
+                                  _messageEditingController.text, 'text');
+                              _messageEditingController.clear();
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xffb3404a),
                             ),
-                          ],
+                            padding: const EdgeInsets.all(10),
+                            child: const Icon(
+                              Icons.send,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        if (_messageEditingController.text.isNotEmpty) {
-                          _sendMessage(_messageEditingController.text, 'text');
-                          _messageEditingController.clear();
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(100),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xffb3404a),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: const Icon(
-                          Icons.send,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                ),
+                        const SizedBox(width: 8),
+                      ],
+                    );
+            },
+          ),
         ],
       ),
     );
