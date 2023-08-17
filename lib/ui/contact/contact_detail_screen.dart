@@ -255,7 +255,6 @@ class _GroupMembersTabState extends State<GroupMembersTab>
           return ListView.builder(
             itemBuilder: (context, index) {
               var profile = controller.profiles[index];
-              print("member name ${profile.name}");
               return Column(
                 children: [
                   Container(
