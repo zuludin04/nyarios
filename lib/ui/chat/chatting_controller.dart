@@ -20,6 +20,9 @@ class ChattingController extends GetxController {
   Contact contact = Get.arguments['contact'];
   String type = Get.arguments['type'];
 
+  List<Message> selectedChat = [];
+  bool isSelectionMode = false;
+
   bool blocked = false;
   bool alreadyAdded = true;
   bool upload = false;
@@ -145,5 +148,24 @@ class ChattingController extends GetxController {
           .deleteGroupChat(contact.group!.groupId!);
       Get.back();
     });
+  }
+
+  void selectChat(Message message) {
+    if (selectedChat.contains(message)) {
+      selectedChat.remove(message);
+      if (selectedChat.isEmpty) {
+        isSelectionMode = false;
+      }
+    } else {
+      selectedChat.add(message);
+      isSelectionMode = true;
+    }
+    update();
+  }
+
+  void clearSelectedChat() {
+    selectedChat.clear();
+    isSelectionMode = false;
+    update();
   }
 }

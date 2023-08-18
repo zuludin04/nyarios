@@ -14,6 +14,7 @@ class Toolbar {
     bool stream = false,
     String? uid = "",
     Widget? leading,
+    Widget? titleWidget,
   }) {
     return AppBar(
       leading: leading ??
@@ -27,7 +28,7 @@ class Toolbar {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title),
+            titleWidget ?? Text(title),
             _buildSubtitleWidget(stream, subtitle, uid),
           ],
         ),

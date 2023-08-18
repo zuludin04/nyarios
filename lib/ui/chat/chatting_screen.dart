@@ -35,101 +35,159 @@ class _ChattingScreenState extends State<ChattingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(
-        selectedChat.isEmpty
-            ? type == 'dm'
-                ? contact.profile?.name ?? ""
-                : contact.group?.name ?? ""
-            : "${selectedChat.length} ${"selected_chat".tr}",
-        leading: selectedChat.isEmpty
-            ? null
-            : IconButton(
-                onPressed: () {
-                  setState(() {
-                    selectedChat.clear();
-                    selectionMode = false;
-                  });
-                },
-                icon: const Icon(Icons.close),
+      appBar: Toolbar.defaultToolbar("",
+          titleWidget: GetBuilder<ChattingController>(
+            builder: (controller) {
+              return Text(controller.selectedChat.isEmpty
+                  ? type == 'dm'
+                      ? contact.profile?.name ?? ""
+                      : contact.group?.name ?? ""
+                  : "${controller.selectedChat.length} ${"selected_chat".tr}");
+            },
+          ),
+          leading: GetBuilder<ChattingController>(
+            builder: (controller) {
+              if (controller.selectedChat.isEmpty) {
+                return IconButton(
+                  onPressed: Get.back,
+                  icon: const Icon(Icons.chevron_left),
+                );
+              } else {
+                return IconButton(
+                  onPressed: controller.clearSelectedChat,
+                  icon: const Icon(Icons.close),
+                );
+              }
+            },
+          ),
+          stream: true,
+          uid: contact.profileId,
+          onTapTitle: () => Get.toNamed(
+                AppRoutes.contactDetail,
+                arguments: contact,
               ),
-        stream: true,
-        uid: contact.profileId,
-        onTapTitle: () => Get.toNamed(
-          AppRoutes.contactDetail,
-          arguments: contact,
-        ),
-        elevation: 0,
-        actions: !selectionMode
-            ? [
-                PopupMenuButton(
-                  icon: const Icon(Icons.more_vert),
-                  itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(
-                        value: 0,
-                        child: Text('view_contact'.tr),
-                      ),
-                      if (type != 'dm')
-                        const PopupMenuItem(
-                          value: 3,
-                          child: Text('Add Member'),
-                        ),
-                      PopupMenuItem(
-                        value: 1,
-                        child: Text('search'.tr),
-                      ),
-                      if (type == 'dm')
+          elevation: 0,
+          actions: [
+            GetBuilder<ChattingController>(
+              builder: (controller) {
+                return Visibility(
+                  visible: !controller.isSelectionMode,
+                  child: PopupMenuButton(
+                    icon: const Icon(Icons.more_vert),
+                    itemBuilder: (context) {
+                      return [
                         PopupMenuItem(
-                          value: 2,
-                          child: Text(chattingController.blocked
-                              ? 'unblock'.tr
-                              : 'block'.tr),
+                          value: 0,
+                          child: Text('view_contact'.tr),
                         ),
-                      if (type != 'dm')
-                        const PopupMenuItem(
-                          value: 4,
-                          child: Text('Leave Group'),
+                        if (type != 'dm')
+                          const PopupMenuItem(
+                            value: 3,
+                            child: Text('Add Member'),
+                          ),
+                        PopupMenuItem(
+                          value: 1,
+                          child: Text('search'.tr),
                         ),
-                    ];
-                  },
-                  onSelected: (value) {
-                    switch (value) {
-                      case 0:
-                        Get.toNamed(
-                          AppRoutes.contactDetail,
-                          arguments: contact,
-                        );
-                        break;
-                      case 1:
-                        Get.toNamed(
-                          AppRoutes.search,
-                          arguments: {
-                            'type': 'chats',
-                            'roomId': contact.chatId,
-                            'user': type == 'dm'
-                                ? contact.profile?.name ?? ""
-                                : contact.group?.name ?? "",
-                          },
-                        );
-                        break;
-                      case 2:
-                        chattingController.changeBlockStatus();
-                        break;
-                      case 3:
-                        Get.toNamed(AppRoutes.groupMemberPick, arguments: {
-                          'source': 'add',
-                          'group': contact.group,
+                        if (type == 'dm')
+                          PopupMenuItem(
+                            value: 2,
+                            child: Text(chattingController.blocked
+                                ? 'unblock'.tr
+                                : 'block'.tr),
+                          ),
+                        if (type != 'dm')
+                          const PopupMenuItem(
+                            value: 4,
+                            child: Text('Leave Group'),
+                          ),
+                      ];
+                    },
+                    onSelected: (value) {
+                      switch (value) {
+                        case 0:
+                          Get.toNamed(
+                            AppRoutes.contactDetail,
+                            arguments: contact,
+                          );
+                          break;
+                        case 1:
+                          Get.toNamed(
+                            AppRoutes.search,
+                            arguments: {
+                              'type': 'chats',
+                              'roomId': contact.chatId,
+                              'user': type == 'dm'
+                                  ? contact.profile?.name ?? ""
+                                  : contact.group?.name ?? "",
+                            },
+                          );
+                          break;
+                        case 2:
+                          chattingController.changeBlockStatus();
+                          break;
+                        case 3:
+                          Get.toNamed(AppRoutes.groupMemberPick, arguments: {
+                            'source': 'add',
+                            'group': contact.group,
+                          });
+                          break;
+                        case 4:
+                          chattingController.leaveAndRemoveGroup();
+                          break;
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
+            GetBuilder<ChattingController>(
+              builder: (controller) {
+                return Visibility(
+                  visible: controller.isSelectionMode,
+                  child: IconButton(
+                    onPressed: () {
+                      var messages = selectedChat
+                          .map((e) => _copiedMessage(e))
+                          .toList()
+                          .join();
+                      FlutterClipboard.copy(messages).then((value) {
+                        Get.rawSnackbar(
+                            message:
+                                "${selectedChat.length} ${"messages_copied".tr}");
+                        setState(() {
+                          selectedChat.clear();
+                          selectionMode = false;
                         });
-                        break;
-                      case 4:
-                        chattingController.leaveAndRemoveGroup();
-                        break;
-                    }
-                  },
-                )
-              ]
-            : _selectedChatActions(),
-      ),
+                      });
+                    },
+                    icon: const Icon(Icons.copy),
+                  ),
+                );
+              },
+            ),
+            GetBuilder<ChattingController>(
+              builder: (controller) {
+                return Visibility(
+                  visible: controller.isSelectionMode,
+                  child: IconButton(
+                    onPressed: () {
+                      // chatRepo
+                      //     .batchDelete(
+                      //         contact.roomId!, selectedChat, contact.profile!)
+                      //     .then((value) {
+                      //   setState(() {
+                      //     selectedChat.clear();
+                      //     selectionMode = false;
+                      //   });
+                      // });
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
+                );
+              },
+            ),
+          ]),
       body: Column(
         children: [
           GetBuilder<ChattingController>(
@@ -187,18 +245,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
       groupHeaderBuilder: _createGroupHeader,
       itemBuilder: (_, Message chat) => ChatItem(
         chat: chat,
-        isSelected: selectedChat.contains(chat),
-        onSelect: () {
-          setState(() {
-            if (selectedChat.contains(chat)) {
-              selectedChat.remove(chat);
-            } else {
-              selectedChat.add(chat);
-            }
-            selectionMode = selectedChat.isNotEmpty;
-          });
-        },
-        selectionMode: selectionMode,
         key: Key(chat.sendDatetime.toString()),
       ),
     );
@@ -225,40 +271,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
         ),
       ),
     );
-  }
-
-  List<Widget> _selectedChatActions() {
-    return [
-      IconButton(
-        onPressed: () {
-          var messages =
-              selectedChat.map((e) => _copiedMessage(e)).toList().join();
-          FlutterClipboard.copy(messages).then((value) {
-            Get.rawSnackbar(
-                message: "${selectedChat.length} ${"messages_copied".tr}");
-            setState(() {
-              selectedChat.clear();
-              selectionMode = false;
-            });
-          });
-        },
-        icon: const Icon(Icons.copy),
-      ),
-      IconButton(
-        onPressed: () {
-          // chatRepo
-          //     .batchDelete(
-          //         contact.roomId!, selectedChat, contact.profile!)
-          //     .then((value) {
-          //   setState(() {
-          //     selectedChat.clear();
-          //     selectionMode = false;
-          //   });
-          // });
-        },
-        icon: const Icon(Icons.delete),
-      ),
-    ];
   }
 
   String _messageDate(int? datetime) {
