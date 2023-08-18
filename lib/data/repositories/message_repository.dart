@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 
 class MessageRepository {
   final CollectionReference messageReference =
       FirebaseFirestore.instance.collection('message');
+
+  ChatRepository chatRepo = ChatRepository();
 
   void sendNewMessage(Message message) {
     messageReference
@@ -33,21 +37,25 @@ class MessageRepository {
 
   Future<void> messagesBatchDelete(
       String roomId, List<Message> chatMessages, Profile profile) async {
-    CollectionReference messages = FirebaseFirestore.instance
-        .collection('room')
-        .doc(roomId)
-        .collection('messages');
+    CollectionReference messages =
+        messageReference.doc(roomId).collection('messages');
 
     for (var message in chatMessages) {
-      messages.doc('message.messageId').delete();
+      messages.doc(message.messageId).delete();
     }
 
     var updatedMessages = await loadChats(roomId);
     var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    // updateLastMessage(true, profile.uid!, selectedMessage.message!,
-    //     sendDateTime: selectedMessage.sendDatetime);
-    // updateLastMessage(false, profile.uid!, selectedMessage.message!,
-    //     sendDateTime: selectedMessage.sendDatetime);
+    Chat chat = Chat(
+      profileId: profile.uid,
+      lastMessage: selectedMessage.message,
+      lastMessageSent: selectedMessage.sendDatetime,
+      chatId: selectedMessage.chatId,
+      type: 'dm',
+    );
+
+    chatRepo.updateRecentChat(true, chat);
+    chatRepo.updateRecentChat(false, chat);
   }
 
   Future<List<Message>> loadChats(String? roomId) async {
@@ -57,6 +65,8 @@ class MessageRepository {
         .orderBy('sendDatetime')
         .get();
 
-    return chats.docs.map((e) => Message.fromMap(e.data())).toList();
+    return chats.docs
+        .map((e) => Message.fromMapWithMessageId(e.data(), e.id))
+        .toList();
   }
 }

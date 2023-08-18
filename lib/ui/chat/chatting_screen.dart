@@ -29,9 +29,6 @@ class _ChattingScreenState extends State<ChattingScreen> {
   Contact contact = Get.arguments['contact'];
   String type = Get.arguments['type'];
 
-  List<Message> selectedChat = [];
-  bool selectionMode = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,18 +144,15 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   visible: controller.isSelectionMode,
                   child: IconButton(
                     onPressed: () {
-                      var messages = selectedChat
+                      var messages = controller.selectedChat
                           .map((e) => _copiedMessage(e))
                           .toList()
                           .join();
                       FlutterClipboard.copy(messages).then((value) {
                         Get.rawSnackbar(
                             message:
-                                "${selectedChat.length} ${"messages_copied".tr}");
-                        setState(() {
-                          selectedChat.clear();
-                          selectionMode = false;
-                        });
+                                "${controller.selectedChat.length} ${"messages_copied".tr}");
+                        controller.clearSelectedChat();
                       });
                     },
                     icon: const Icon(Icons.copy),
@@ -172,15 +166,12 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   visible: controller.isSelectionMode,
                   child: IconButton(
                     onPressed: () {
-                      // chatRepo
-                      //     .batchDelete(
-                      //         contact.roomId!, selectedChat, contact.profile!)
-                      //     .then((value) {
-                      //   setState(() {
-                      //     selectedChat.clear();
-                      //     selectionMode = false;
-                      //   });
-                      // });
+                      controller.messageRepo
+                          .messagesBatchDelete(contact.chatId!,
+                              controller.selectedChat, contact.profile!)
+                          .then((value) {
+                        controller.clearSelectedChat();
+                      });
                     },
                     icon: const Icon(Icons.delete),
                   ),
@@ -219,7 +210,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 }
 
                 return _buildChatMessages(snapshot.data!.docs
-                    .map((e) => Message.fromMap(e.data()))
+                    .map((e) => Message.fromMapWithMessageId(e.data(), e.id))
                     .toList());
               },
             ),
