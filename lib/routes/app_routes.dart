@@ -17,4 +17,5 @@ abstract class AppRoutes {
   static const contactBlock = '/contact_block';
   static const groupCreate = '/group_create';
   static const groupMemberPick = '/group_member_pick';
+  static const callVideo = '/call_video';
 }

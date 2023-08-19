@@ -8,6 +8,8 @@ import 'routes/app_pages.dart';
 import 'services/language_service.dart';
 import 'services/storage_services.dart';
 
+const String appId = "042988789b8240a7b885002e80889062";
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

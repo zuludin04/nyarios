@@ -65,6 +65,13 @@ class _ChattingScreenState extends State<ChattingScreen> {
               ),
           elevation: 0,
           actions: [
+            Visibility(
+              visible: type == 'dm',
+              child: IconButton(
+                onPressed: () => Get.toNamed(AppRoutes.callVideo),
+                icon: const Icon(Icons.videocam),
+              ),
+            ),
             GetBuilder<ChattingController>(
               builder: (controller) {
                 return Visibility(
