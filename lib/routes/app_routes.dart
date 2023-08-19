@@ -18,4 +18,5 @@ abstract class AppRoutes {
   static const groupCreate = '/group_create';
   static const groupMemberPick = '/group_member_pick';
   static const callVideo = '/call_video';
+  static const callVoice = '/call_voice';
 }

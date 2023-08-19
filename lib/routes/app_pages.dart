@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:nyarios/ui/call/call_video_screen.dart';
+import 'package:nyarios/ui/call/call_voice_screen.dart';
 import 'package:nyarios/ui/chat/chatting_binding.dart';
 import 'package:nyarios/ui/contact/block/contact_block_screen.dart';
 import 'package:nyarios/ui/contact/friend/contact_friends_screen.dart';
@@ -89,6 +90,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.callVideo,
       page: () => const CallVideoScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.callVoice,
+      page: () => const CallVoiceScreen(),
     ),
   ];
 }
