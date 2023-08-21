@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/main.dart';
 import 'package:nyarios/ui/home/home_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -59,9 +60,9 @@ class _CallVideoScreenState extends State<CallVideoScreen>
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
 
-  String channelName = Get.arguments;
+  Contact contact = Get.arguments;
 
-  int uid = 32;
+  int uid = 12;
 
   int? _remoteUid;
   bool _isJoined = false;
@@ -78,7 +79,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
       await _requestPermissionForAndroid();
       _initForegroundTask();
 
-      // You can get the previous ReceivePort without restarting the service.
       if (await FlutterForegroundTask.isRunningService) {
         final newReceivePort = FlutterForegroundTask.receivePort;
         _registerReceivePort(newReceivePort);
@@ -114,46 +114,103 @@ class _CallVideoScreenState extends State<CallVideoScreen>
             return false;
           },
           child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Get started with Video Calling'),
-            ),
-            body: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              children: [
-                Container(
-                  height: 240,
-                  decoration: BoxDecoration(border: Border.all()),
-                  child: Center(child: _localPreview()),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  height: 240,
-                  decoration: BoxDecoration(border: Border.all()),
-                  child: Center(child: _remoteVideo()),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _isJoined
-                            ? null
-                            : () {
-                                fetchToken(uid, channelName, tokenRole);
-                              },
-                        child: const Text("Join"),
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  _remoteUid != null ? _remoteVideo() : _localPreview(),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: _remoteUid != null
+                        ? SizedBox(
+                            width: 140,
+                            height: 180,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: _localPreview(),
+                            ),
+                          )
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: Image.network(
+                                  contact.profile!.photo!,
+                                  width: 70,
+                                  height: 70,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                contact.profile!.name!,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                  Positioned(
+                    bottom: 80,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade800,
+                        shape: BoxShape.circle,
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(1, 1),
+                            blurRadius: 1,
+                            spreadRadius: 1,
+                            color: Colors.black26,
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        onPressed: _stopForegroundTask,
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.phone_disabled,
+                            color: Colors.white),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _isJoined ? leave : null,
-                        child: const Text("Leave"),
-                      ),
-                    ),
-                  ],
-                ),
-                // Button Row ends
-              ],
+                  ),
+                  // Container(
+                  //   height: 240,
+                  //   decoration: BoxDecoration(border: Border.all()),
+                  //   child: Center(child: _localPreview()),
+                  // ),
+                  // const SizedBox(height: 10),
+                  // Container(
+                  //   height: 240,
+                  //   decoration: BoxDecoration(border: Border.all()),
+                  //   child: Center(child: _remoteVideo()),
+                  // ),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: ElevatedButton(
+                  //         onPressed: _isJoined
+                  //             ? null
+                  //             : () {
+                  //                 fetchToken(uid, channelName, tokenRole);
+                  //               },
+                  //         child: const Text("Join"),
+                  //       ),
+                  //     ),
+                  //     const SizedBox(width: 10),
+                  //     Expanded(
+                  //       child: ElevatedButton(
+                  //         onPressed: _isJoined ? leave : null,
+                  //         child: const Text("Leave"),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                ],
+              ),
             ),
           ),
         ),
@@ -170,30 +227,23 @@ class _CallVideoScreenState extends State<CallVideoScreen>
         ),
       );
     } else {
-      return const Text(
-        'Join a channel',
-        textAlign: TextAlign.center,
+      return const Center(
+        child: Text(
+          'Connecting video call',
+          textAlign: TextAlign.center,
+        ),
       );
     }
   }
 
   Widget _remoteVideo() {
-    if (_remoteUid != null) {
-      return AgoraVideoView(
-        controller: VideoViewController.remote(
-          rtcEngine: agoraEngine,
-          canvas: VideoCanvas(uid: _remoteUid),
-          connection: RtcConnection(channelId: channelName),
-        ),
-      );
-    } else {
-      String msg = '';
-      if (_isJoined) msg = 'Waiting for a remote user to join';
-      return Text(
-        msg,
-        textAlign: TextAlign.center,
-      );
-    }
+    return AgoraVideoView(
+      controller: VideoViewController.remote(
+        rtcEngine: agoraEngine,
+        canvas: VideoCanvas(uid: _remoteUid),
+        connection: RtcConnection(channelId: contact.chatId!),
+      ),
+    );
   }
 
   Future<void> setupVideoSDKEngine() async {
@@ -203,26 +253,23 @@ class _CallVideoScreenState extends State<CallVideoScreen>
     await agoraEngine.initialize(const RtcEngineContext(appId: appId));
 
     await agoraEngine.enableVideo();
+    fetchToken(uid, contact.chatId!, tokenRole);
 
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          showMessage(
-              "Local user uid:${connection.localUid} joined the channel");
           setState(() {
             _isJoined = true;
           });
           _startForegroundTask();
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          showMessage("Remote user uid:$remoteUid joined the channel");
           setState(() {
             _remoteUid = remoteUid;
           });
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
-          showMessage("Remote user uid:$remoteUid left the channel");
           setState(() {
             _remoteUid = null;
           });
@@ -232,22 +279,16 @@ class _CallVideoScreenState extends State<CallVideoScreen>
   }
 
   Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
-    // Prepare the Url
     String url =
         '$serverUrl/rtc/$channelName/${tokenRole.toString()}/userAccount/${uid.toString()}';
 
-    // Send the request
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      // If the server returns an OK response, then parse the JSON.
       Map<String, dynamic> json = jsonDecode(response.body);
       String newToken = json['rtcToken'];
-      // Use the token to join a channel or renew an expiring token
       setToken(newToken);
     } else {
-      // If the server did not return an OK response,
-      // then throw an exception.
       throw Exception(
           'Failed to fetch a token. Make sure that your server URL is valid');
     }
@@ -255,10 +296,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
 
   void setToken(String newToken) async {
     token = newToken;
-
-    // Join a channel.
     showMessage("Token received, joining a channel...");
-
     join(token);
   }
 
@@ -272,7 +310,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
 
     await agoraEngine.joinChannel(
       token: token,
-      channelId: channelName,
+      channelId: contact.chatId!,
       options: options,
       uid: uid,
     );
@@ -295,24 +333,10 @@ class _CallVideoScreenState extends State<CallVideoScreen>
       return;
     }
 
-    // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
-    // onNotificationPressed function to be called.
-    //
-    // When the notification is pressed while permission is denied,
-    // the onNotificationPressed function is not called and the app opens.
-    //
-    // If you do not use the onNotificationPressed or launchApp function,
-    // you do not need to write this code.
-
-    // Android 12 or higher, there are restrictions on starting a foreground service.
-    //
-    // To restart the service on device reboot or unexpected problem, you need to allow below permission.
     if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-      // This function requires `android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission.
       await FlutterForegroundTask.requestIgnoreBatteryOptimization();
     }
 
-    // Android 13 and higher, you need to allow notification permission to expose foreground service notification.
     final NotificationPermission notificationPermissionStatus =
         await FlutterForegroundTask.checkNotificationPermission();
     if (notificationPermissionStatus != NotificationPermission.granted) {
@@ -359,7 +383,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
   }
 
   Future<bool> _startForegroundTask() async {
-    // Register the receivePort before starting the service.
     final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
     final bool isRegistered = _registerReceivePort(receivePort);
     if (!isRegistered) {
