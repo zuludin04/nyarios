@@ -7,8 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/main.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 @pragma('vm:entry-point')
 void startCallback() {
@@ -52,13 +55,11 @@ class MyTaskHandler extends TaskHandler {
 
   Future<void> setupVoiceSDKEngine(
       String token, String channelName, int uid) async {
-    //create an instance of the Agora engine
     agoraEngine = createAgoraRtcEngine();
     await agoraEngine.initialize(const RtcEngineContext(appId: appId));
 
     join(token, channelName, uid);
 
-    // Register the event handler
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
@@ -107,15 +108,16 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
 
-  String channelName = Get.arguments;
+  Contact contact = Get.arguments;
 
-  int uid = 32;
+  int uid = 12;
 
   int? _remoteUid;
   bool _isJoined = false;
   late RtcEngine agoraEngine;
 
   ReceivePort? _receivePort;
+  final StopWatchTimer _stopWatchTimer = StopWatchTimer();
 
   @override
   void initState() {
@@ -124,11 +126,12 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
       await _requestPermissionForAndroid();
       _initForegroundTask();
 
-      // You can get the previous ReceivePort without restarting the service.
       if (await FlutterForegroundTask.isRunningService) {
         final newReceivePort = FlutterForegroundTask.receivePort;
         _registerReceivePort(newReceivePort);
       }
+
+      fetchToken(uid, contact.chatId!, tokenRole);
     });
   }
 
@@ -141,49 +144,85 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Get started with Voice Calling'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        children: [
-          SizedBox(height: 40, child: Center(child: _status())),
-          Row(
+      backgroundColor: Colors.blueGrey.shade200,
+      body: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
             children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    fetchToken(uid, channelName, tokenRole);
-                  },
-                  child: const Text("Join"),
+              const Spacer(flex: 1),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image.network(
+                  contact.profile!.photo!,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.fill,
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
+              const SizedBox(height: 24),
+              Text(
+                contact.profile!.name!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _status(),
+              const Spacer(flex: 7),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.shade800,
+                  shape: BoxShape.circle,
+                  boxShadow: const [
+                    BoxShadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 1,
+                      spreadRadius: 1,
+                      color: Colors.black26,
+                    ),
+                  ],
+                ),
+                child: IconButton(
                   onPressed: _stopForegroundTask,
-                  child: const Text("Leave"),
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.phone_disabled, color: Colors.white),
                 ),
               ),
+              const Spacer(flex: 1),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _status() {
-    String statusText;
-
     if (!_isJoined) {
-      statusText = 'Join a channel';
+      return const Text(
+        'Connecting voice call',
+        style: TextStyle(color: Colors.white),
+      );
     } else if (_remoteUid == null) {
-      statusText = 'Waiting for a remote user to join...';
+      return LoadingAnimationWidget.waveDots(color: Colors.white, size: 40);
     } else {
-      statusText = 'Connected to remote user, uid:$_remoteUid';
+      return StreamBuilder<int>(
+        stream: _stopWatchTimer.rawTime,
+        initialData: 0,
+        builder: (context, snap) {
+          final value = snap.data;
+          final displayTime =
+              StopWatchTimer.getDisplayTime(value!, milliSecond: false);
+          _stopWatchTimer.onStartTimer();
+          return Text(
+            displayTime,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          );
+        },
+      );
     }
-
-    return Text(statusText);
   }
 
   Future<void> _requestPermissionForAndroid() async {
@@ -191,24 +230,10 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
       return;
     }
 
-    // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
-    // onNotificationPressed function to be called.
-    //
-    // When the notification is pressed while permission is denied,
-    // the onNotificationPressed function is not called and the app opens.
-    //
-    // If you do not use the onNotificationPressed or launchApp function,
-    // you do not need to write this code.
-
-    // Android 12 or higher, there are restrictions on starting a foreground service.
-    //
-    // To restart the service on device reboot or unexpected problem, you need to allow below permission.
     if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-      // This function requires `android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission.
       await FlutterForegroundTask.requestIgnoreBatteryOptimization();
     }
 
-    // Android 13 and higher, you need to allow notification permission to expose foreground service notification.
     final NotificationPermission notificationPermissionStatus =
         await FlutterForegroundTask.checkNotificationPermission();
     if (notificationPermissionStatus != NotificationPermission.granted) {
@@ -221,7 +246,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
       androidNotificationOptions: AndroidNotificationOptions(
         id: 500,
         channelId: 'agora_call_channel_id',
-        channelName: 'Hallaw Client Call',
+        channelName: 'Nyarios Call',
         channelDescription:
             'This notification appears when the foreground service is running.',
         channelImportance: NotificationChannelImportance.LOW,
@@ -255,13 +280,11 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   }
 
   Future<bool> _startForegroundTask(String token) async {
-    // You can save data using the saveData function.
     await FlutterForegroundTask.saveData(key: 'agoraToken', value: token);
     await FlutterForegroundTask.saveData(
-        key: 'agoraChannel', value: channelName);
+        key: 'agoraChannel', value: contact.chatId!);
     await FlutterForegroundTask.saveData(key: 'agoraUid', value: uid);
 
-    // Register the receivePort before starting the service.
     final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
     final bool isRegistered = _registerReceivePort(receivePort);
     if (!isRegistered) {
@@ -272,8 +295,8 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
       return FlutterForegroundTask.restartService();
     } else {
       return FlutterForegroundTask.startService(
-        notificationTitle: 'Hallaw Consultation',
-        notificationText: 'Consultation with partner',
+        notificationTitle: 'Nyarios Call',
+        notificationText: 'Voice call with ${contact.profile!.name}',
         callback: startCallback,
       );
     }
@@ -327,21 +350,17 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          showMessage(
-              "Local user uid:${connection.localUid} joined the channel");
           setState(() {
             _isJoined = true;
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          showMessage("Remote user uid:$remoteUid joined the channel");
           setState(() {
             _remoteUid = remoteUid;
           });
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
-          showMessage("Remote user uid:$remoteUid left the channel");
           setState(() {
             _remoteUid = null;
           });
@@ -351,22 +370,16 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   }
 
   Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
-    // Prepare the Url
     String url =
         '$serverUrl/rtc/$channelName/${tokenRole.toString()}/userAccount/${uid.toString()}';
 
-    // Send the request
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      // If the server returns an OK response, then parse the JSON.
       Map<String, dynamic> json = jsonDecode(response.body);
       String newToken = json['rtcToken'];
-      // Use the token to join a channel or renew an expiring token
       _startForegroundTask(newToken);
     } else {
-      // If the server did not return an OK response,
-      // then throw an exception.
       throw Exception(
           'Failed to fetch a token. Make sure that your server URL is valid');
     }
@@ -374,10 +387,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
 
   void setToken(String newToken) async {
     token = newToken;
-
-    // Join a channel.
     showMessage("Token received, joining a channel...");
-
     join(token);
   }
 
@@ -389,7 +399,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
 
     await agoraEngine.joinChannel(
       token: token,
-      channelId: channelName,
+      channelId: contact.chatId!,
       options: options,
       uid: uid,
     );

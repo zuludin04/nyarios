@@ -77,7 +77,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
               visible: type == 'dm',
               child: IconButton(
                 onPressed: () =>
-                    Get.toNamed(AppRoutes.callVoice, arguments: contact.chatId),
+                    Get.toNamed(AppRoutes.callVoice, arguments: contact),
                 icon: const Icon(Icons.call),
               ),
             ),
