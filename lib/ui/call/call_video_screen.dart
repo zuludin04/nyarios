@@ -1,11 +1,50 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:nyarios/main.dart';
+import 'package:nyarios/ui/home/home_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pip_view/pip_view.dart';
+
+@pragma('vm:entry-point')
+void startCallback() {
+  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
+}
+
+class MyTaskHandler extends TaskHandler {
+  SendPort? _sendPort;
+  late RtcEngine agoraEngine;
+
+  @override
+  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
+    _sendPort = sendPort;
+  }
+
+  @override
+  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {}
+
+  @override
+  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
+    _sendPort?.send('onHangUpCall');
+  }
+
+  @override
+  void onNotificationButtonPressed(String id) {
+    if (id == 'hangUp') {
+      _sendPort?.send('onHangUpCall');
+    }
+  }
+
+  @override
+  void onNotificationPressed() {}
+}
 
 class CallVideoScreen extends StatefulWidget {
   const CallVideoScreen({super.key});
@@ -14,7 +53,8 @@ class CallVideoScreen extends StatefulWidget {
   State<CallVideoScreen> createState() => _CallVideoScreenState();
 }
 
-class _CallVideoScreenState extends State<CallVideoScreen> {
+class _CallVideoScreenState extends State<CallVideoScreen>
+    with WidgetsBindingObserver {
   int tokenRole = 1;
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
@@ -27,64 +67,98 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
   bool _isJoined = false;
   late RtcEngine agoraEngine;
 
+  final floating = Floating();
+  ReceivePort? _receivePort;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _requestPermissionForAndroid();
+      _initForegroundTask();
+
+      // You can get the previous ReceivePort without restarting the service.
+      if (await FlutterForegroundTask.isRunningService) {
+        final newReceivePort = FlutterForegroundTask.receivePort;
+        _registerReceivePort(newReceivePort);
+      }
+    });
     setupVideoSDKEngine();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     agoraEngine.leaveChannel();
     agoraEngine.release();
+    _closeReceivePort();
     super.dispose();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    if (lifecycleState == AppLifecycleState.inactive) {
+      floating.enable(aspectRatio: const Rational.vertical());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Get started with Video Calling'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        children: [
-          Container(
-            height: 240,
-            decoration: BoxDecoration(border: Border.all()),
-            child: Center(child: _localPreview()),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            height: 240,
-            decoration: BoxDecoration(border: Border.all()),
-            child: Center(child: _remoteVideo()),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _isJoined
-                      ? null
-                      : () {
-                          fetchToken(uid, channelName, tokenRole);
-                        },
-                  child: const Text("Join"),
+    return PIPView(builder: (context, isFloating) {
+      return PiPSwitcher(
+        childWhenEnabled: _localPreview(),
+        childWhenDisabled: WillPopScope(
+          onWillPop: () async {
+            PIPView.of(context)?.presentBelow(const HomeScreen());
+            return false;
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Get started with Video Calling'),
+            ),
+            body: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              children: [
+                Container(
+                  height: 240,
+                  decoration: BoxDecoration(border: Border.all()),
+                  child: Center(child: _localPreview()),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _isJoined ? leave : null,
-                  child: const Text("Leave"),
+                const SizedBox(height: 10),
+                Container(
+                  height: 240,
+                  decoration: BoxDecoration(border: Border.all()),
+                  child: Center(child: _remoteVideo()),
                 ),
-              ),
-            ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isJoined
+                            ? null
+                            : () {
+                                fetchToken(uid, channelName, tokenRole);
+                              },
+                        child: const Text("Join"),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: _isJoined ? leave : null,
+                        child: const Text("Leave"),
+                      ),
+                    ),
+                  ],
+                ),
+                // Button Row ends
+              ],
+            ),
           ),
-          // Button Row ends
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 
   Widget _localPreview() {
@@ -138,6 +212,7 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
           setState(() {
             _isJoined = true;
           });
+          _startForegroundTask();
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
           showMessage("Remote user uid:$remoteUid joined the channel");
@@ -213,5 +288,121 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
 
   void showMessage(String message) {
     Get.rawSnackbar(message: message);
+  }
+
+  Future<void> _requestPermissionForAndroid() async {
+    if (!Platform.isAndroid) {
+      return;
+    }
+
+    // "android.permission.SYSTEM_ALERT_WINDOW" permission must be granted for
+    // onNotificationPressed function to be called.
+    //
+    // When the notification is pressed while permission is denied,
+    // the onNotificationPressed function is not called and the app opens.
+    //
+    // If you do not use the onNotificationPressed or launchApp function,
+    // you do not need to write this code.
+
+    // Android 12 or higher, there are restrictions on starting a foreground service.
+    //
+    // To restart the service on device reboot or unexpected problem, you need to allow below permission.
+    if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
+      // This function requires `android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission.
+      await FlutterForegroundTask.requestIgnoreBatteryOptimization();
+    }
+
+    // Android 13 and higher, you need to allow notification permission to expose foreground service notification.
+    final NotificationPermission notificationPermissionStatus =
+        await FlutterForegroundTask.checkNotificationPermission();
+    if (notificationPermissionStatus != NotificationPermission.granted) {
+      await FlutterForegroundTask.requestNotificationPermission();
+    }
+  }
+
+  void _initForegroundTask() {
+    FlutterForegroundTask.init(
+      androidNotificationOptions: AndroidNotificationOptions(
+        id: 500,
+        channelId: 'agora_video_call_channel_id',
+        channelName: 'Hallaw Client Call',
+        channelDescription:
+            'This notification appears when the foreground service is running.',
+        channelImportance: NotificationChannelImportance.LOW,
+        priority: NotificationPriority.LOW,
+        iconData: const NotificationIconData(
+          resType: ResourceType.mipmap,
+          resPrefix: ResourcePrefix.ic,
+          name: 'launcher',
+          backgroundColor: Colors.orange,
+        ),
+        buttons: [
+          const NotificationButton(
+            id: 'hangUp',
+            text: 'Hang Up',
+            textColor: Colors.red,
+          ),
+        ],
+      ),
+      iosNotificationOptions: const IOSNotificationOptions(
+        showNotification: true,
+        playSound: false,
+      ),
+      foregroundTaskOptions: const ForegroundTaskOptions(
+        interval: 5000,
+        isOnceEvent: false,
+        autoRunOnBoot: true,
+        allowWakeLock: true,
+        allowWifiLock: true,
+      ),
+    );
+  }
+
+  Future<bool> _startForegroundTask() async {
+    // Register the receivePort before starting the service.
+    final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
+    final bool isRegistered = _registerReceivePort(receivePort);
+    if (!isRegistered) {
+      return false;
+    }
+
+    if (await FlutterForegroundTask.isRunningService) {
+      return FlutterForegroundTask.restartService();
+    } else {
+      return FlutterForegroundTask.startService(
+        notificationTitle: 'Hallaw Consultation',
+        notificationText: 'Consultation with partner',
+        callback: startCallback,
+      );
+    }
+  }
+
+  Future<bool> _stopForegroundTask() {
+    Get.back();
+    return FlutterForegroundTask.stopService();
+  }
+
+  bool _registerReceivePort(ReceivePort? newReceivePort) {
+    if (newReceivePort == null) {
+      return false;
+    }
+
+    _closeReceivePort();
+
+    _receivePort = newReceivePort;
+    _receivePort?.listen((data) {
+      if (data is String) {
+        if (data == 'onHangUpCall') {
+          _stopForegroundTask();
+        }
+      }
+    });
+
+    return _receivePort != null;
+  }
+
+  void _closeReceivePort() {
+    _receivePort?.close();
+    _receivePort = null;
   }
 }
