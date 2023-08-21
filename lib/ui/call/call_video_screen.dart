@@ -59,8 +59,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
 
   Contact contact = Get.arguments;
 
-  int uid = 12;
-
   int? _remoteUid;
   bool _isJoined = false;
   late RtcEngine agoraEngine;
@@ -203,7 +201,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
     await agoraEngine.initialize(const RtcEngineContext(appId: appId));
 
     await agoraEngine.enableVideo();
-    fetchToken(uid, contact.chatId!, tokenRole);
+    fetchToken(contact.profile!.id!, contact.chatId!, tokenRole);
 
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
@@ -261,7 +259,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
       token: token,
       channelId: contact.chatId!,
       options: options,
-      uid: uid,
+      uid: contact.profile!.id!,
     );
   }
 

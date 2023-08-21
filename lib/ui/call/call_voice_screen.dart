@@ -110,8 +110,6 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
 
   Contact contact = Get.arguments;
 
-  int uid = 12;
-
   int? _remoteUid;
   bool _isJoined = false;
   late RtcEngine agoraEngine;
@@ -132,7 +130,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
         _registerReceivePort(newReceivePort);
       }
 
-      fetchToken(uid, contact.chatId!, tokenRole);
+      fetchToken(contact.profile!.id!, contact.chatId!, tokenRole);
     });
   }
 
@@ -284,7 +282,8 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     await FlutterForegroundTask.saveData(key: 'agoraToken', value: token);
     await FlutterForegroundTask.saveData(
         key: 'agoraChannel', value: contact.chatId!);
-    await FlutterForegroundTask.saveData(key: 'agoraUid', value: uid);
+    await FlutterForegroundTask.saveData(
+        key: 'agoraUid', value: contact.profile!.id!);
 
     final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
     final bool isRegistered = _registerReceivePort(receivePort);
