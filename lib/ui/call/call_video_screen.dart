@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:nyarios/main.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -12,9 +15,11 @@ class CallVideoScreen extends StatefulWidget {
 }
 
 class _CallVideoScreenState extends State<CallVideoScreen> {
-  String channelName = "callTesting";
-  String token =
-      "007eJxTYEh917rbreJF0Lm5L45z+wtH+ibefrr3qfUvTouwztBdGpEKDAYmRpYWFuYWlkkWRiYGieZJFhamBgZGqRYGFhaWBmZGniUPUhoCGRn2HHdiZGSAQBCfmyE5MScnJLW4JDMvnYEBAEsNIes=";
+  int tokenRole = 1;
+  String serverUrl = "https://agoranyarios.up.railway.app";
+  String token = "";
+
+  String channelName = Get.arguments;
 
   int uid = 32;
 
@@ -59,7 +64,11 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _isJoined ? null : join,
+                  onPressed: _isJoined
+                      ? null
+                      : () {
+                          fetchToken(uid, channelName, tokenRole);
+                        },
                   child: const Text("Join"),
                 ),
               ),
@@ -147,7 +156,38 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
     );
   }
 
-  void join() async {
+  Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
+    // Prepare the Url
+    String url =
+        '$serverUrl/rtc/$channelName/${tokenRole.toString()}/userAccount/${uid.toString()}';
+
+    // Send the request
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      // If the server returns an OK response, then parse the JSON.
+      Map<String, dynamic> json = jsonDecode(response.body);
+      String newToken = json['rtcToken'];
+      // Use the token to join a channel or renew an expiring token
+      setToken(newToken);
+    } else {
+      // If the server did not return an OK response,
+      // then throw an exception.
+      throw Exception(
+          'Failed to fetch a token. Make sure that your server URL is valid');
+    }
+  }
+
+  void setToken(String newToken) async {
+    token = newToken;
+
+    // Join a channel.
+    showMessage("Token received, joining a channel...");
+
+    join(token);
+  }
+
+  void join(String token) async {
     await agoraEngine.startPreview();
 
     ChannelMediaOptions options = const ChannelMediaOptions(

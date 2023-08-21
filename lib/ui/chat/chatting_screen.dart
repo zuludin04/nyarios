@@ -68,14 +68,16 @@ class _ChattingScreenState extends State<ChattingScreen> {
             Visibility(
               visible: type == 'dm',
               child: IconButton(
-                onPressed: () => Get.toNamed(AppRoutes.callVideo),
+                onPressed: () =>
+                    Get.toNamed(AppRoutes.callVideo, arguments: contact.chatId),
                 icon: const Icon(Icons.videocam),
               ),
             ),
             Visibility(
               visible: type == 'dm',
               child: IconButton(
-                onPressed: () => Get.toNamed(AppRoutes.callVoice),
+                onPressed: () =>
+                    Get.toNamed(AppRoutes.callVoice, arguments: contact.chatId),
                 icon: const Icon(Icons.call),
               ),
             ),
