@@ -9,6 +9,10 @@ class ProfileRepository {
   Future<void> saveUserProfile(Profile profile) async {
     var exist = await checkIfUserExist(profile.uid!);
     if (!exist) {
+      var id = await getIncrementedId();
+      var userId = id + 1;
+      profile.id = userId;
+      updateIncrementedId(userId);
       profileReference.doc(profile.uid).set(profile.toMap());
     }
   }
@@ -70,5 +74,18 @@ class ProfileRepository {
         .collection('profile')
         .doc(profileId)
         .update(updateData);
+  }
+
+  Future<int> getIncrementedId() async {
+    var collection = FirebaseFirestore.instance.collection('incrementedId');
+    var doc = await collection.doc('FvmJzscRcjO4J9AFFPEe').get();
+    return doc.data()!['id'];
+  }
+
+  Future<void> updateIncrementedId(int id) async {
+    FirebaseFirestore.instance
+        .collection('incrementedId')
+        .doc('FvmJzscRcjO4J9AFFPEe')
+        .set({'id': id});
   }
 }

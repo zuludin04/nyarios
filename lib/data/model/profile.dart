@@ -1,4 +1,5 @@
 class Profile {
+  int? id;
   String? uid;
   String? name;
   String? photo;
@@ -7,6 +8,7 @@ class Profile {
   bool? visibility;
 
   Profile({
+    this.id,
     this.uid,
     this.name,
     this.photo,
@@ -17,7 +19,8 @@ class Profile {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': uid,
+      'id': id,
+      'uid': uid,
       'name': name,
       'photo': photo,
       'status': status,
@@ -28,7 +31,8 @@ class Profile {
 
   factory Profile.fromMap(Map<String, dynamic> map) {
     return Profile(
-      uid: map['id'] != null ? map['id'] as String : null,
+      id: map['id'] != null ? map['id'] as int : null,
+      uid: map['uid'] != null ? map['uid'] as String : null,
       name: map['name'] != null ? map['name'] as String : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
       status: map['status'] != null ? map['status'] as String : null,
