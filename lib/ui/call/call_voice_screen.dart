@@ -122,6 +122,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   @override
   void initState() {
     super.initState();
+    setupCallPermission();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _requestPermissionForAndroid();
       _initForegroundTask();
@@ -341,32 +342,8 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     _receivePort = null;
   }
 
-  Future<void> setupVoiceSDKEngine() async {
+  Future<void> setupCallPermission() async {
     await [Permission.microphone].request();
-
-    agoraEngine = createAgoraRtcEngine();
-    await agoraEngine.initialize(const RtcEngineContext(appId: appId));
-
-    agoraEngine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          setState(() {
-            _isJoined = true;
-          });
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          setState(() {
-            _remoteUid = remoteUid;
-          });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          setState(() {
-            _remoteUid = null;
-          });
-        },
-      ),
-    );
   }
 
   Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
@@ -383,37 +360,5 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
       throw Exception(
           'Failed to fetch a token. Make sure that your server URL is valid');
     }
-  }
-
-  void setToken(String newToken) async {
-    token = newToken;
-    showMessage("Token received, joining a channel...");
-    join(token);
-  }
-
-  void join(String token) async {
-    ChannelMediaOptions options = const ChannelMediaOptions(
-      clientRoleType: ClientRoleType.clientRoleBroadcaster,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
-    );
-
-    await agoraEngine.joinChannel(
-      token: token,
-      channelId: contact.chatId!,
-      options: options,
-      uid: uid,
-    );
-  }
-
-  void leave() {
-    setState(() {
-      _isJoined = false;
-      _remoteUid = null;
-    });
-    agoraEngine.leaveChannel();
-  }
-
-  void showMessage(String message) {
-    Get.rawSnackbar(message: message);
   }
 }

@@ -3,16 +3,13 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/main.dart';
-import 'package:nyarios/ui/home/home_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pip_view/pip_view.dart';
 
 @pragma('vm:entry-point')
 void startCallback() {
@@ -68,7 +65,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
   bool _isJoined = false;
   late RtcEngine agoraEngine;
 
-  final floating = Floating();
   ReceivePort? _receivePort;
 
   @override
@@ -97,125 +93,79 @@ class _CallVideoScreenState extends State<CallVideoScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
-    if (lifecycleState == AppLifecycleState.inactive) {
-      floating.enable(aspectRatio: const Rational.vertical());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return PIPView(builder: (context, isFloating) {
-      return PiPSwitcher(
-        childWhenEnabled: _localPreview(),
-        childWhenDisabled: WillPopScope(
-          onWillPop: () async {
-            PIPView.of(context)?.presentBelow(const HomeScreen());
-            return false;
-          },
-          child: Scaffold(
-            body: SafeArea(
-              child: Stack(
-                children: [
-                  _remoteUid != null ? _remoteVideo() : _localPreview(),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: _remoteUid != null
-                        ? SizedBox(
-                            width: 140,
-                            height: 180,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: _localPreview(),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Stack(
+            children: [
+              _remoteUid != null ? _remoteVideo() : _localPreview(),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: _remoteUid != null
+                    ? SizedBox(
+                        width: 140,
+                        height: 180,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: _localPreview(),
+                        ),
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Image.network(
+                              contact.profile!.photo!,
+                              width: 70,
+                              height: 70,
+                              fit: BoxFit.fill,
                             ),
-                          )
-                        : Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(100),
-                                child: Image.network(
-                                  contact.profile!.photo!,
-                                  width: 70,
-                                  height: 70,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                contact.profile!.name!,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
                           ),
-                  ),
-                  Positioned(
-                    bottom: 80,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade800,
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            offset: Offset(1, 1),
-                            blurRadius: 1,
-                            spreadRadius: 1,
-                            color: Colors.black26,
+                          const SizedBox(height: 16),
+                          Text(
+                            contact.profile!.name!,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ],
                       ),
-                      child: IconButton(
-                        onPressed: _stopForegroundTask,
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.phone_disabled,
-                            color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  // Container(
-                  //   height: 240,
-                  //   decoration: BoxDecoration(border: Border.all()),
-                  //   child: Center(child: _localPreview()),
-                  // ),
-                  // const SizedBox(height: 10),
-                  // Container(
-                  //   height: 240,
-                  //   decoration: BoxDecoration(border: Border.all()),
-                  //   child: Center(child: _remoteVideo()),
-                  // ),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: ElevatedButton(
-                  //         onPressed: _isJoined
-                  //             ? null
-                  //             : () {
-                  //                 fetchToken(uid, channelName, tokenRole);
-                  //               },
-                  //         child: const Text("Join"),
-                  //       ),
-                  //     ),
-                  //     const SizedBox(width: 10),
-                  //     Expanded(
-                  //       child: ElevatedButton(
-                  //         onPressed: _isJoined ? leave : null,
-                  //         child: const Text("Leave"),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                ],
               ),
-            ),
+              Positioned(
+                bottom: 80,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade800,
+                    shape: BoxShape.circle,
+                    boxShadow: const [
+                      BoxShadow(
+                        offset: Offset(1, 1),
+                        blurRadius: 1,
+                        spreadRadius: 1,
+                        color: Colors.black26,
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    onPressed: _stopForegroundTask,
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(Icons.phone_disabled, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _localPreview() {
@@ -296,7 +246,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
 
   void setToken(String newToken) async {
     token = newToken;
-    showMessage("Token received, joining a channel...");
     join(token);
   }
 
@@ -324,10 +273,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
     agoraEngine.leaveChannel();
   }
 
-  void showMessage(String message) {
-    Get.rawSnackbar(message: message);
-  }
-
   Future<void> _requestPermissionForAndroid() async {
     if (!Platform.isAndroid) {
       return;
@@ -349,7 +294,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
       androidNotificationOptions: AndroidNotificationOptions(
         id: 500,
         channelId: 'agora_video_call_channel_id',
-        channelName: 'Hallaw Client Call',
+        channelName: 'Nyarios Call',
         channelDescription:
             'This notification appears when the foreground service is running.',
         channelImportance: NotificationChannelImportance.LOW,
@@ -393,8 +338,8 @@ class _CallVideoScreenState extends State<CallVideoScreen>
       return FlutterForegroundTask.restartService();
     } else {
       return FlutterForegroundTask.startService(
-        notificationTitle: 'Hallaw Consultation',
-        notificationText: 'Consultation with partner',
+        notificationTitle: 'Nyarios Call',
+        notificationText: 'Video call with ${contact.profile!.name}',
         callback: startCallback,
       );
     }
