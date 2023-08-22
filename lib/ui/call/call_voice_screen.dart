@@ -322,9 +322,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
             _isJoined = true;
           });
         } else if (data == 'onUserOffline') {
-          setState(() {
-            _remoteUid = null;
-          });
+          _stopForegroundTask();
         }
       } else if (data is int) {
         setState(() {

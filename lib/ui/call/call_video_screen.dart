@@ -218,9 +218,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
-          setState(() {
-            _remoteUid = null;
-          });
+          _stopForegroundTask();
         },
       ),
     );
