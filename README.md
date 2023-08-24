@@ -25,9 +25,9 @@ You can try this app by clicking this link below.
 - [x]  Add friend with QR Code
 - [x]  Group message
 - [ ]  Forward, Reply, and Star message
-- [x]  Block user/friend\
+- [x]  Block user/friend
 - [ ]  Voice message
-- [ ]  Video and Call message
+- [x]  Video and Call message
 
 ## Contact
 
