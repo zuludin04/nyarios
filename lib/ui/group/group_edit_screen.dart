@@ -96,33 +96,42 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
     );
 
     if (pickedFile != null) {
-      var storage = FirebaseStorage.instance.ref();
-      var uploadImage = storage
-          .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
-          .putFile(File(pickedFile.path));
+      if (mounted) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const Center(child: CircularProgressIndicator());
+            });
 
-      uploadImage.snapshotEvents.listen((event) async {
-        switch (event.state) {
-          case TaskState.running:
-            debugPrint("Upload is running.");
-            break;
-          case TaskState.paused:
-            debugPrint("Upload is paused.");
-            break;
-          case TaskState.canceled:
-            debugPrint("Upload was canceled");
-            break;
-          case TaskState.error:
-            debugPrint("Upload was error");
-            break;
-          case TaskState.success:
-            var url = await storage
-                .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
-                .getDownloadURL();
-            repository.updateImageGroup(group.groupId!, url);
-            break;
-        }
-      });
+        var storage = FirebaseStorage.instance.ref();
+        var uploadImage = storage
+            .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
+            .putFile(File(pickedFile.path));
+
+        uploadImage.snapshotEvents.listen((event) async {
+          switch (event.state) {
+            case TaskState.running:
+              debugPrint("Upload is running.");
+              break;
+            case TaskState.paused:
+              debugPrint("Upload is paused.");
+              break;
+            case TaskState.canceled:
+              debugPrint("Upload was canceled");
+              break;
+            case TaskState.error:
+              debugPrint("Upload was error");
+              break;
+            case TaskState.success:
+              var url = await storage
+                  .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
+                  .getDownloadURL();
+              repository.updateImageGroup(group.groupId!, url);
+              Get.back();
+              break;
+          }
+        });
+      }
     }
   }
 }
