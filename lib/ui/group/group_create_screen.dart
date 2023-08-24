@@ -107,8 +107,9 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
                   if (index == 0) {
                     return GestureDetector(
                       onTap: () async {
-                        var result =
-                            await Get.toNamed(AppRoutes.groupMemberPick);
+                        var result = await Get.toNamed(
+                            AppRoutes.groupMemberPick,
+                            arguments: {'source': 'create'});
                         if (result != null) {
                           if (result is Profile) {
                             members.add(result);
