@@ -26,4 +26,18 @@ class GroupRepository {
   Future<void> updateGroupMember(String groupId, List<String> members) async {
     await contactReference.doc(groupId).update({'members': members});
   }
+
+  Future<void> updateImageGroup(String groupId, String url) async {
+    FirebaseFirestore.instance
+        .collection('group')
+        .doc(groupId)
+        .update({'photo': url});
+  }
+
+  Future<void> updateGroupName(String groupId, String name) async {
+    FirebaseFirestore.instance
+        .collection('group')
+        .doc(groupId)
+        .update({'name': name});
+  }
 }

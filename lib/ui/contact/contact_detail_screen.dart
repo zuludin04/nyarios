@@ -5,6 +5,7 @@ import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/ui/contact/contact_media_controller.dart';
 
 import '../../core/widgets/toolbar.dart';
@@ -41,7 +42,24 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('', elevation: 0),
+      appBar: Toolbar.defaultToolbar('', elevation: 0, actions: [
+        if (detailGroup)
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem(
+                  value: 0,
+                  child: Text('Edit'),
+                ),
+              ];
+            },
+            onSelected: (value) {
+              if (value == 0) {
+                Get.toNamed(AppRoutes.groupEdit, arguments: lastMessage.group!);
+              }
+            },
+          ),
+      ]),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
