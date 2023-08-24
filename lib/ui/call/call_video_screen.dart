@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/main.dart';
+import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CallVideoScreen extends StatefulWidget {
@@ -21,6 +22,9 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
   String token = "";
 
   Contact contact = Get.arguments;
+
+  bool isMuted = false;
+  bool isSpeaker = false;
 
   int? _remoteUid;
   bool _isJoined = false;
@@ -88,24 +92,40 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
                 bottom: 80,
                 left: 0,
                 right: 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade800,
-                    shape: BoxShape.circle,
-                    boxShadow: const [
-                      BoxShadow(
-                        offset: Offset(1, 1),
-                        blurRadius: 1,
-                        spreadRadius: 1,
-                        color: Colors.black26,
-                      ),
-                    ],
-                  ),
-                  child: IconButton(
-                    onPressed: leave,
-                    padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.phone_disabled, color: Colors.white),
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CallActionButton(
+                      icon: isMuted ? Icons.mic_off_outlined : Icons.mic_none,
+                      color: Colors.white,
+                      iconColor: Colors.black,
+                      onPressed: () {
+                        setState(() {
+                          isMuted = !isMuted;
+                        });
+                        agoraEngine.muteLocalAudioStream(isMuted);
+                      },
+                    ),
+                    CallActionButton(
+                      icon: Icons.phone_disabled,
+                      color: Colors.red.shade800,
+                      iconColor: Colors.white,
+                      onPressed: leave,
+                    ),
+                    CallActionButton(
+                      icon: isSpeaker
+                          ? Icons.volume_up_outlined
+                          : Icons.volume_off,
+                      color: Colors.white,
+                      iconColor: Colors.black,
+                      onPressed: () {
+                        setState(() {
+                          isSpeaker = !isSpeaker;
+                        });
+                        agoraEngine.setEnableSpeakerphone(isSpeaker);
+                      },
+                    ),
+                  ],
                 ),
               ),
             ],
