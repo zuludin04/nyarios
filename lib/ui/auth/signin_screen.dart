@@ -136,7 +136,7 @@ class _SignInScreenState extends State<SignInScreen> {
           visibility: true,
         );
 
-        repository.saveUserProfile(profile);
+        await repository.saveUserProfile(profile);
 
         Get.offAllNamed(AppRoutes.home);
       }
