@@ -14,6 +14,17 @@ class ProfileRepository {
       profile.id = userId;
       updateIncrementedId(userId);
       profileReference.doc(profile.uid).set(profile.toMap());
+
+      StorageServices.to.userId = profile.uid ?? "";
+      StorageServices.to.userName = profile.name ?? "";
+      StorageServices.to.email = profile.email ?? "";
+      StorageServices.to.userImage = profile.photo ?? "";
+    } else {
+      var userProfile = await loadSingleProfile(profile.uid);
+      StorageServices.to.userId = userProfile.uid ?? "";
+      StorageServices.to.userName = userProfile.name ?? "";
+      StorageServices.to.email = userProfile.email ?? "";
+      StorageServices.to.userImage = userProfile.photo ?? "";
     }
   }
 

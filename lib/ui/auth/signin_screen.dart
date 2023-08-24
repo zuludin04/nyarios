@@ -126,10 +126,6 @@ class _SignInScreenState extends State<SignInScreen> {
           },
         );
         StorageServices.to.alreadyLogin = true;
-        StorageServices.to.userId = user?.uid ?? "";
-        StorageServices.to.userName = user?.displayName ?? "";
-        StorageServices.to.email = user?.email ?? "";
-        StorageServices.to.userImage = user?.photoURL ?? "";
 
         var profile = Profile(
           uid: user?.uid,
