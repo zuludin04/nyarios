@@ -44,7 +44,7 @@ class MessageRepository {
       messages.doc(message.messageId).delete();
     }
 
-    var updatedMessages = await loadChats(roomId);
+    var updatedMessages = await loadMessages(roomId);
     var selectedMessage = updatedMessages[updatedMessages.length - 1];
     Chat chat = Chat(
       profileId: profile.uid,
@@ -58,7 +58,7 @@ class MessageRepository {
     chatRepo.updateRecentChat(false, chat);
   }
 
-  Future<List<Message>> loadChats(String? roomId) async {
+  Future<List<Message>> loadMessages(String? roomId) async {
     var chats = await messageReference
         .doc(roomId)
         .collection('messages')

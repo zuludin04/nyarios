@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 
@@ -7,6 +8,7 @@ import '../../data/model/chat.dart';
 
 class NyariosSearchController extends GetxController {
   final repository = MessageRepository();
+  final chatRepo = ChatRepository();
   final contactRepo = ContactRepository();
 
   String type = Get.arguments['type'];
@@ -15,31 +17,31 @@ class NyariosSearchController extends GetxController {
 
   String term = '';
 
-  var filterLastMessage = <Chat>[].obs;
-  var lastMessages = <Chat>[].obs;
+  var filterRecentChat = <Chat>[].obs;
+  var recentChats = <Chat>[].obs;
 
-  var filterChat = <Message>[].obs;
-  var chats = <Message>[].obs;
+  var filterMessage = <Message>[].obs;
+  var messages = <Message>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     if (type == 'lastMessage') {
-      loadLastMessages();
+      loadRecentChat();
     } else {
-      loadChats();
+      loadMessages();
     }
   }
 
   void searchLastMessage(String term) {
     if (term.isNotEmpty) {
-      var filter = lastMessages
+      var filter = recentChats
           .where((element) =>
               element.profile!.name!.toLowerCase().contains(term.toLowerCase()))
           .toList();
-      filterLastMessage.value = filter;
+      filterRecentChat.value = filter;
     } else {
-      filterLastMessage.value = lastMessages;
+      filterRecentChat.value = recentChats;
     }
   }
 
@@ -47,26 +49,26 @@ class NyariosSearchController extends GetxController {
     this.term = term;
 
     if (term.isNotEmpty) {
-      var filter = chats
+      var filter = messages
           .where((element) =>
               element.message!.toLowerCase().contains(term.toLowerCase()))
           .toList();
-      // filterChat.value = filter;
+      filterMessage.value = filter;
     } else {
-      // filterChat.value = chats;
+      filterMessage.value = messages;
       this.term = '';
     }
   }
 
-  void loadLastMessages() async {
-    var lastMessages = <Chat>[];
-    filterLastMessage.value = lastMessages;
-    this.lastMessages.value = lastMessages;
+  void loadRecentChat() async {
+    var recent = await chatRepo.loadUserRecentChat();
+    filterRecentChat.value = recent;
+    recentChats.value = recent;
   }
 
-  void loadChats() async {
-    var chats = await repository.loadChats(roomId);
-    // filterChat.value = chats;
-    // this.chats.value = chats;
+  void loadMessages() async {
+    var chats = await repository.loadMessages(roomId);
+    filterMessage.value = chats;
+    messages.value = chats;
   }
 }

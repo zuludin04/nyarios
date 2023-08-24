@@ -20,6 +20,15 @@ class ChatRepository {
         .snapshots();
   }
 
+  Future<List<Chat>> loadUserRecentChat() async {
+    var results = await chatReference
+        .doc(StorageServices.to.userId)
+        .collection('receiver')
+        .get();
+    var recent = results.docs.map((e) => Chat.fromMap(e.data())).toList();
+    return recent;
+  }
+
   void updateRecentChat(bool fromSender, Chat lastMessage) {
     chatReference
         .doc(fromSender ? StorageServices.to.userId : lastMessage.profileId)

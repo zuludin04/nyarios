@@ -16,8 +16,8 @@ class SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.filterLastMessage.isEmpty &&
-          controller.filterChat.isEmpty) {
+      if (controller.filterRecentChat.isEmpty &&
+          controller.filterMessage.isEmpty) {
         return Center(
           child: Text(controller.type == 'lastMessage'
               ? "empty_contact".tr
@@ -33,17 +33,17 @@ class SearchResults extends StatelessWidget {
                 itemBuilder: (context, index) {
                   if (controller.type == 'lastMessage') {
                     return LastMessageItem(
-                        lastMessage: controller.filterLastMessage[index]);
+                        lastMessage: controller.filterRecentChat[index]);
                   } else {
                     return _chatSearchItem(
-                      controller.filterChat[index],
+                      controller.filterMessage[index],
                       controller.term,
                     );
                   }
                 },
                 itemCount: controller.type == 'lastMessage'
-                    ? controller.filterLastMessage.length
-                    : controller.filterChat.length,
+                    ? controller.filterRecentChat.length
+                    : controller.filterMessage.length,
               ),
             ),
           ],
