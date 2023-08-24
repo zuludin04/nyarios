@@ -4,6 +4,7 @@ import 'package:nyarios/ui/call/call_voice_screen.dart';
 import 'package:nyarios/ui/chat/chatting_binding.dart';
 import 'package:nyarios/ui/contact/block/contact_block_screen.dart';
 import 'package:nyarios/ui/contact/friend/contact_friends_screen.dart';
+import 'package:nyarios/ui/group/bindings/group_member_pick_binding.dart';
 import 'package:nyarios/ui/group/group_create_screen.dart';
 import 'package:nyarios/ui/group/group_edit_screen.dart';
 import 'package:nyarios/ui/group/group_member_pick_screen.dart';
@@ -87,6 +88,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.groupMemberPick,
       page: () => const GroupMemberPickScreen(),
+      binding: GroupMemberPickBinding(),
     ),
     GetPage(
       name: AppRoutes.groupEdit,
