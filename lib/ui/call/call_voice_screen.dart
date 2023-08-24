@@ -1,10 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -12,89 +9,6 @@ import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/main.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-
-@pragma('vm:entry-point')
-void startCallback() {
-  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
-}
-
-class MyTaskHandler extends TaskHandler {
-  SendPort? _sendPort;
-  late RtcEngine agoraEngine;
-
-  @override
-  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
-    _sendPort = sendPort;
-
-    final token =
-        await FlutterForegroundTask.getData<String>(key: 'agoraToken');
-    final channel =
-        await FlutterForegroundTask.getData<String>(key: 'agoraChannel');
-    final uid = await FlutterForegroundTask.getData<int>(key: 'agoraUid');
-    setupVoiceSDKEngine(token!, channel!, uid!);
-  }
-
-  @override
-  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {}
-
-  @override
-  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
-    leave();
-  }
-
-  @override
-  void onNotificationButtonPressed(String id) {
-    if (id == 'hangUp') {
-      leave();
-      FlutterForegroundTask.stopService();
-    }
-  }
-
-  @override
-  void onNotificationPressed() {}
-
-  Future<void> setupVoiceSDKEngine(
-      String token, String channelName, int uid) async {
-    agoraEngine = createAgoraRtcEngine();
-    await agoraEngine.initialize(const RtcEngineContext(appId: appId));
-
-    join(token, channelName, uid);
-
-    agoraEngine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          _sendPort?.send('onJoinChannelSuccess');
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          _sendPort?.send(remoteUid);
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          _sendPort?.send('onUserOffline');
-        },
-      ),
-    );
-  }
-
-  void join(String token, String channelName, int uid) async {
-    ChannelMediaOptions options = const ChannelMediaOptions(
-      clientRoleType: ClientRoleType.clientRoleBroadcaster,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
-    );
-
-    await agoraEngine.joinChannel(
-      token: token,
-      channelId: channelName,
-      options: options,
-      uid: uid,
-    );
-  }
-
-  void leave() {
-    agoraEngine.release();
-    agoraEngine.leaveChannel();
-  }
-}
 
 class CallVoiceScreen extends StatefulWidget {
   const CallVoiceScreen({super.key});
@@ -114,29 +28,16 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   bool _isJoined = false;
   late RtcEngine agoraEngine;
 
-  ReceivePort? _receivePort;
   final StopWatchTimer _stopWatchTimer = StopWatchTimer();
 
   @override
   void initState() {
     super.initState();
-    setupCallPermission();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _requestPermissionForAndroid();
-      _initForegroundTask();
-
-      if (await FlutterForegroundTask.isRunningService) {
-        final newReceivePort = FlutterForegroundTask.receivePort;
-        _registerReceivePort(newReceivePort);
-      }
-
-      fetchToken(contact.profile!.id!, contact.chatId!, tokenRole);
-    });
+    setupVoiceSDKEngine();
   }
 
   @override
   void dispose() async {
-    _closeReceivePort();
     super.dispose();
   }
 
@@ -185,7 +86,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
                   ],
                 ),
                 child: IconButton(
-                  onPressed: _stopForegroundTask,
+                  onPressed: leave,
                   padding: EdgeInsets.zero,
                   icon: const Icon(Icons.phone_disabled, color: Colors.white),
                 ),
@@ -224,125 +125,6 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     }
   }
 
-  Future<void> _requestPermissionForAndroid() async {
-    if (!Platform.isAndroid) {
-      return;
-    }
-
-    if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-      await FlutterForegroundTask.requestIgnoreBatteryOptimization();
-    }
-
-    final NotificationPermission notificationPermissionStatus =
-        await FlutterForegroundTask.checkNotificationPermission();
-    if (notificationPermissionStatus != NotificationPermission.granted) {
-      await FlutterForegroundTask.requestNotificationPermission();
-    }
-  }
-
-  void _initForegroundTask() {
-    FlutterForegroundTask.init(
-      androidNotificationOptions: AndroidNotificationOptions(
-        id: 500,
-        channelId: 'agora_call_channel_id',
-        channelName: 'Nyarios Call',
-        channelDescription:
-            'This notification appears when the foreground service is running.',
-        channelImportance: NotificationChannelImportance.LOW,
-        priority: NotificationPriority.LOW,
-        iconData: const NotificationIconData(
-          resType: ResourceType.mipmap,
-          resPrefix: ResourcePrefix.ic,
-          name: 'launcher',
-          backgroundColor: Colors.orange,
-        ),
-        buttons: [
-          const NotificationButton(
-            id: 'hangUp',
-            text: 'Hang Up',
-            textColor: Colors.red,
-          ),
-        ],
-      ),
-      iosNotificationOptions: const IOSNotificationOptions(
-        showNotification: true,
-        playSound: false,
-      ),
-      foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 5000,
-        isOnceEvent: false,
-        autoRunOnBoot: true,
-        allowWakeLock: true,
-        allowWifiLock: true,
-      ),
-    );
-  }
-
-  Future<bool> _startForegroundTask(String token) async {
-    await FlutterForegroundTask.saveData(key: 'agoraToken', value: token);
-    await FlutterForegroundTask.saveData(
-        key: 'agoraChannel', value: contact.chatId!);
-    await FlutterForegroundTask.saveData(
-        key: 'agoraUid', value: contact.profile!.id!);
-
-    final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
-    final bool isRegistered = _registerReceivePort(receivePort);
-    if (!isRegistered) {
-      return false;
-    }
-
-    if (await FlutterForegroundTask.isRunningService) {
-      return FlutterForegroundTask.restartService();
-    } else {
-      return FlutterForegroundTask.startService(
-        notificationTitle: 'Nyarios Call',
-        notificationText: 'Voice call with ${contact.profile!.name}',
-        callback: startCallback,
-      );
-    }
-  }
-
-  Future<bool> _stopForegroundTask() {
-    Get.back();
-    return FlutterForegroundTask.stopService();
-  }
-
-  bool _registerReceivePort(ReceivePort? newReceivePort) {
-    if (newReceivePort == null) {
-      return false;
-    }
-
-    _closeReceivePort();
-
-    _receivePort = newReceivePort;
-    _receivePort?.listen((data) {
-      if (data is String) {
-        if (data == 'onJoinChannelSuccess') {
-          setState(() {
-            _isJoined = true;
-          });
-        } else if (data == 'onUserOffline') {
-          _stopForegroundTask();
-        }
-      } else if (data is int) {
-        setState(() {
-          _remoteUid = data;
-        });
-      }
-    });
-
-    return _receivePort != null;
-  }
-
-  void _closeReceivePort() {
-    _receivePort?.close();
-    _receivePort = null;
-  }
-
-  Future<void> setupCallPermission() async {
-    await [Permission.microphone].request();
-  }
-
   Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
     String url =
         '$serverUrl/rtc/$channelName/${tokenRole.toString()}/userAccount/${uid.toString()}';
@@ -352,10 +134,58 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     if (response.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(response.body);
       String newToken = json['rtcToken'];
-      _startForegroundTask(newToken);
+      join(newToken, channelName, uid);
     } else {
       throw Exception(
           'Failed to fetch a token. Make sure that your server URL is valid');
     }
+  }
+
+  Future<void> setupVoiceSDKEngine() async {
+    await [Permission.microphone].request();
+
+    agoraEngine = createAgoraRtcEngine();
+    await agoraEngine.initialize(const RtcEngineContext(appId: appId));
+
+    fetchToken(contact.profile!.id!, contact.chatId!, tokenRole);
+
+    agoraEngine.registerEventHandler(
+      RtcEngineEventHandler(
+        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+          setState(() {
+            _isJoined = true;
+          });
+        },
+        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+          setState(() {
+            _remoteUid = remoteUid;
+          });
+        },
+        onUserOffline: (RtcConnection connection, int remoteUid,
+            UserOfflineReasonType reason) {
+          Get.back();
+        },
+      ),
+    );
+  }
+
+  void join(String token, String channelName, int uid) async {
+    ChannelMediaOptions options = const ChannelMediaOptions(
+      clientRoleType: ClientRoleType.clientRoleBroadcaster,
+      channelProfile: ChannelProfileType.channelProfileCommunication,
+    );
+
+    await agoraEngine.joinChannel(
+      token: token,
+      channelId: channelName,
+      options: options,
+      uid: uid,
+    );
+  }
+
+  void leave() {
+    agoraEngine.release();
+    agoraEngine.leaveChannel();
+    Get.back();
   }
 }

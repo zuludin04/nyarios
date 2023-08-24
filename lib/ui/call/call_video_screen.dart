@@ -1,48 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/main.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-@pragma('vm:entry-point')
-void startCallback() {
-  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
-}
-
-class MyTaskHandler extends TaskHandler {
-  SendPort? _sendPort;
-  late RtcEngine agoraEngine;
-
-  @override
-  Future<void> onStart(DateTime timestamp, SendPort? sendPort) async {
-    _sendPort = sendPort;
-  }
-
-  @override
-  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {}
-
-  @override
-  Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
-    _sendPort?.send('onHangUpCall');
-  }
-
-  @override
-  void onNotificationButtonPressed(String id) {
-    if (id == 'hangUp') {
-      _sendPort?.send('onHangUpCall');
-    }
-  }
-
-  @override
-  void onNotificationPressed() {}
-}
 
 class CallVideoScreen extends StatefulWidget {
   const CallVideoScreen({super.key});
@@ -51,8 +15,7 @@ class CallVideoScreen extends StatefulWidget {
   State<CallVideoScreen> createState() => _CallVideoScreenState();
 }
 
-class _CallVideoScreenState extends State<CallVideoScreen>
-    with WidgetsBindingObserver {
+class _CallVideoScreenState extends State<CallVideoScreen> {
   int tokenRole = 1;
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
@@ -63,30 +26,16 @@ class _CallVideoScreenState extends State<CallVideoScreen>
   bool _isJoined = false;
   late RtcEngine agoraEngine;
 
-  ReceivePort? _receivePort;
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _requestPermissionForAndroid();
-      _initForegroundTask();
-
-      if (await FlutterForegroundTask.isRunningService) {
-        final newReceivePort = FlutterForegroundTask.receivePort;
-        _registerReceivePort(newReceivePort);
-      }
-    });
     setupVideoSDKEngine();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     agoraEngine.leaveChannel();
     agoraEngine.release();
-    _closeReceivePort();
     super.dispose();
   }
 
@@ -153,7 +102,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
                     ],
                   ),
                   child: IconButton(
-                    onPressed: _stopForegroundTask,
+                    onPressed: leave,
                     padding: EdgeInsets.zero,
                     icon: const Icon(Icons.phone_disabled, color: Colors.white),
                   ),
@@ -209,7 +158,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
           setState(() {
             _isJoined = true;
           });
-          _startForegroundTask();
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
           setState(() {
@@ -218,7 +166,7 @@ class _CallVideoScreenState extends State<CallVideoScreen>
         },
         onUserOffline: (RtcConnection connection, int remoteUid,
             UserOfflineReasonType reason) {
-          _stopForegroundTask();
+          Get.back();
         },
       ),
     );
@@ -267,106 +215,6 @@ class _CallVideoScreenState extends State<CallVideoScreen>
       _remoteUid = null;
     });
     agoraEngine.leaveChannel();
-  }
-
-  Future<void> _requestPermissionForAndroid() async {
-    if (!Platform.isAndroid) {
-      return;
-    }
-
-    if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-      await FlutterForegroundTask.requestIgnoreBatteryOptimization();
-    }
-
-    final NotificationPermission notificationPermissionStatus =
-        await FlutterForegroundTask.checkNotificationPermission();
-    if (notificationPermissionStatus != NotificationPermission.granted) {
-      await FlutterForegroundTask.requestNotificationPermission();
-    }
-  }
-
-  void _initForegroundTask() {
-    FlutterForegroundTask.init(
-      androidNotificationOptions: AndroidNotificationOptions(
-        id: 500,
-        channelId: 'agora_video_call_channel_id',
-        channelName: 'Nyarios Call',
-        channelDescription:
-            'This notification appears when the foreground service is running.',
-        channelImportance: NotificationChannelImportance.LOW,
-        priority: NotificationPriority.LOW,
-        iconData: const NotificationIconData(
-          resType: ResourceType.mipmap,
-          resPrefix: ResourcePrefix.ic,
-          name: 'launcher',
-          backgroundColor: Colors.orange,
-        ),
-        buttons: [
-          const NotificationButton(
-            id: 'hangUp',
-            text: 'Hang Up',
-            textColor: Colors.red,
-          ),
-        ],
-      ),
-      iosNotificationOptions: const IOSNotificationOptions(
-        showNotification: true,
-        playSound: false,
-      ),
-      foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 5000,
-        isOnceEvent: false,
-        autoRunOnBoot: true,
-        allowWakeLock: true,
-        allowWifiLock: true,
-      ),
-    );
-  }
-
-  Future<bool> _startForegroundTask() async {
-    final ReceivePort? receivePort = FlutterForegroundTask.receivePort;
-    final bool isRegistered = _registerReceivePort(receivePort);
-    if (!isRegistered) {
-      return false;
-    }
-
-    if (await FlutterForegroundTask.isRunningService) {
-      return FlutterForegroundTask.restartService();
-    } else {
-      return FlutterForegroundTask.startService(
-        notificationTitle: 'Nyarios Call',
-        notificationText: 'Video call with ${contact.profile!.name}',
-        callback: startCallback,
-      );
-    }
-  }
-
-  Future<bool> _stopForegroundTask() {
     Get.back();
-    return FlutterForegroundTask.stopService();
-  }
-
-  bool _registerReceivePort(ReceivePort? newReceivePort) {
-    if (newReceivePort == null) {
-      return false;
-    }
-
-    _closeReceivePort();
-
-    _receivePort = newReceivePort;
-    _receivePort?.listen((data) {
-      if (data is String) {
-        if (data == 'onHangUpCall') {
-          _stopForegroundTask();
-        }
-      }
-    });
-
-    return _receivePort != null;
-  }
-
-  void _closeReceivePort() {
-    _receivePort?.close();
-    _receivePort = null;
   }
 }
