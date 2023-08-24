@@ -146,7 +146,50 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           });
                           break;
                         case 4:
-                          chattingController.leaveAndRemoveGroup();
+                          Get.dialog(
+                            AlertDialog(
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                      'Your chat history will be deleted, are you sure?'),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        onPressed: Get.back,
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                            color: StorageServices.to.darkMode
+                                                ? Colors.white
+                                                : const Color(0xffb3404a),
+                                          ),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          chattingController
+                                              .leaveAndRemoveGroup()
+                                              .then((value) {
+                                            Get.back();
+                                          });
+                                        },
+                                        child: Text(
+                                          'OK',
+                                          style: TextStyle(
+                                            color: StorageServices.to.darkMode
+                                                ? Colors.white
+                                                : const Color(0xffb3404a),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
                           break;
                       }
                     },

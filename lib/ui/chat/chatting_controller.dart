@@ -127,7 +127,7 @@ class ChattingController extends GetxController {
     });
   }
 
-  void leaveAndRemoveGroup() async {
+  Future<void> leaveAndRemoveGroup() async {
     Chat chat = Chat(
       profileId: contact.group?.groupId,
       lastMessage:
