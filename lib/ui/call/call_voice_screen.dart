@@ -27,7 +27,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
 
   int? _remoteUid;
   bool _isJoined = false;
-  late RtcEngine agoraEngine;
+  RtcEngine? agoraEngine;
 
   bool isMuted = false;
   bool isSpeaker = false;
@@ -37,11 +37,15 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   @override
   void initState() {
     super.initState();
-    setupVoiceSDKEngine();
+    handleCallPermission();
   }
 
   @override
   void dispose() async {
+    if (agoraEngine != null) {
+      agoraEngine?.release();
+      agoraEngine?.leaveChannel();
+    }
     super.dispose();
   }
 
@@ -87,7 +91,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
                       setState(() {
                         isMuted = !isMuted;
                       });
-                      agoraEngine.muteLocalAudioStream(isMuted);
+                      agoraEngine?.muteLocalAudioStream(isMuted);
                     },
                   ),
                   CallActionButton(
@@ -105,7 +109,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
                       setState(() {
                         isSpeaker = !isSpeaker;
                       });
-                      agoraEngine.setEnableSpeakerphone(isSpeaker);
+                      agoraEngine?.setEnableSpeakerphone(isSpeaker);
                     },
                   ),
                 ],
@@ -144,6 +148,17 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     }
   }
 
+  Future<void> handleCallPermission() async {
+    await [Permission.microphone].request();
+
+    if (await Permission.microphone.isDenied) {
+      Get.back();
+      Get.rawSnackbar(message: 'Need microphone permission to make a call');
+    } else {
+      setupVoiceSDKEngine();
+    }
+  }
+
   Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
     String url =
         '$serverUrl/rtc/$channelName/${tokenRole.toString()}/userAccount/${uid.toString()}';
@@ -164,11 +179,11 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     await [Permission.microphone].request();
 
     agoraEngine = createAgoraRtcEngine();
-    await agoraEngine.initialize(const RtcEngineContext(appId: appId));
+    await agoraEngine?.initialize(const RtcEngineContext(appId: appId));
 
     fetchToken(contact.profile!.id!, contact.chatId!, tokenRole);
 
-    agoraEngine.registerEventHandler(
+    agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
           setState(() {
@@ -194,7 +209,7 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
       channelProfile: ChannelProfileType.channelProfileCommunication,
     );
 
-    await agoraEngine.joinChannel(
+    await agoraEngine?.joinChannel(
       token: token,
       channelId: channelName,
       options: options,
@@ -203,8 +218,8 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   }
 
   void leave() {
-    agoraEngine.release();
-    agoraEngine.leaveChannel();
+    agoraEngine?.release();
+    agoraEngine?.leaveChannel();
     Get.back();
   }
 }

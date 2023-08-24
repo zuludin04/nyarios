@@ -33,7 +33,7 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
   @override
   void initState() {
     super.initState();
-    setupVideoSDKEngine();
+    handleVideoCallPermission();
   }
 
   @override
@@ -163,9 +163,21 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
     );
   }
 
-  Future<void> setupVideoSDKEngine() async {
+  Future<void> handleVideoCallPermission() async {
     await [Permission.microphone, Permission.camera].request();
 
+    if (await Permission.microphone.isDenied) {
+      Get.back();
+      Get.rawSnackbar(message: 'Need microphone permission to make a call');
+    } else if (await Permission.camera.isDenied) {
+      Get.back();
+      Get.rawSnackbar(message: 'Need camera permission to make a video call');
+    } else {
+      setupVideoSDKEngine();
+    }
+  }
+
+  Future<void> setupVideoSDKEngine() async {
     agoraEngine = createAgoraRtcEngine();
     await agoraEngine.initialize(const RtcEngineContext(appId: appId));
 
