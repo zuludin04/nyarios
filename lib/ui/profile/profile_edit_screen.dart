@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -56,17 +57,17 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     ),
                     const SizedBox(height: 32),
                     ProfileInfoWidget(
-                      icon: Icons.person,
+                      icon: 'assets/icons/ic_profile.png',
                       title: 'name'.tr,
                       data: snapshot.data?.name ?? "-",
                     ),
                     ProfileInfoWidget(
-                      icon: Icons.info_outline,
+                      icon: 'assets/icons/ic_status.png',
                       title: 'Status',
                       data: snapshot.data?.status ?? "-",
                     ),
                     ProfileInfoWidget(
-                      icon: Icons.email,
+                      icon: 'assets/icons/ic_email.png',
                       title: 'E-Mail',
                       data: snapshot.data?.email ?? "-",
                     ),
@@ -137,10 +138,11 @@ class ImageProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: InkWell(
+    return Center(
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          InkWell(
             onTap: onTap,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
@@ -153,25 +155,24 @@ class ImageProfile extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                     )
-                  : ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image.network(
-                        url!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+                  : Image.network(
+                      url!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
             ),
           ),
-        ),
-        Positioned(
-          left: 100,
-          right: 0,
-          bottom: 0,
-          child: Icon(Icons.edit, color: Get.theme.iconTheme.color),
-        ),
-      ],
+          Positioned(
+            right: -10,
+            bottom: 0,
+            child: ImageAsset(
+              assets: 'assets/icons/ic_edit.png',
+              color: Get.theme.iconTheme.color!,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

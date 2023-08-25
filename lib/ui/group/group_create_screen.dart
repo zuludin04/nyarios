@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/group.dart';
@@ -165,7 +166,10 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
             _createGroup(group, file);
           }
         },
-        child: const Icon(Icons.check),
+        child: ImageAsset(
+          assets: 'assets/icons/ic_done.png',
+          color: Get.theme.iconTheme.color!,
+        ),
       ),
     );
   }

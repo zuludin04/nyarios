@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -45,7 +46,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               SettingsTile(
                 title: Text('qr_code'.tr),
-                leading: const Icon(Icons.qr_code_2),
+                leading: ImageAsset(
+                  assets: 'assets/icons/ic_qr_code.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
                 onPressed: (context) => Get.toNamed(AppRoutes.qrCodeProfile),
               ),
             ],
@@ -64,11 +68,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   });
                 },
                 title: Text("dark_mode".tr),
-                leading: const Icon(Icons.dark_mode),
+                leading: ImageAsset(
+                  assets: 'assets/icons/ic_dark_mode.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
               ),
               SettingsTile(
                 title: Text('language'.tr),
-                leading: const Icon(Icons.language),
+                leading: ImageAsset(
+                  assets: 'assets/icons/ic_language.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
                 onPressed: (context) => Get.toNamed(AppRoutes.language),
               ),
             ],
@@ -78,7 +88,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             tiles: [
               SettingsTile(
                 title: Text('blocked_friend'.tr),
-                leading: const Icon(Icons.app_blocking),
+                leading: ImageAsset(
+                  assets: 'assets/icons/ic_empty_profile.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
                 onPressed: (context) => Get.toNamed(AppRoutes.contactBlock),
               ),
             ],
@@ -88,12 +101,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             tiles: [
               SettingsTile(
                 title: Text('rating'.tr),
-                leading: const Icon(Icons.star),
+                leading: ImageAsset(
+                  assets: 'assets/icons/ic_star.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
                 onPressed: (context) {},
               ),
               SettingsTile(
                 title: Text('share'.tr),
-                leading: const Icon(Icons.share),
+                leading: ImageAsset(
+                  assets: 'assets/icons/ic_share.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
                 onPressed: (context) {},
               ),
             ],
@@ -102,7 +121,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             tiles: [
               SettingsTile(
                 title: Text('logout'.tr),
-                leading: const Icon(Icons.logout),
+                leading: ImageAsset(
+                  assets: 'assets/icons/ic_logout.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
                 onPressed: (context) async {
                   await signOut();
                   Get.offAllNamed(AppRoutes.signIn);

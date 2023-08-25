@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
@@ -55,10 +56,9 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.group,
-                              size: 28,
-                              color: Get.theme.iconTheme.color,
+                            ImageAsset(
+                              assets: 'assets/icons/ic_group_2.png',
+                              color: Get.theme.iconTheme.color!,
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -66,7 +66,8 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text('name'.tr, style: Get.textTheme.bodySmall),
+                                  Text('name'.tr,
+                                      style: Get.textTheme.bodySmall),
                                   Text(
                                     snapshot.data?.name ?? "-",
                                     style: Get.textTheme.titleMedium,
@@ -144,10 +145,11 @@ class ImageProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: InkWell(
+    return Center(
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          InkWell(
             onTap: onTap,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
@@ -160,25 +162,24 @@ class ImageProfile extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                     )
-                  : ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image.network(
-                        url!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+                  : Image.network(
+                      url!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
             ),
           ),
-        ),
-        Positioned(
-          left: 100,
-          right: 0,
-          bottom: 0,
-          child: Icon(Icons.edit, color: Get.theme.iconTheme.color),
-        ),
-      ],
+          Positioned(
+            right: -10,
+            bottom: 0,
+            child: ImageAsset(
+              assets: 'assets/icons/ic_edit.png',
+              color: Get.theme.iconTheme.color!,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

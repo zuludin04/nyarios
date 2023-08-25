@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
@@ -45,6 +46,10 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
       appBar: Toolbar.defaultToolbar('', elevation: 0, actions: [
         if (detailGroup)
           PopupMenuButton(
+            icon: ImageAsset(
+              assets: 'assets/icons/ic_vert_more.png',
+              color: Get.theme.iconTheme.color!,
+            ),
             itemBuilder: (context) {
               return [
                 PopupMenuItem(

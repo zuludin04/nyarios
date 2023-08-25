@@ -41,9 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
             _searchController.searchChat(query);
           }
         },
-        builder: (context, transition) {
-          return Container();
-        },
+        builder: (context, transition) => Container(),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
 
 class ChatInputMessage extends StatefulWidget {
@@ -89,10 +90,16 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      _pickFileMenu('File', Icons.attach_file,
-                                          controller),
                                       _pickFileMenu(
-                                          'Gallery', Icons.image, controller),
+                                        'File',
+                                        'assets/icons/ic_attach_file.png',
+                                        controller,
+                                      ),
+                                      _pickFileMenu(
+                                        'Gallery',
+                                        'assets/icons/ic_gallery.png',
+                                        controller,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -100,13 +107,19 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                                     Get.theme.colorScheme.background,
                               );
                             },
-                            icon: const Icon(Icons.attach_file),
+                            icon: ImageAsset(
+                              assets: 'assets/icons/ic_attach_file.png',
+                              color: Get.theme.iconTheme.color!,
+                            ),
                           ),
                           IconButton(
                             onPressed: () {
                               _pickImage(false, controller);
                             },
-                            icon: const Icon(Icons.camera_alt),
+                            icon: ImageAsset(
+                              assets: 'assets/icons/ic_camera.png',
+                              color: Get.theme.iconTheme.color!,
+                            ),
                           ),
                         ],
                       ),
@@ -127,10 +140,8 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                         color: Color(0xffb3404a),
                       ),
                       padding: const EdgeInsets.all(10),
-                      child: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                      ),
+                      child:
+                          const ImageAsset(assets: 'assets/icons/ic_send.png'),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -141,7 +152,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
   }
 
   Widget _pickFileMenu(
-      String title, IconData icon, ChattingController controller) {
+      String title, String icon, ChattingController controller) {
     return InkWell(
       onTap: () async {
         Get.back();
@@ -155,7 +166,12 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, size: 32),
+          ImageAsset(
+            assets: icon,
+            color: Get.theme.iconTheme.color!,
+            size: 32,
+          ),
+          const SizedBox(height: 8),
           Text(title.toLowerCase().tr),
         ],
       ),

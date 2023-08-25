@@ -34,14 +34,18 @@ class NyariosSearchController extends GetxController {
   }
 
   void searchLastMessage(String term) {
+    this.term = term;
+
     if (term.isNotEmpty) {
       var filter = recentChats
           .where((element) =>
               element.profile!.name!.toLowerCase().contains(term.toLowerCase()))
           .toList();
       filterRecentChat.value = filter;
+      print("result search contact ${filter.length}");
     } else {
       filterRecentChat.value = recentChats;
+      this.term = '';
     }
   }
 

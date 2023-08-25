@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
@@ -18,7 +19,7 @@ class ContactFriends extends StatelessWidget {
       appBar: Toolbar.defaultToolbar('contact'.tr),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.groupCreate),
-        child: const Icon(Icons.group),
+        child: const ImageAsset(assets: 'assets/icons/ic_group_2.png'),
       ),
       body: FutureBuilder<List<Contact>>(
         future: repository.loadContacts(false),

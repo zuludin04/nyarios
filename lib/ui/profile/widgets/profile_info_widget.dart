@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 
 import 'profile_edit_bottom_sheet.dart';
 
 class ProfileInfoWidget extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final String title;
   final String data;
 
@@ -30,7 +31,10 @@ class ProfileInfoWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            Icon(icon, size: 28, color: Get.theme.iconTheme.color),
+            ImageAsset(
+              assets: icon,
+              color: Get.theme.iconTheme.color!,
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

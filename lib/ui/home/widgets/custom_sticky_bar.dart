@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 
 import '../../../routes/app_pages.dart';
-import 'action_menu_item.dart';
 
 class CustomStickyBar extends SliverPersistentHeaderDelegate {
   @override
@@ -20,24 +20,26 @@ class CustomStickyBar extends SliverPersistentHeaderDelegate {
         children: [
           const Text(
             'Nyarios',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
           ),
           Row(
             children: [
-              ActionMenuItem(
-                icon: Icons.search,
-                onTap: () => Get.toNamed(
+              IconButton(
+                onPressed: () => Get.toNamed(
                   AppRoutes.search,
                   arguments: {'type': 'lastMessage', 'roomId': '', 'user': ''},
                 ),
+                icon: ImageAsset(
+                  assets: 'assets/icons/ic_search.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
               ),
-              const SizedBox(width: 12),
-              ActionMenuItem(
-                icon: Icons.settings,
-                onTap: () => Get.toNamed(AppRoutes.settings),
+              IconButton(
+                onPressed: () => Get.toNamed(AppRoutes.settings),
+                icon: ImageAsset(
+                  assets: 'assets/icons/ic_settings.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
               ),
             ],
           ),

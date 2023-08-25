@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 
@@ -18,35 +19,14 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.contactFriend),
-        child: const Icon(Icons.edit, color: Colors.white),
+        child: const ImageAsset(assets: 'assets/icons/ic_edit.png'),
       ),
       body: SafeArea(
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            SliverPersistentHeader(
-              delegate: CustomStickyBar(),
-              pinned: true,
-            ),
-            // SliverToBoxAdapter(
-            //   child: Column(
-            //     children: [
-            //       const SizedBox(height: 20),
-            //       Container(
-            //         height: 90,
-            //         padding: const EdgeInsets.symmetric(horizontal: 12),
-            //         child: ListView.builder(
-            //           itemBuilder: (context, index) => _storyItem(),
-            //           itemCount: 1,
-            //           scrollDirection: Axis.horizontal,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 10),
-            ),
+            SliverPersistentHeader(delegate: CustomStickyBar(), pinned: true),
+            const SliverToBoxAdapter(child: SizedBox(height: 10)),
             StreamBuilder(
               stream: repository.loadRecentChat(),
               builder: (context, snapshot) {

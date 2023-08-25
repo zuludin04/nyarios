@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 
 import '../../services/storage_services.dart';
@@ -20,7 +21,10 @@ class Toolbar {
       leading: leading ??
           IconButton(
             onPressed: Get.back,
-            icon: const Icon(Icons.chevron_left),
+            icon: ImageAsset(
+              assets: 'assets/icons/ic_back.png',
+              color: Get.theme.iconTheme.color!,
+            ),
           ),
       elevation: elevation,
       title: InkWell(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
@@ -47,7 +48,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
               if (controller.selectedChat.isEmpty) {
                 return IconButton(
                   onPressed: Get.back,
-                  icon: const Icon(Icons.chevron_left),
+                  icon: ImageAsset(
+                    assets: 'assets/icons/ic_back.png',
+                    color: Get.theme.iconTheme.color!,
+                  ),
                 );
               } else {
                 return IconButton(
@@ -70,7 +74,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
               child: IconButton(
                 onPressed: () =>
                     Get.toNamed(AppRoutes.callVideo, arguments: contact),
-                icon: const Icon(Icons.videocam),
+                icon:ImageAsset(
+                  assets: 'assets/icons/ic_video.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
               ),
             ),
             Visibility(
@@ -78,7 +85,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
               child: IconButton(
                 onPressed: () =>
                     Get.toNamed(AppRoutes.callVoice, arguments: contact),
-                icon: const Icon(Icons.call),
+                icon: ImageAsset(
+                  assets: 'assets/icons/ic_call\.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
               ),
             ),
             GetBuilder<ChattingController>(
@@ -86,7 +96,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 return Visibility(
                   visible: !controller.isSelectionMode,
                   child: PopupMenuButton(
-                    icon: const Icon(Icons.more_vert),
+                    icon: ImageAsset(
+                      assets: 'assets/icons/ic_vert_more.png',
+                      color: Get.theme.iconTheme.color!,
+                    ),
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(

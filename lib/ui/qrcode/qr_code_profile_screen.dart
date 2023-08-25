@@ -2,6 +2,7 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/profile.dart';
@@ -34,11 +35,11 @@ class QrCodeProfileScreen extends StatelessWidget {
                 size: 200,
                 padding: const EdgeInsets.all(16),
                 dataModuleStyle: QrDataModuleStyle(
-                  dataModuleShape: QrDataModuleShape.square,
+                  dataModuleShape: QrDataModuleShape.circle,
                   color: Get.theme.colorScheme.onPrimary,
                 ),
                 eyeStyle: QrEyeStyle(
-                  eyeShape: QrEyeShape.square,
+                  eyeShape: QrEyeShape.circle,
                   color: Get.theme.colorScheme.onPrimary,
                 ),
               ),
@@ -52,7 +53,7 @@ class QrCodeProfileScreen extends StatelessWidget {
             children: [
               _qrActions(
                 'copy_link'.tr,
-                Icons.copy,
+                'assets/icons/ic_copy.png',
                 () {
                   Clipboard.setData(const ClipboardData(text: ""));
                   Get.rawSnackbar(message: "copy_clipboard".tr);
@@ -60,7 +61,7 @@ class QrCodeProfileScreen extends StatelessWidget {
               ),
               _qrActions(
                 'share'.tr,
-                Icons.share_outlined,
+                'assets/icons/ic_share.png',
                 () {
                   Share.share(
                     "babca",
@@ -88,7 +89,10 @@ class QrCodeProfileScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.qr_code_scanner),
+                  ImageAsset(
+                    assets: 'assets/icons/ic_qr_scan.png',
+                    color: Get.theme.iconTheme.color!,
+                  ),
                   const SizedBox(width: 8),
                   Text('scan_qr_code'.tr),
                 ],
@@ -100,12 +104,15 @@ class QrCodeProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _qrActions(String title, IconData icon, Function() onTap) {
+  Widget _qrActions(String title, String icon, Function() onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         children: [
-          Icon(icon),
+          ImageAsset(
+            assets: icon,
+            color: Get.theme.iconTheme.color!,
+          ),
           const SizedBox(height: 4),
           Text(title),
         ],
