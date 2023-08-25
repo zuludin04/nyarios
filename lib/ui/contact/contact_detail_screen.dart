@@ -47,9 +47,9 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
           PopupMenuButton(
             itemBuilder: (context) {
               return [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 0,
-                  child: Text('Edit'),
+                  child: Text('edit_group'.tr),
                 ),
               ];
             },
@@ -155,7 +155,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                         width: double.infinity,
                         child: Tab(
                           icon: Text(
-                            'Members'.tr,
+                            'members'.tr,
                             style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -200,7 +200,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
 
   Widget _detailInfo() {
     if (detailGroup) {
-      return Text('${lastMessage.group!.members!.length} members');
+      return Text('${lastMessage.group!.members!.length} ${'members'.tr}');
     } else {
       return FutureBuilder(
         future: ProfileRepository().loadUserStatus(lastMessage.profileId),

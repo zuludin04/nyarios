@@ -48,7 +48,7 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Create Group', elevation: 0),
+      appBar: Toolbar.defaultToolbar('create_group'.tr, elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -86,17 +86,15 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
                 Expanded(
                   child: TextField(
                     controller: _groupTitleController,
-                    decoration: const InputDecoration(
-                      hintText: 'Your Group Name',
-                    ),
+                    decoration: InputDecoration(hintText: 'group_name'.tr),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Member',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            Text(
+              'member'.tr,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Expanded(
@@ -130,7 +128,7 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
                             child: const Icon(Icons.add),
                           ),
                           const SizedBox(height: 4),
-                          const Text('Add Member'),
+                          Text('add_member'.tr, textAlign: TextAlign.center),
                         ],
                       ),
                     );

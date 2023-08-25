@@ -94,9 +94,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                           child: Text('view_contact'.tr),
                         ),
                         if (type != 'dm')
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 3,
-                            child: Text('Add Member'),
+                            child: Text('add_member'.tr),
                           ),
                         PopupMenuItem(
                           value: 1,
@@ -110,9 +110,9 @@ class _ChattingScreenState extends State<ChattingScreen> {
                                 : 'block'.tr),
                           ),
                         if (type != 'dm')
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 4,
-                            child: Text('Leave Group'),
+                            child: Text('leave_group'.tr),
                           ),
                       ];
                     },
@@ -151,15 +151,14 @@ class _ChattingScreenState extends State<ChattingScreen> {
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Text(
-                                      'Your chat history will be deleted, are you sure?'),
+                                  Text('leave_group_message'.tr),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       TextButton(
                                         onPressed: Get.back,
                                         child: Text(
-                                          'Cancel',
+                                          'cancel'.tr,
                                           style: TextStyle(
                                             color: StorageServices.to.darkMode
                                                 ? Colors.white

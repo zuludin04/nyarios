@@ -24,7 +24,7 @@ class _GroupMemberPickScreenState extends State<GroupMemberPickScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Pick Member', elevation: 0),
+      appBar: Toolbar.defaultToolbar('pick_member'.tr, elevation: 0),
       floatingActionButton: Visibility(
         visible: controller.selectedMembers.isNotEmpty,
         child: FloatingActionButton(

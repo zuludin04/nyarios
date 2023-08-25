@@ -30,7 +30,7 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Enter group name'),
+          Text('group_name'.tr),
           TextFormField(
             controller: _textEditingController..text = widget.initialValue,
           ),
@@ -40,7 +40,7 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
               TextButton(
                 onPressed: Get.back,
                 child: Text(
-                  'Cancel',
+                  'cancel'.tr,
                   style: TextStyle(
                     color: StorageServices.to.darkMode
                         ? Colors.white
@@ -57,11 +57,11 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
                     );
                     Get.back();
                   } else {
-                    Get.rawSnackbar(message: 'Please fill your data');
+                    Get.rawSnackbar(message: 'fill_message'.tr);
                   }
                 },
                 child: Text(
-                  'Save',
+                  'save'.tr,
                   style: TextStyle(
                     color: StorageServices.to.darkMode
                         ? Colors.white

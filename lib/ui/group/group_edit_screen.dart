@@ -24,7 +24,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Group'.tr),
+      appBar: Toolbar.defaultToolbar('edit_group'.tr),
       body: Column(
         children: [
           Padding(
@@ -66,7 +66,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text('Name', style: Get.textTheme.bodySmall),
+                                  Text('name'.tr, style: Get.textTheme.bodySmall),
                                   Text(
                                     snapshot.data?.name ?? "-",
                                     style: Get.textTheme.titleMedium,

@@ -31,7 +31,7 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Enter your name'),
+          Text(widget.updateName ? 'enter_name'.tr : 'enter_status'.tr),
           TextFormField(
             controller: _textEditingController..text = widget.initialValue,
           ),
@@ -41,7 +41,7 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
               TextButton(
                 onPressed: Get.back,
                 child: Text(
-                  'Cancel',
+                  'cancel'.tr,
                   style: TextStyle(
                     color: StorageServices.to.darkMode
                         ? Colors.white
@@ -59,11 +59,11 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
                     );
                     Get.back();
                   } else {
-                    Get.rawSnackbar(message: 'Please fill your data');
+                    Get.rawSnackbar(message: 'fill_message'.tr);
                   }
                 },
                 child: Text(
-                  'Save',
+                  'save'.tr,
                   style: TextStyle(
                     color: StorageServices.to.darkMode
                         ? Colors.white
