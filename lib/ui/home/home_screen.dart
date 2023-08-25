@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.contactFriend),
-        child: const ImageAsset(assets: 'assets/icons/ic_edit.png'),
+        child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
       ),
       body: SafeArea(
         child: CustomScrollView(
