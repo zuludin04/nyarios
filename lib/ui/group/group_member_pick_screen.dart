@@ -25,14 +25,18 @@ class _GroupMemberPickScreenState extends State<GroupMemberPickScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: Toolbar.defaultToolbar('pick_member'.tr, elevation: 0),
-      floatingActionButton: Visibility(
-        visible: controller.selectedMembers.isNotEmpty,
-        child: FloatingActionButton(
-          onPressed: () {
-            controller.addGroupMembers(group);
-          },
-          child: const Icon(Icons.check),
-        ),
+      floatingActionButton: GetBuilder<GroupMemberPickController>(
+        builder: (controller) {
+          return Visibility(
+            visible: controller.selectedMembers.isNotEmpty,
+            child: FloatingActionButton(
+              onPressed: () {
+                controller.addGroupMembers(group);
+              },
+              child: const Icon(Icons.check),
+            ),
+          );
+        },
       ),
       body: FutureBuilder<List<Contact>>(
         future: controller.contactRepo.loadContacts(false),
