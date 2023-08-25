@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
@@ -19,9 +20,12 @@ class SearchResults extends StatelessWidget {
       if (controller.filterRecentChat.isEmpty &&
           controller.filterMessage.isEmpty) {
         return Center(
-          child: Text(controller.type == 'lastMessage'
-              ? "empty_contact".tr
-              : "empty_chat".tr),
+          child: EmptyWidget(
+            message: controller.type == 'lastMessage'
+                ? "empty_contact".tr
+                : "empty_chat".tr,
+            asset: 'assets/icons/ic_empty_search.png',
+          ),
         );
       } else {
         return Column(
