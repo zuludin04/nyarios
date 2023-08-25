@@ -226,7 +226,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         controller.clearSelectedChat();
                       });
                     },
-                    icon: const Icon(Icons.copy),
+                    icon: ImageAsset(
+                      assets: 'assets/icons/ic_copy.png',
+                      color: Get.theme.iconTheme.color!,
+                    ),
                   ),
                 );
               },
@@ -244,7 +247,10 @@ class _ChattingScreenState extends State<ChattingScreen> {
                         controller.clearSelectedChat();
                       });
                     },
-                    icon: const Icon(Icons.delete),
+                    icon: ImageAsset(
+                      assets: 'assets/icons/ic_delete.png',
+                      color: Get.theme.iconTheme.color!,
+                    ),
                   ),
                 );
               },
