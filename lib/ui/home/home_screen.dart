@@ -47,7 +47,10 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.speaker_notes_off, size: 80),
+                        const ImageAsset(
+                          assets: 'assets/icons/ic_empty_chat.png',
+                          size: 80,
+                        ),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () => Get.toNamed(AppRoutes.contactFriend),

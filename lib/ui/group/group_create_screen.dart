@@ -126,7 +126,7 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
                               shape: BoxShape.circle,
                               border: Border.all(color: Colors.black38),
                             ),
-                            child: const Icon(Icons.add),
+                            child: const Icon(Icons.add, color: Colors.black),
                           ),
                           const SizedBox(height: 4),
                           Text('add_member'.tr, textAlign: TextAlign.center),

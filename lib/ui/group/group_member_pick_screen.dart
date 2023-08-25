@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/group.dart';
@@ -54,7 +55,10 @@ class _GroupMemberPickScreenState extends State<GroupMemberPickScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.person_off, size: 80),
+                  const ImageAsset(
+                    assets: 'assets/icons/ic_profile_not_found.png',
+                    size: 80,
+                  ),
                   Text('no_friend'.tr),
                 ],
               ),

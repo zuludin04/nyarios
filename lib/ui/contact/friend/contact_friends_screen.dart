@@ -37,7 +37,10 @@ class ContactFriends extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.person_off, size: 80),
+                  const ImageAsset(
+                    assets: 'assets/icons/ic_profile_not_found.png',
+                    size: 80,
+                  ),
                   Text('no_friend'.tr),
                   const SizedBox(height: 16),
                   ElevatedButton(
