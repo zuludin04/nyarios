@@ -86,7 +86,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                 onPressed: () =>
                     Get.toNamed(AppRoutes.callVoice, arguments: contact),
                 icon: ImageAsset(
-                  assets: 'assets/icons/ic_call\.png',
+                  assets: 'assets/icons/ic_call.png',
                   color: Get.theme.iconTheme.color!,
                 ),
               ),
