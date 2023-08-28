@@ -1,10 +1,9 @@
 import 'package:get/get.dart';
+import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
-
-import '../../data/model/chat.dart';
 
 class NyariosSearchController extends GetxController {
   final repository = MessageRepository();
@@ -42,7 +41,6 @@ class NyariosSearchController extends GetxController {
               element.profile!.name!.toLowerCase().contains(term.toLowerCase()))
           .toList();
       filterRecentChat.value = filter;
-      print("result search contact ${filter.length}");
     } else {
       filterRecentChat.value = recentChats;
       this.term = '';

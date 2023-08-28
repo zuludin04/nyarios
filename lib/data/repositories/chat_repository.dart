@@ -24,9 +24,15 @@ class ChatRepository {
     var results = await chatReference
         .doc(StorageServices.to.userId)
         .collection('receiver')
+        .where('type', isEqualTo: 'dm')
         .get();
-    var recent = results.docs.map((e) => Chat.fromMap(e.data())).toList();
-    return recent;
+    var recent = results.docs.map((e) async {
+      var chat = Chat.fromMap(e.data());
+      var profile = await profileRepository.loadSingleProfile(chat.profileId);
+      chat.profile = profile;
+      return chat;
+    }).toList();
+    return Future.wait(recent);
   }
 
   void updateRecentChat(bool fromSender, Chat lastMessage) {
