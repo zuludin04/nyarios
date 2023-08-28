@@ -44,7 +44,7 @@ class _SettingsNavigationState extends State<SettingsNavigation> {
               title: Text('qr_code'.tr),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_qr_code.png',
-                color: Get.theme.iconTheme.color!,
+                color: Theme.of(context).iconTheme.color!,
               ),
               onPressed: (context) => Get.toNamed(AppRoutes.qrCodeProfile),
             ),
@@ -66,14 +66,14 @@ class _SettingsNavigationState extends State<SettingsNavigation> {
               title: Text("dark_mode".tr),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_dark_mode.png',
-                color: Get.theme.iconTheme.color!,
+                color: Theme.of(context).iconTheme.color!,
               ),
             ),
             SettingsTile(
               title: Text('language'.tr),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_language.png',
-                color: Get.theme.iconTheme.color!,
+                color: Theme.of(context).iconTheme.color!,
               ),
               onPressed: (context) => Get.toNamed(AppRoutes.language),
             ),
@@ -86,7 +86,7 @@ class _SettingsNavigationState extends State<SettingsNavigation> {
               title: Text('blocked_friend'.tr),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_empty_profile.png',
-                color: Get.theme.iconTheme.color!,
+                color: Theme.of(context).iconTheme.color!,
               ),
               onPressed: (context) => Get.toNamed(AppRoutes.contactBlock),
             ),
@@ -99,7 +99,7 @@ class _SettingsNavigationState extends State<SettingsNavigation> {
               title: Text('rating'.tr),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_star.png',
-                color: Get.theme.iconTheme.color!,
+                color: Theme.of(context).iconTheme.color!,
               ),
               onPressed: (context) {},
             ),
@@ -107,7 +107,7 @@ class _SettingsNavigationState extends State<SettingsNavigation> {
               title: Text('share'.tr),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_share.png',
-                color: Get.theme.iconTheme.color!,
+                color: Theme.of(context).iconTheme.color!,
               ),
               onPressed: (context) {},
             ),
@@ -119,7 +119,7 @@ class _SettingsNavigationState extends State<SettingsNavigation> {
               title: Text('logout'.tr),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_logout.png',
-                color: Get.theme.iconTheme.color!,
+                color: Theme.of(context).iconTheme.color!,
               ),
               onPressed: (context) async {
                 await signOut();

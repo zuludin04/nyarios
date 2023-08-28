@@ -73,7 +73,7 @@ class _BottomNavItem extends StatelessWidget {
           width: 20,
           height: 20,
           color: selected
-              ? const Color(0xffffa400)
+              ? const Color(0xffb3404a)
               : Theme.of(context).iconTheme.color,
         ),
         const SizedBox(height: 2),
@@ -83,7 +83,7 @@ class _BottomNavItem extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: selected
-                ? const Color(0xffffa400)
+                ? const Color(0xffb3404a)
                 : Theme.of(context).iconTheme.color,
           ),
         ),
