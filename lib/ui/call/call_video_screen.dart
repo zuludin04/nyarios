@@ -50,86 +50,115 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
         return false;
       },
       child: Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              _remoteUid != null ? _remoteVideo() : _localPreview(),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: _remoteUid != null
-                    ? SizedBox(
-                        width: 140,
-                        height: 180,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: _localPreview(),
+        body: Stack(
+          children: [
+            _remoteUid != null ? _remoteVideo() : _localPreview(),
+            Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: _remoteUid != null
+                        ? Container(
+                            width: 140,
+                            height: 180,
+                            margin: const EdgeInsets.only(right: 32),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: _localPreview(),
+                            ),
+                          )
+                        : Container(
+                            margin: const EdgeInsets.only(right: 32),
+                            padding: const EdgeInsets.all(16),
+                            width: 120,
+                            height: 160,
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    offset: Offset(1, 1),
+                                    blurRadius: 1,
+                                    spreadRadius: 1,
+                                    color: Colors.black26,
+                                  ),
+                                ]),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: Image.network(
+                                    contact.profile!.photo!,
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  contact.profile!.name!,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                  ),
+                  const SizedBox(height: 32),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CallActionButton(
+                          icon:
+                              isMuted ? Icons.mic_off_outlined : Icons.mic_none,
+                          color: Colors.white,
+                          iconColor: Colors.black,
+                          onPressed: () {
+                            setState(() {
+                              isMuted = !isMuted;
+                            });
+                            agoraEngine.muteLocalAudioStream(isMuted);
+                          },
                         ),
-                      )
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: Image.network(
-                              contact.profile!.photo!,
-                              width: 70,
-                              height: 70,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            contact.profile!.name!,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
+                        CallActionButton(
+                          icon: Icons.phone_disabled,
+                          color: Colors.red.shade800,
+                          iconColor: Colors.white,
+                          onPressed: leave,
+                        ),
+                        CallActionButton(
+                          icon: isSpeaker
+                              ? Icons.volume_up_outlined
+                              : Icons.volume_off,
+                          color: Colors.white,
+                          iconColor: Colors.black,
+                          onPressed: () {
+                            setState(() {
+                              isSpeaker = !isSpeaker;
+                            });
+                            agoraEngine.setEnableSpeakerphone(isSpeaker);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Positioned(
-                bottom: 80,
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    CallActionButton(
-                      icon: isMuted ? Icons.mic_off_outlined : Icons.mic_none,
-                      color: Colors.white,
-                      iconColor: Colors.black,
-                      onPressed: () {
-                        setState(() {
-                          isMuted = !isMuted;
-                        });
-                        agoraEngine.muteLocalAudioStream(isMuted);
-                      },
-                    ),
-                    CallActionButton(
-                      icon: Icons.phone_disabled,
-                      color: Colors.red.shade800,
-                      iconColor: Colors.white,
-                      onPressed: leave,
-                    ),
-                    CallActionButton(
-                      icon: isSpeaker
-                          ? Icons.volume_up_outlined
-                          : Icons.volume_off,
-                      color: Colors.white,
-                      iconColor: Colors.black,
-                      onPressed: () {
-                        setState(() {
-                          isSpeaker = !isSpeaker;
-                        });
-                        agoraEngine.setEnableSpeakerphone(isSpeaker);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
