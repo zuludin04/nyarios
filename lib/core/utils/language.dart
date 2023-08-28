@@ -62,6 +62,7 @@ const Map<String, String> idID = {
   "members": "Anggota",
   "edit_group": "Sunting Group",
   "enter_group_name": "Masukkan group anda",
+  "your_friend": "Teman Kamu",
 };
 
 const Map<String, String> enUS = {
@@ -128,4 +129,5 @@ const Map<String, String> enUS = {
   "members": "Members",
   "edit_group": "Edit Group",
   "enter_group_name": "Enter group name",
+  "your_friend": "Your Friend",
 };
