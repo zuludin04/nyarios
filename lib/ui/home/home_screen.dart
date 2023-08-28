@@ -1,81 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/bottom_navigation.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/data/model/chat.dart';
-import 'package:nyarios/data/repositories/chat_repository.dart';
+import 'package:nyarios/ui/home/home_controller.dart';
+import 'package:nyarios/ui/home/nav/call_history_navigation.dart';
+import 'package:nyarios/ui/home/nav/recent_chat_navigation.dart';
+import 'package:nyarios/ui/home/nav/settings_navigation.dart';
 
-import '../../core/widgets/custom_indicator.dart';
 import '../../routes/app_pages.dart';
-import 'widgets/custom_sticky_bar.dart';
-import 'widgets/last_message_item.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var repository = ChatRepository();
-
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRoutes.contactFriend),
-        child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
-      ),
-      body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverPersistentHeader(delegate: CustomStickyBar(), pinned: true),
-            const SliverToBoxAdapter(child: SizedBox(height: 10)),
-            StreamBuilder(
-              stream: repository.loadRecentChat(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return SliverFillRemaining(
-                    child: Center(child: Text('something_went_wrong'.tr)),
-                  );
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SliverFillRemaining(
-                    child: Center(child: CustomIndicator()),
-                  );
-                }
-
-                if (snapshot.data!.size == 0) {
-                  return SliverFillRemaining(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const ImageAsset(
-                          assets: 'assets/icons/ic_empty_chat.png',
-                          size: 80,
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () => Get.toNamed(AppRoutes.contactFriend),
-                          child: Text('start_conversation'.tr),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      var data = snapshot.data!.docs[index];
-                      var chat = Chat.fromMap(data.data());
-                      return LastMessageItem(lastMessage: chat);
-                    },
-                    childCount: snapshot.data!.size,
-                  ),
-                );
-              },
+    return GetBuilder<HomeController>(
+      builder: (controller) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.background,
+            title: const Text(
+              'Nyarios',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
-          ],
-        ),
-      ),
+            actions: [
+              IconButton(
+                onPressed: () => Get.toNamed(
+                  AppRoutes.search,
+                  arguments: {'type': 'lastMessage', 'roomId': '', 'user': ''},
+                ),
+                icon: ImageAsset(
+                  assets: 'assets/icons/ic_search.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
+              )
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => Get.toNamed(AppRoutes.contactFriend),
+            child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
+          ),
+          bottomNavigationBar: BottomNavigation(
+            currentIndex: controller.selectedIndex,
+            navMenus: [
+              NavMenu(label: 'Chat', icon: 'ic_chat'),
+              NavMenu(label: 'Call', icon: 'ic_call_history'),
+              NavMenu(label: 'Settings', icon: 'ic_settings'),
+            ],
+            onSelectedMenu: controller.changeNavIndex,
+          ),
+          body: IndexedStack(
+            index: controller.selectedIndex,
+            children: const [
+              RecentChatNavigation(),
+              CallHistoryNavigation(),
+              SettingsNavigation(),
+            ],
+          ),
+        );
+      },
     );
   }
 }

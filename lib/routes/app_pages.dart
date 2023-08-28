@@ -8,6 +8,7 @@ import 'package:nyarios/ui/group/bindings/group_member_pick_binding.dart';
 import 'package:nyarios/ui/group/group_create_screen.dart';
 import 'package:nyarios/ui/group/group_edit_screen.dart';
 import 'package:nyarios/ui/group/group_member_pick_screen.dart';
+import 'package:nyarios/ui/home/home_binding.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_screen.dart';
 
 import '../ui/auth/signin_screen.dart';
@@ -45,6 +46,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.home,
       page: () => const HomeScreen(),
+      binding: HomeBinding(),
     ),
     GetPage(
       name: AppRoutes.chatting,
