@@ -9,9 +9,11 @@ import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/group.dart';
+import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
+import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
@@ -36,9 +38,6 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
       uid: StorageServices.to.userId,
     ),
   ];
-
-  bool upload = false;
-  String uploadIndicator = '0';
 
   @override
   void dispose() {
@@ -181,17 +180,22 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
             'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg')
         .putFile(file);
 
-    setState(() {
-      upload = true;
-    });
+    Get.dialog(
+      AlertDialog(
+        content: Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 8),
+            Text('create_group'.tr),
+          ],
+        ),
+      ),
+    );
 
     uploadImage.snapshotEvents.listen((event) async {
       switch (event.state) {
         case TaskState.running:
-          final progress = event.bytesTransferred / event.totalBytes;
-          setState(() {
-            uploadIndicator = (progress * 100).toStringAsFixed(0);
-          });
+          debugPrint("Upload is running.");
           break;
         case TaskState.paused:
           debugPrint("Upload is paused.");
@@ -210,6 +214,8 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
           group.photo = url;
           _groupRepo.createGroupChat(group).then((value) async {
             await _updateGroupRecentMessage(group);
+            await _addGroupInfoMessage(group.chatId!);
+            Get.back();
             Get.back();
           });
           break;
@@ -230,6 +236,22 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
     );
 
     await repo.updateGroupRecentChat(group, chat);
+  }
+
+  Future<void> _addGroupInfoMessage(String chatId) async {
+    var repo = MessageRepository();
+
+    Message newMessage = Message(
+      message: '${StorageServices.to.userName} create new group',
+      type: 'info',
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      url: '',
+      fileSize: '',
+      profileId: StorageServices.to.userId,
+      chatId: chatId,
+    );
+
+    repo.sendNewMessage(newMessage);
   }
 
   void _pickImage(bool fromGallery) async {
