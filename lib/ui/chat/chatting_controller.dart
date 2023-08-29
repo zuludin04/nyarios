@@ -130,24 +130,35 @@ class ChattingController extends GetxController {
   Future<void> leaveAndRemoveGroup() async {
     Chat chat = Chat(
       profileId: contact.group?.groupId,
-      lastMessage:
-      '${StorageServices.to.userName} left group',
-      lastMessageSent:
-      DateTime.now().millisecondsSinceEpoch,
+      lastMessage: '${StorageServices.to.userName} left group',
+      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
       chatId: contact.chatId,
       type: type,
     );
-    chatRepo
-        .updateGroupRecentChat(contact.group!, chat)
-        .then((value) async {
-      contact.group!.members!
-          .remove(StorageServices.to.userId);
-      await GroupRepository().updateGroupMember(
-          contact.group!.groupId!, contact.group!.members!);
-      await chatRepo
-          .deleteGroupChat(contact.group!.groupId!);
+    chatRepo.updateGroupRecentChat(contact.group!, chat).then((value) async {
+      _addGroupInfoMessage(contact.chatId!);
+      contact.group!.members!.remove(StorageServices.to.userId);
+      await GroupRepository()
+          .updateGroupMember(contact.group!.groupId!, contact.group!.members!);
+      await chatRepo.deleteGroupChat(contact.group!.groupId!);
       Get.back();
     });
+  }
+
+  Future<void> _addGroupInfoMessage(String chatId) async {
+    var repo = MessageRepository();
+
+    Message newMessage = Message(
+      message: '${StorageServices.to.userName} left group',
+      type: 'info',
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      url: '',
+      fileSize: '',
+      profileId: StorageServices.to.userId,
+      chatId: chatId,
+    );
+
+    repo.sendNewMessage(newMessage);
   }
 
   void selectChat(Message message) {
