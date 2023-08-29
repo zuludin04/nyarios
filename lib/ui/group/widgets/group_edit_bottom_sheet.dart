@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nyarios/data/model/chat.dart';
+import 'package:nyarios/data/model/group.dart';
+import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
+import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class GroupEditBottomSheet extends StatefulWidget {
-  final String initialValue;
-  final String groupId;
+  final Group group;
 
-  const GroupEditBottomSheet({
-    super.key,
-    required this.initialValue,
-    required this.groupId,
-  });
+  const GroupEditBottomSheet({super.key, required this.group});
 
   @override
   State<GroupEditBottomSheet> createState() => _GroupEditBottomSheetState();
@@ -32,7 +32,7 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
         children: [
           Text('group_name'.tr),
           TextFormField(
-            controller: _textEditingController..text = widget.initialValue,
+            controller: _textEditingController..text = widget.group.name!,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -51,11 +51,14 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
               TextButton(
                 onPressed: () {
                   if (_textEditingController.text.isNotEmpty) {
-                    _repository.updateGroupName(
-                      widget.groupId,
-                      _textEditingController.text,
-                    );
-                    Get.back();
+                    _repository
+                        .updateGroupName(
+                            widget.group.groupId!, _textEditingController.text)
+                        .then((value) async {
+                      await _updateGroupRecentMessage(widget.group);
+                      await _addGroupInfoMessage(widget.group.chatId!);
+                      Get.back();
+                    });
                   } else {
                     Get.rawSnackbar(message: 'fill_message'.tr);
                   }
@@ -74,5 +77,35 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
         ],
       ),
     );
+  }
+
+  Future<void> _addGroupInfoMessage(String chatId) async {
+    var repo = MessageRepository();
+
+    Message newMessage = Message(
+      message: '${StorageServices.to.userName} update group name',
+      type: 'info',
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      url: '',
+      fileSize: '',
+      profileId: StorageServices.to.userId,
+      chatId: chatId,
+    );
+
+    repo.sendNewMessage(newMessage);
+  }
+
+  Future<void> _updateGroupRecentMessage(Group group) async {
+    var repo = ChatRepository();
+
+    var chat = Chat(
+      profileId: group.groupId,
+      lastMessage: '${StorageServices.to.userName} update group image',
+      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
+      chatId: group.chatId,
+      type: 'group',
+    );
+
+    await repo.updateGroupRecentChat(group, chat);
   }
 }

@@ -69,86 +69,117 @@ class _ChatItemState extends State<ChatItem> {
           onLongPress: () {
             controller.selectChat(widget.chat);
           },
-          child: Stack(
-            children: [
-              Align(
-                alignment: widget.chat.profileId != StorageServices.to.userId
-                    ? Alignment.centerLeft
-                    : Alignment.centerRight,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  margin: EdgeInsets.only(
-                    top: 8,
-                    bottom: 8,
-                    left: widget.chat.profileId != StorageServices.to.userId
-                        ? 16
-                        : 75,
-                    right: widget.chat.profileId != StorageServices.to.userId
-                        ? 75
-                        : 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: widget.chat.profileId != StorageServices.to.userId
-                        ? Colors.grey
-                        : const Color(0xffb3404a),
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(10),
-                      topRight: const Radius.circular(10),
-                      bottomLeft: Radius.circular(
-                          widget.chat.profileId != StorageServices.to.userId
-                              ? 0
-                              : 10),
-                      bottomRight: Radius.circular(
-                          widget.chat.profileId != StorageServices.to.userId
-                              ? 10
-                              : 0),
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        offset: Offset(0, 0),
-                        blurRadius: 1,
-                        spreadRadius: 1,
-                        color: Colors.black12,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _showChatType(widget.chat.type!),
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            DateFormat("hh:mm a")
-                                .format(
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      widget.chat.sendDatetime ?? 0),
-                                )
-                                .toLowerCase(),
-                            style: const TextStyle(
-                              color: Colors.white54,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: controller.selectedChat.contains(widget.chat),
-                child: Positioned.fill(
+          child: widget.chat.type == 'info'
+              ? Align(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 2),
-                    color: const Color(0xffb3404a).withOpacity(0.3),
+                    margin: const EdgeInsets.only(top: 8),
+                    decoration: BoxDecoration(
+                      color: Get.theme.colorScheme.background,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 1,
+                          spreadRadius: 1,
+                          color: Colors.black12,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        widget.chat.message ?? "",
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
+                )
+              : Stack(
+                  children: [
+                    Align(
+                      alignment:
+                          widget.chat.profileId != StorageServices.to.userId
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        margin: EdgeInsets.only(
+                          top: 8,
+                          bottom: 8,
+                          left:
+                              widget.chat.profileId != StorageServices.to.userId
+                                  ? 16
+                                  : 75,
+                          right:
+                              widget.chat.profileId != StorageServices.to.userId
+                                  ? 75
+                                  : 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              widget.chat.profileId != StorageServices.to.userId
+                                  ? Colors.grey
+                                  : const Color(0xffb3404a),
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(10),
+                            topRight: const Radius.circular(10),
+                            bottomLeft: Radius.circular(widget.chat.profileId !=
+                                    StorageServices.to.userId
+                                ? 0
+                                : 10),
+                            bottomRight: Radius.circular(
+                                widget.chat.profileId !=
+                                        StorageServices.to.userId
+                                    ? 10
+                                    : 0),
+                          ),
+                          boxShadow: const [
+                            BoxShadow(
+                              offset: Offset(0, 0),
+                              blurRadius: 1,
+                              spreadRadius: 1,
+                              color: Colors.black12,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            _showChatType(widget.chat.type!),
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  DateFormat("hh:mm a")
+                                      .format(
+                                        DateTime.fromMillisecondsSinceEpoch(
+                                            widget.chat.sendDatetime ?? 0),
+                                      )
+                                      .toLowerCase(),
+                                  style: const TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: controller.selectedChat.contains(widget.chat),
+                      child: Positioned.fill(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 2),
+                          color: const Color(0xffb3404a).withOpacity(0.3),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         );
       },
     );

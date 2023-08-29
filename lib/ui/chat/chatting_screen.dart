@@ -74,7 +74,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
               child: IconButton(
                 onPressed: () =>
                     Get.toNamed(AppRoutes.callVideo, arguments: contact),
-                icon:ImageAsset(
+                icon: ImageAsset(
                   assets: 'assets/icons/ic_video.png',
                   color: Get.theme.iconTheme.color!,
                 ),
@@ -288,6 +288,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
 
                 return _buildChatMessages(snapshot.data!.docs
                     .map((e) => Message.fromMapWithMessageId(e.data(), e.id))
+                    .toList()
+                    .reversed
                     .toList());
               },
             ),
@@ -303,7 +305,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
       physics: const BouncingScrollPhysics(),
       elements: chats,
       order: GroupedListOrder.DESC,
-      reverse: true,
+      reverse: false,
       floatingHeader: true,
       useStickyGroupSeparators: true,
       groupBy: (Message chat) {

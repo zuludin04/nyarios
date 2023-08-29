@@ -6,8 +6,13 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/group.dart';
+import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
+import 'package:nyarios/data/repositories/message_repository.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_edit_bottom_sheet.dart';
 
 class GroupEditScreen extends StatefulWidget {
@@ -47,10 +52,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                     const SizedBox(height: 32),
                     InkWell(
                       onTap: () {
-                        Get.bottomSheet(GroupEditBottomSheet(
-                          initialValue: group.name!,
-                          groupId: group.groupId!,
-                        ));
+                        Get.bottomSheet(GroupEditBottomSheet(group: group));
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -99,10 +101,11 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
     if (pickedFile != null) {
       if (mounted) {
         showDialog(
-            context: context,
-            builder: (context) {
-              return const Center(child: CircularProgressIndicator());
-            });
+          context: context,
+          builder: (context) {
+            return const Center(child: CircularProgressIndicator());
+          },
+        );
 
         var storage = FirebaseStorage.instance.ref();
         var uploadImage = storage
@@ -127,13 +130,48 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
               var url = await storage
                   .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
                   .getDownloadURL();
-              repository.updateImageGroup(group.groupId!, url);
-              Get.back();
+              repository
+                  .updateImageGroup(group.groupId!, url)
+                  .then((value) async {
+                await _updateGroupRecentMessage(group);
+                await _addGroupInfoMessage(group.chatId!);
+                Get.back();
+              });
               break;
           }
         });
       }
     }
+  }
+
+  Future<void> _addGroupInfoMessage(String chatId) async {
+    var repo = MessageRepository();
+
+    Message newMessage = Message(
+      message: '${StorageServices.to.userName} update group image',
+      type: 'info',
+      sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      url: '',
+      fileSize: '',
+      profileId: StorageServices.to.userId,
+      chatId: chatId,
+    );
+
+    repo.sendNewMessage(newMessage);
+  }
+
+  Future<void> _updateGroupRecentMessage(Group group) async {
+    var repo = ChatRepository();
+
+    var chat = Chat(
+      profileId: group.groupId,
+      lastMessage: '${StorageServices.to.userName} update group image',
+      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
+      chatId: group.chatId,
+      type: 'group',
+    );
+
+    await repo.updateGroupRecentChat(group, chat);
   }
 }
 
