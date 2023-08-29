@@ -4,7 +4,6 @@ import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/contact.dart';
-import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/ui/contact/contact_media_controller.dart';
@@ -194,7 +193,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
         body: TabBarView(
           controller: tabController,
           children: [
-            if (detailGroup) GroupMembersTab(group: lastMessage.group!),
+            if (detailGroup)
+              GroupMembersTab(groupId: lastMessage.group!.groupId!),
             const ContactMediaTab(type: "image"),
             const ContactMediaTab(type: "file"),
           ],
@@ -205,7 +205,10 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
 
   Widget _detailInfo() {
     if (detailGroup) {
-      return Text('${lastMessage.group!.members!.length} ${'members'.tr}');
+      return GetBuilder<ContactMediaController>(
+        builder: (controller) =>
+            Text('${controller.profiles.length} ${'members'.tr}'),
+      );
     } else {
       return FutureBuilder(
         future: ProfileRepository().loadUserStatus(lastMessage.profileId),
@@ -244,9 +247,9 @@ class SliverPersistentHeaderDelegateImpl
 }
 
 class GroupMembersTab extends StatefulWidget {
-  final Group group;
+  final String groupId;
 
-  const GroupMembersTab({super.key, required this.group});
+  const GroupMembersTab({super.key, required this.groupId});
 
   @override
   State<GroupMembersTab> createState() => _GroupMembersTabState();
@@ -261,7 +264,7 @@ class _GroupMembersTabState extends State<GroupMembersTab>
 
   @override
   void initState() {
-    controller.loadMembers(widget.group);
+    controller.loadMembers(widget.groupId);
     super.initState();
   }
 
