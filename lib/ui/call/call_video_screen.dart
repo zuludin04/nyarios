@@ -4,10 +4,14 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/main.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:uuid/uuid.dart';
 
 class CallVideoScreen extends StatefulWidget {
   const CallVideoScreen({super.key});
@@ -17,9 +21,12 @@ class CallVideoScreen extends StatefulWidget {
 }
 
 class _CallVideoScreenState extends State<CallVideoScreen> {
+  var callRepo = CallRepository();
+
   int tokenRole = 1;
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
+  String callId = "";
 
   Contact contact = Get.arguments;
 
@@ -221,6 +228,7 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+          saveCallHistory();
           setState(() {
             _remoteUid = remoteUid;
           });
@@ -277,5 +285,24 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
     });
     agoraEngine.leaveChannel();
     Get.back();
+  }
+
+  void saveCallHistory() async {
+    callId = const Uuid().v4();
+
+    var call = Call(
+        callDate: DateTime.now().millisecondsSinceEpoch,
+        callId: callId,
+        profileId: contact.profileId,
+        status: 'incoming_call',
+        type: 'video_call',
+        isAccepted: true);
+
+    callRepo.saveCallHistory(StorageServices.to.userId, call);
+  }
+
+  void updateCallingStatus() async {
+    // saveCallHistory(false, 'incoming_call', true);
+    callRepo.updateCallStatus(callId, true);
   }
 }
