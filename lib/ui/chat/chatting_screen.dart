@@ -77,8 +77,26 @@ class _ChattingScreenState extends State<ChattingScreen> {
             Visibility(
               visible: type == 'dm',
               child: IconButton(
-                onPressed: () =>
-                    Get.toNamed(AppRoutes.callVideo, arguments: contact),
+                onPressed: () {
+                  var callId = const Uuid().v4();
+
+                  var notification = notif.Notification(
+                    callerImage: StorageServices.to.userImage,
+                    callerName: StorageServices.to.userName,
+                    callerUid: StorageServices.to.userId,
+                    profile: contact.profile,
+                    callingTime: DateTime.now().millisecondsSinceEpoch,
+                    type: 'video_call',
+                    callId: callId,
+                  );
+
+                  saveCallHistory(callId, 'video_call');
+                  FirebaseFirestore.instance
+                      .collection('notification')
+                      .doc(contact.profileId)
+                      .set(notification.toMap());
+                  // Get.toNamed(AppRoutes.callVideo, arguments: contact);
+                },
                 icon: ImageAsset(
                   assets: 'assets/icons/ic_video.png',
                   color: Get.theme.iconTheme.color!,
@@ -101,7 +119,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     callId: callId,
                   );
 
-                  saveCallHistory(callId);
+                  saveCallHistory(callId, 'voice_call');
                   FirebaseFirestore.instance
                       .collection('notification')
                       .doc(contact.profileId)
@@ -391,7 +409,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
     return "[$date] $user: ${chat.message}\n";
   }
 
-  void saveCallHistory(String callId) async {
+  void saveCallHistory(String callId, String type) async {
     var callRepo = CallRepository();
 
     var call = Call(
@@ -399,7 +417,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         callId: callId,
         profileId: contact.profileId,
         status: 'outgoing_call',
-        type: 'voice_call',
+        type: type,
         isAccepted: true);
 
     callRepo.saveCallHistory(StorageServices.to.userId, call);
