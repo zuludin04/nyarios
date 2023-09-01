@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "550134906790-stoshg0vt7hgghkdj3jc7nofl721d4en.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.zuludin.nyarios",
+            "certificate_hash": "755d31e42199bda5ce9cd444824a31594312a421"
+          }
+        },
+        {
           "client_id": "550134906790-5667taek0odl5l8hvhv6bjmufdc6rl6e.apps.googleusercontent.com",
           "client_type": 3
         }
