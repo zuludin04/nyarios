@@ -28,7 +28,12 @@ class CallHistoryItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.call_received, color: Colors.green),
+                        Icon(
+                          call.status == 'incoming_call'
+                              ? Icons.call_received
+                              : Icons.call_made,
+                          color: call.isAccepted! ? Colors.green : Colors.red,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           DateFormat("dd MMM yyyy, HH:mm").format(
@@ -88,8 +93,9 @@ class CallHistoryItem extends StatelessWidget {
             snapshot.data?.name ?? "",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
+              color: call.isAccepted! ? Colors.green : Colors.red,
               fontWeight: FontWeight.w600,
             ),
           );

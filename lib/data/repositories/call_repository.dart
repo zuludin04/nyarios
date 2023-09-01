@@ -14,9 +14,10 @@ class CallRepository {
         .set(call.toMap());
   }
 
-  Future<void> updateCallStatus(String callId, bool isAccepted) async {
+  Future<void> updateCallStatus(
+      String profileId, String callId, bool isAccepted) async {
     await callReference
-        .doc(StorageServices.to.userId)
+        .doc(profileId)
         .collection('history')
         .doc(callId)
         .update({'isAccepted': isAccepted});

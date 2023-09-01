@@ -176,7 +176,17 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Expanded(
                 child: TextButton(
-                  onPressed: Get.back,
+                  onPressed: () {
+                    saveCallHistory(notification.callId!,
+                        notification.callerUid!, notification.type!, false);
+                    updateCallingStatus(
+                        notification.callerUid!, notification.callId!);
+                    FirebaseFirestore.instance
+                        .collection('notification')
+                        .doc(StorageServices.to.userId)
+                        .delete();
+                    Get.back();
+                  },
                   child: const Text(
                     'Decline',
                     style: TextStyle(color: Colors.red),
@@ -186,8 +196,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: TextButton(
                   onPressed: () {
-                    saveCallHistory(
-                        notification.callId!, notification.callerUid!);
+                    saveCallHistory(notification.callId!,
+                        notification.callerUid!, notification.type!, true);
                     FirebaseFirestore.instance
                         .collection('notification')
                         .doc(StorageServices.to.userId)
@@ -208,7 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
     ).show(context);
   }
 
-  void saveCallHistory(String callId, String profileId) async {
+  void saveCallHistory(
+      String callId, String profileId, String type, bool isAccepted) async {
     var callRepo = CallRepository();
 
     var call = Call(
@@ -216,9 +227,14 @@ class _HomeScreenState extends State<HomeScreen> {
         callId: callId,
         profileId: profileId,
         status: 'incoming_call',
-        type: 'voice_call',
-        isAccepted: true);
+        type: type,
+        isAccepted: isAccepted);
 
     callRepo.saveCallHistory(StorageServices.to.userId, call);
+  }
+
+  void updateCallingStatus(String profileId, String callId) async {
+    var callRepo = CallRepository();
+    callRepo.updateCallStatus(profileId, callId, false);
   }
 }

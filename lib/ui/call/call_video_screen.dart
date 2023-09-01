@@ -300,9 +300,4 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
 
     callRepo.saveCallHistory(StorageServices.to.userId, call);
   }
-
-  void updateCallingStatus() async {
-    // saveCallHistory(false, 'incoming_call', true);
-    callRepo.updateCallStatus(callId, true);
-  }
 }

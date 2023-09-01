@@ -97,7 +97,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                     callerUid: StorageServices.to.userId,
                     profile: contact.profile,
                     callingTime: DateTime.now().millisecondsSinceEpoch,
-                    type: 'video_call',
+                    type: 'voice_call',
                     callId: callId,
                   );
 
@@ -398,7 +398,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
         callDate: DateTime.now().millisecondsSinceEpoch,
         callId: callId,
         profileId: contact.profileId,
-        status: 'incoming_call',
+        status: 'outgoing_call',
         type: 'voice_call',
         isAccepted: true);
 

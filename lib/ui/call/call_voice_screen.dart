@@ -226,9 +226,4 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     agoraEngine?.release();
     Get.back();
   }
-
-  void updateCallingStatus() async {
-    // saveCallHistory(false, 'incoming_call', true);
-    callRepo.updateCallStatus(callId, true);
-  }
 }
