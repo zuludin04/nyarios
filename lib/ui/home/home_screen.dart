@@ -9,13 +9,12 @@ import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/notification.dart' as notif;
 import 'package:nyarios/data/repositories/call_repository.dart';
+import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/home_controller.dart';
 import 'package:nyarios/ui/home/nav/call_history_navigation.dart';
 import 'package:nyarios/ui/home/nav/recent_chat_navigation.dart';
 import 'package:nyarios/ui/home/nav/settings_navigation.dart';
-
-import '../../routes/app_pages.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,9 +56,12 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => Get.toNamed(AppRoutes.contactFriend),
-            child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
+          floatingActionButton: Visibility(
+            visible: controller.selectedIndex != 2,
+            child: FloatingActionButton(
+              onPressed: () => Get.toNamed(AppRoutes.contactFriend),
+              child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
+            ),
           ),
           bottomNavigationBar: BottomNavigation(
             currentIndex: controller.selectedIndex,
