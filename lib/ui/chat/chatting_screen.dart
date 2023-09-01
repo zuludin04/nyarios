@@ -9,6 +9,7 @@ import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/model/notification.dart' as notif;
+import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
@@ -79,15 +80,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
               child: IconButton(
                 onPressed: () {
                   var callId = const Uuid().v4();
-
+                  var profile = Profile(
+                    photo: StorageServices.to.userImage,
+                    name: StorageServices.to.userName,
+                    uid: StorageServices.to.userId,
+                    id: StorageServices.to.id,
+                  );
                   var notification = notif.Notification(
-                    callerImage: StorageServices.to.userImage,
-                    callerName: StorageServices.to.userName,
-                    callerUid: StorageServices.to.userId,
-                    profile: contact.profile,
+                    profile: profile,
                     callingTime: DateTime.now().millisecondsSinceEpoch,
                     type: 'video_call',
                     callId: callId,
+                    chatId: contact.chatId,
                   );
 
                   saveCallHistory(callId, 'video_call');
@@ -95,7 +99,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       .collection('notification')
                       .doc(contact.profileId)
                       .set(notification.toMap());
-                  // Get.toNamed(AppRoutes.callVideo, arguments: contact);
+
+                  Get.toNamed(AppRoutes.callVideo, arguments: contact);
                 },
                 icon: ImageAsset(
                   assets: 'assets/icons/ic_video.png',
@@ -108,15 +113,18 @@ class _ChattingScreenState extends State<ChattingScreen> {
               child: IconButton(
                 onPressed: () {
                   var callId = const Uuid().v4();
-
+                  var profile = Profile(
+                    photo: StorageServices.to.userImage,
+                    name: StorageServices.to.userName,
+                    uid: StorageServices.to.userId,
+                    id: StorageServices.to.id,
+                  );
                   var notification = notif.Notification(
-                    callerImage: StorageServices.to.userImage,
-                    callerName: StorageServices.to.userName,
-                    callerUid: StorageServices.to.userId,
-                    profile: contact.profile,
+                    profile: profile,
                     callingTime: DateTime.now().millisecondsSinceEpoch,
                     type: 'voice_call',
                     callId: callId,
+                    chatId: contact.chatId,
                   );
 
                   saveCallHistory(callId, 'voice_call');
@@ -125,7 +133,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       .doc(contact.profileId)
                       .set(notification.toMap());
 
-                  // Get.toNamed(AppRoutes.callVoice, arguments: contact);
+                  Get.toNamed(AppRoutes.callVoice, arguments: contact);
                 },
                 icon: ImageAsset(
                   assets: 'assets/icons/ic_call.png',

@@ -40,4 +40,9 @@ class StorageServices extends GetxService {
   set alreadyLogin(bool value) {
     _storage.write('ALREADY_LOGIN', value);
   }
+
+  int get id => _storage.read('USER_INT_ID') ?? 0;
+  set id(int value) {
+    _storage.write('USER_INT_ID', value);
+  }
 }

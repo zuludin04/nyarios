@@ -19,12 +19,14 @@ class ProfileRepository {
       StorageServices.to.userName = profile.name ?? "";
       StorageServices.to.email = profile.email ?? "";
       StorageServices.to.userImage = profile.photo ?? "";
+      StorageServices.to.id = userId;
     } else {
       var userProfile = await loadSingleProfile(profile.uid);
       StorageServices.to.userId = userProfile.uid ?? "";
       StorageServices.to.userName = userProfile.name ?? "";
       StorageServices.to.email = userProfile.email ?? "";
       StorageServices.to.userImage = userProfile.photo ?? "";
+      StorageServices.to.id = userProfile.id ?? 0;
     }
   }
 

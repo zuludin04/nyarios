@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/bottom_navigation.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/call.dart';
+import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/notification.dart' as notif;
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
@@ -137,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         Text(
-                          notification.callerName!,
+                          notification.profile!.name!,
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 8),
@@ -162,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(18),
                 child: Image.network(
-                  notification.callerImage!,
+                  notification.profile!.photo!,
                   width: 34,
                   height: 34,
                 ),
@@ -178,9 +179,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: TextButton(
                   onPressed: () {
                     saveCallHistory(notification.callId!,
-                        notification.callerUid!, notification.type!, false);
+                        notification.profile!.uid!, notification.type!, false);
                     updateCallingStatus(
-                        notification.callerUid!, notification.callId!);
+                        notification.profile!.uid!, notification.callId!);
                     FirebaseFirestore.instance
                         .collection('notification')
                         .doc(StorageServices.to.userId)
@@ -197,12 +198,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: TextButton(
                   onPressed: () {
                     saveCallHistory(notification.callId!,
-                        notification.callerUid!, notification.type!, true);
+                        notification.profile!.uid!, notification.type!, true);
                     FirebaseFirestore.instance
                         .collection('notification')
                         .doc(StorageServices.to.userId)
                         .delete();
                     Get.back();
+                    Get.toNamed(
+                        notification.type == 'voice_call'
+                            ? AppRoutes.callVoice
+                            : AppRoutes.callVideo,
+                        arguments: Contact(
+                          profile: notification.profile,
+                          chatId: notification.chatId,
+                        ));
                   },
                   child: const Text(
                     'Answer',
