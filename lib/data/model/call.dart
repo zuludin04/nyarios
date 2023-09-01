@@ -4,8 +4,16 @@ class Call {
   String? profileId;
   String? status;
   String? type;
+  bool? isAccepted;
 
-  Call({this.callDate, this.callId, this.profileId, this.status, this.type});
+  Call({
+    this.callDate,
+    this.callId,
+    this.profileId,
+    this.status,
+    this.type,
+    this.isAccepted,
+  });
 
   factory Call.fromMap(Map<String, dynamic> map) {
     return Call(
@@ -14,6 +22,7 @@ class Call {
       profileId: map['profileId'],
       status: map['status'],
       type: map['type'],
+      isAccepted: map['isAccepted'],
     );
   }
 
@@ -24,11 +33,7 @@ class Call {
     map['profileId'] = profileId;
     map['status'] = status;
     map['type'] = type;
+    map['isAccepted'] = isAccepted;
     return map;
-  }
-
-  @override
-  String toString() {
-    return 'Call{callDate: $callDate, callId: $callId, profileId: $profileId, status: $status, type: $type}';
   }
 }

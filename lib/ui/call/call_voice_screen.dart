@@ -23,9 +23,12 @@ class CallVoiceScreen extends StatefulWidget {
 }
 
 class _CallVoiceScreenState extends State<CallVoiceScreen> {
+  var callRepo = CallRepository();
+
   int tokenRole = 1;
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
+  String callId = "";
 
   Contact contact = Get.arguments;
 
@@ -190,12 +193,12 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          saveCallHistory();
           setState(() {
             _isJoined = true;
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+          saveCallHistory();
           setState(() {
             _remoteUid = remoteUid;
           });
@@ -229,19 +232,21 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
   }
 
   void saveCallHistory() async {
-    var repo = CallRepository();
-    var callId = const Uuid().v4();
+    callId = const Uuid().v4();
 
     var call = Call(
         callDate: DateTime.now().millisecondsSinceEpoch,
         callId: callId,
         profileId: contact.profileId,
-        status: 'outgoing_call',
-        type: 'voice_call');
+        status: 'incoming_call',
+        type: 'voice_call',
+        isAccepted: true);
 
-    repo.saveCallHistory(StorageServices.to.userId, call);
-    call.profileId = StorageServices.to.userId;
-    call.status = 'missed_call';
-    repo.saveCallHistory(contact.profileId!, call);
+    callRepo.saveCallHistory(StorageServices.to.userId, call);
+  }
+
+  void updateCallingStatus() async {
+    // saveCallHistory(false, 'incoming_call', true);
+    callRepo.updateCallStatus(callId, true);
   }
 }

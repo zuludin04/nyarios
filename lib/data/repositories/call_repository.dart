@@ -14,12 +14,12 @@ class CallRepository {
         .set(call.toMap());
   }
 
-  Future<void> updateCallStatus(Call call, String status) async {
+  Future<void> updateCallStatus(String callId, bool isAccepted) async {
     await callReference
-        .doc(call.profileId)
+        .doc(StorageServices.to.userId)
         .collection('history')
-        .doc(call.callId)
-        .update({'status': status});
+        .doc(callId)
+        .update({'isAccepted': isAccepted});
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> loadCallHistory() async* {
