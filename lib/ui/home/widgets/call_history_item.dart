@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 
@@ -24,13 +26,27 @@ class CallHistoryItem extends StatelessWidget {
                   children: [
                     _nameRecentChat(),
                     const SizedBox(height: 4),
-                    Text(
-                      call.status ?? "",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        const Icon(Icons.call_received, color: Colors.green),
+                        const SizedBox(width: 4),
+                        Text(
+                          DateFormat("dd MMM yyyy, HH:mm").format(
+                            DateTime.fromMillisecondsSinceEpoch(call.callDate!),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
                   ],
                 ),
+              ),
+              ImageAsset(
+                assets: call.type == 'voice_call'
+                    ? 'assets/icons/ic_call.png'
+                    : 'assets/icons/ic_video.png',
+                color: Theme.of(context).iconTheme.color!,
               ),
             ],
           ),
