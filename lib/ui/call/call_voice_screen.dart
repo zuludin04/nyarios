@@ -5,15 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/main.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-import 'package:uuid/uuid.dart';
 
 class CallVoiceScreen extends StatefulWidget {
   const CallVoiceScreen({super.key});
@@ -198,7 +195,6 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          saveCallHistory();
           setState(() {
             _remoteUid = remoteUid;
           });
@@ -229,20 +225,6 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
     agoraEngine?.leaveChannel();
     agoraEngine?.release();
     Get.back();
-  }
-
-  void saveCallHistory() async {
-    callId = const Uuid().v4();
-
-    var call = Call(
-        callDate: DateTime.now().millisecondsSinceEpoch,
-        callId: callId,
-        profileId: contact.profileId,
-        status: 'incoming_call',
-        type: 'voice_call',
-        isAccepted: true);
-
-    callRepo.saveCallHistory(StorageServices.to.userId, call);
   }
 
   void updateCallingStatus() async {

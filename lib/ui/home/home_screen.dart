@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/bottom_navigation.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/notification.dart' as notif;
+import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/home_controller.dart';
 import 'package:nyarios/ui/home/nav/call_history_navigation.dart';
@@ -184,6 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: TextButton(
                   onPressed: () {
+                    saveCallHistory(
+                        notification.callId!, notification.callerUid!);
                     FirebaseFirestore.instance
                         .collection('notification')
                         .doc(StorageServices.to.userId)
@@ -202,5 +206,19 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       duration: const Duration(seconds: 100),
     ).show(context);
+  }
+
+  void saveCallHistory(String callId, String profileId) async {
+    var callRepo = CallRepository();
+
+    var call = Call(
+        callDate: DateTime.now().millisecondsSinceEpoch,
+        callId: callId,
+        profileId: profileId,
+        status: 'incoming_call',
+        type: 'voice_call',
+        isAccepted: true);
+
+    callRepo.saveCallHistory(StorageServices.to.userId, call);
   }
 }

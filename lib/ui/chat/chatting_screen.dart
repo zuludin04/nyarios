@@ -1,15 +1,20 @@
 import 'package:clipboard/clipboard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/data/model/notification.dart' as notif;
+import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/toolbar.dart';
@@ -84,19 +89,25 @@ class _ChattingScreenState extends State<ChattingScreen> {
               visible: type == 'dm',
               child: IconButton(
                 onPressed: () {
-                  Get.toNamed(AppRoutes.callVoice, arguments: contact);
-                  // var notification = notif.Notification(
-                  //   callerImage: StorageServices.to.userImage,
-                  //   callerName: StorageServices.to.userName,
-                  //   profile: contact.profile,
-                  //   callingTime: DateTime.now().millisecondsSinceEpoch,
-                  //   type: 'video_call',
-                  // );
-                  //
-                  // FirebaseFirestore.instance
-                  //     .collection('notification')
-                  //     .doc(contact.profileId)
-                  //     .set(notification.toMap());
+                  var callId = const Uuid().v4();
+
+                  var notification = notif.Notification(
+                    callerImage: StorageServices.to.userImage,
+                    callerName: StorageServices.to.userName,
+                    callerUid: StorageServices.to.userId,
+                    profile: contact.profile,
+                    callingTime: DateTime.now().millisecondsSinceEpoch,
+                    type: 'video_call',
+                    callId: callId,
+                  );
+
+                  saveCallHistory(callId);
+                  FirebaseFirestore.instance
+                      .collection('notification')
+                      .doc(contact.profileId)
+                      .set(notification.toMap());
+
+                  // Get.toNamed(AppRoutes.callVoice, arguments: contact);
                 },
                 icon: ImageAsset(
                   assets: 'assets/icons/ic_call.png',
@@ -378,5 +389,19 @@ class _ChattingScreenState extends State<ChattingScreen> {
             ? contact.profile?.name ?? ""
             : contact.group?.name ?? "";
     return "[$date] $user: ${chat.message}\n";
+  }
+
+  void saveCallHistory(String callId) async {
+    var callRepo = CallRepository();
+
+    var call = Call(
+        callDate: DateTime.now().millisecondsSinceEpoch,
+        callId: callId,
+        profileId: contact.profileId,
+        status: 'incoming_call',
+        type: 'voice_call',
+        isAccepted: true);
+
+    callRepo.saveCallHistory(StorageServices.to.userId, call);
   }
 }
