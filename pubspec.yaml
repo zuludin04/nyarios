@@ -41,6 +41,7 @@ dependencies:
   http: ^0.13.5
   loading_animation_widget: ^1.2.0+4
   stop_watch_timer: ^3.0.1
+  another_flushbar: ^1.12.30
 
 dev_dependencies:
   flutter_test:

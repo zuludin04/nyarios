@@ -1,7 +1,11 @@
+import 'package:another_flushbar/flushbar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/bottom_navigation.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/home_controller.dart';
 import 'package:nyarios/ui/home/nav/call_history_navigation.dart';
 import 'package:nyarios/ui/home/nav/recent_chat_navigation.dart';
@@ -9,8 +13,21 @@ import 'package:nyarios/ui/home/nav/settings_navigation.dart';
 
 import '../../routes/app_pages.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Stream<DocumentSnapshot<Map<String, dynamic>>> notifStream;
+
+  @override
+  void initState() {
+    super.initState();
+    listenFirebaseNotification();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,5 +77,120 @@ class HomeScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  void listenFirebaseNotification() {
+    notifStream = FirebaseFirestore.instance
+        .collection('notification')
+        .doc(StorageServices.to.userId)
+        .snapshots();
+
+    notifStream.listen((event) {
+      if (event.exists) {
+        showCallNotification();
+      }
+    });
+  }
+
+  void showCallNotification() {
+    Flushbar(
+      boxShadows: [
+        BoxShadow(
+          color: Colors.grey.shade400,
+          blurRadius: 1,
+          spreadRadius: 1,
+          offset: const Offset(1, 1),
+          blurStyle: BlurStyle.outer,
+        ),
+      ],
+      borderRadius: BorderRadius.circular(16),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      margin: const EdgeInsets.all(16),
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      messageText: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xffb3404a),
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(8),
+                child: const ImageAsset(
+                  assets: 'assets/icons/ic_video.png',
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          StorageServices.to.userName,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          DateFormat("HH:mm a").format(DateTime.now()),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w100,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Text('Incoming video call'),
+                  ],
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Image.network(
+                  StorageServices.to.userImage,
+                  width: 34,
+                  height: 34,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: Get.back,
+                  child: const Text(
+                    'Decline',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    FirebaseFirestore.instance
+                        .collection('notification')
+                        .doc(StorageServices.to.userId)
+                        .delete();
+                  },
+                  child: const Text(
+                    'Answer',
+                    style: TextStyle(color: Colors.green),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      duration: const Duration(seconds: 100),
+    ).show(context);
   }
 }
