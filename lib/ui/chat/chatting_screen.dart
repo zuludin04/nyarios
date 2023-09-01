@@ -83,8 +83,21 @@ class _ChattingScreenState extends State<ChattingScreen> {
             Visibility(
               visible: type == 'dm',
               child: IconButton(
-                onPressed: () =>
-                    Get.toNamed(AppRoutes.callVoice, arguments: contact),
+                onPressed: () {
+                  Get.toNamed(AppRoutes.callVoice, arguments: contact);
+                  // var notification = notif.Notification(
+                  //   callerImage: StorageServices.to.userImage,
+                  //   callerName: StorageServices.to.userName,
+                  //   profile: contact.profile,
+                  //   callingTime: DateTime.now().millisecondsSinceEpoch,
+                  //   type: 'video_call',
+                  // );
+                  //
+                  // FirebaseFirestore.instance
+                  //     .collection('notification')
+                  //     .doc(contact.profileId)
+                  //     .set(notification.toMap());
+                },
                 icon: ImageAsset(
                   assets: 'assets/icons/ic_call.png',
                   color: Get.theme.iconTheme.color!,

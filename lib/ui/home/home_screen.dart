@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/bottom_navigation.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/data/model/notification.dart' as notif;
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/home_controller.dart';
 import 'package:nyarios/ui/home/nav/call_history_navigation.dart';
@@ -87,12 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     notifStream.listen((event) {
       if (event.exists) {
-        showCallNotification();
+        var notification = notif.Notification.fromMap(event.data()!);
+        showCallNotification(notification);
       }
     });
   }
 
-  void showCallNotification() {
+  void showCallNotification(notif.Notification notification) {
     Flushbar(
       boxShadows: [
         BoxShadow(
@@ -118,8 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   shape: BoxShape.circle,
                 ),
                 padding: const EdgeInsets.all(8),
-                child: const ImageAsset(
-                  assets: 'assets/icons/ic_video.png',
+                child: ImageAsset(
+                  assets: notification.type == 'video_call'
+                      ? 'assets/icons/ic_video.png'
+                      : 'assets/icons/ic_call.png',
                   size: 18,
                 ),
               ),
@@ -131,12 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         Text(
-                          StorageServices.to.userName,
+                          notification.callerName!,
                           style: const TextStyle(fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          DateFormat("HH:mm a").format(DateTime.now()),
+                          DateFormat("HH:mm a").format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                notification.callingTime!),
+                          ),
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w100,
@@ -144,14 +151,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    const Text('Incoming video call'),
+                    Text(notification.type == 'video_call'
+                        ? 'Incoming video call'
+                        : 'Incoming voice call'),
                   ],
                 ),
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(18),
                 child: Image.network(
-                  StorageServices.to.userImage,
+                  notification.callerImage!,
                   width: 34,
                   height: 34,
                 ),
@@ -179,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         .collection('notification')
                         .doc(StorageServices.to.userId)
                         .delete();
+                    Get.back();
                   },
                   child: const Text(
                     'Answer',
