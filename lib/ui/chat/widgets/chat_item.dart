@@ -367,7 +367,9 @@ class _ChatItemState extends State<ChatItem> {
   }
 
   void checkFileAlreadyExist() async {
-    var savePath = await getExternalStorageDirectory();
+    Directory? savePath = Platform.isAndroid
+        ? await getExternalStorageDirectory()
+        : await getApplicationSupportDirectory();
     File file = File("${savePath!.path}/files/${widget.chat.message}");
     bool exist = await file.exists();
 
