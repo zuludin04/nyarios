@@ -43,6 +43,7 @@ class _MyAppState extends State<MyApp> {
       theme: CustomTheme.defaultTheme,
       darkTheme: CustomTheme.darkTheme,
       themeMode: ThemeMode.system,
+      debugShowCheckedModeBanner: false,
       initialBinding: BindingsBuilder(() {
         Get.put(StorageServices());
       }),
