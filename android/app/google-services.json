@@ -14,17 +14,6 @@
       },
       "oauth_client": [
         {
-<<<<<<< HEAD
-=======
-          "client_id": "550134906790-bh2cbat36i7r8b3uif0vi3q9rjs2knq9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.app.zuludin.nyarios",
-            "certificate_hash": "f678c812b3dea59886ba7080650bf3fc0446ddaa"
-          }
-        },
-        {
->>>>>>> b3f7303191dfc068ded09adf83565559d4b9ad7a
           "client_id": "550134906790-ikjfu1uedfq2ueovpb9lbeuvbma96spn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
