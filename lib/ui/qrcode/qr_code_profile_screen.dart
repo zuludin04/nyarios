@@ -11,7 +11,7 @@ import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
 class QrCodeProfileScreen extends StatelessWidget {
@@ -51,25 +51,15 @@ class QrCodeProfileScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _qrActions(
-                'copy_link'.tr,
-                'assets/icons/ic_copy.png',
-                () {
-                  Clipboard.setData(const ClipboardData(text: ""));
-                  Get.rawSnackbar(message: "copy_clipboard".tr);
-                },
-              ),
-              _qrActions(
-                'share'.tr,
-                'assets/icons/ic_share.png',
-                () {
-                  Share.share(
-                    "babca",
-                    subject: "share_qr_code".tr,
-                    sharePositionOrigin: const Rect.fromLTWH(30, 30, 30, 30),
-                  );
-                },
-              ),
+              _qrActions('copy_link'.tr, 'assets/icons/ic_copy.png', () {
+                Clipboard.setData(const ClipboardData(text: ""));
+                Get.rawSnackbar(message: "copy_clipboard".tr);
+              }),
+              _qrActions('share'.tr, 'assets/icons/ic_share.png', () {
+                SharePlus.instance.share(
+                  ShareParams(text: 'check out my website https://example.com'),
+                );
+              }),
             ],
           ),
           const Spacer(),
@@ -109,10 +99,7 @@ class QrCodeProfileScreen extends StatelessWidget {
       onTap: onTap,
       child: Column(
         children: [
-          ImageAsset(
-            assets: icon,
-            color: Get.theme.iconTheme.color!,
-          ),
+          ImageAsset(assets: icon, color: Get.theme.iconTheme.color!),
           const SizedBox(height: 4),
           Text(title),
         ],
@@ -131,10 +118,7 @@ class QrCodeProfileScreen extends StatelessWidget {
           },
           useCamera: 0,
           autoEnableFlash: false,
-          android: AndroidOptions(
-            aspectTolerance: 0.00,
-            useAutoFocus: true,
-          ),
+          android: AndroidOptions(aspectTolerance: 0.00, useAutoFocus: true),
         ),
       );
 
@@ -192,8 +176,10 @@ class QrCodeProfileScreen extends StatelessWidget {
                         );
                         repo.saveContact(contact, profile.uid!);
 
-                        Get.toNamed(AppRoutes.chatting,
-                            arguments: {'contact': contact, 'type': 'dm'});
+                        Get.toNamed(
+                          AppRoutes.chatting,
+                          arguments: {'contact': contact, 'type': 'dm'},
+                        );
                       },
                       child: Text('add_friend'.tr),
                     ),

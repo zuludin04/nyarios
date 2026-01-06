@@ -131,21 +131,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
   Future<void> signOut() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn();
+    // final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    try {
-      await googleSignIn.signOut();
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      debugPrint("error sign out");
-    }
+    // try {
+    //   await googleSignIn.signOut();
+    //   await FirebaseAuth.instance.signOut();
+    // } catch (e) {
+    //   debugPrint("error sign out");
+    // }
   }
 }
 
