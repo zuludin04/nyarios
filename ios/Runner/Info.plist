@@ -47,5 +47,31 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<string>com.googleusercontent.apps.550134906790-20rof4tj6shslblah1p2k0sci827v4mc</string>
+    		</array>
+    	</dict>
+    </array>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>sms</string>
+      <string>tel</string>
+    </array>
+    <key>NSCameraUsageDescription</key>
+    <string>camera for taking photos</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>microphone</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>photos</string>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
+    <key>UIFileSharingEnabled</key>
+    <true/>
 </dict>
 </plist>
