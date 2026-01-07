@@ -19,7 +19,11 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  // final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId:
+        "550134906790-eo0ouqv3snr01ehpv91gq267js91rogv.apps.googleusercontent.com",
+    scopes: ['email'],
+  );
 
   final repository = ProfileRepository();
 
@@ -66,7 +70,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             await signInGoogle();
                           },
                           style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
+                            padding: WidgetStatePropertyAll(
                               const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
@@ -103,43 +107,41 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> signInGoogle() async {
-    // try {
-    //   final GoogleSignInAccount? googleSignInAccount =
-    //       await _googleSignIn.signIn();
-    //   final GoogleSignInAuthentication googleSignInAuthentication =
-    //       await googleSignInAccount!.authentication;
-    //   final AuthCredential credential = GoogleAuthProvider.credential(
-    //     accessToken: googleSignInAuthentication.accessToken,
-    //     idToken: googleSignInAuthentication.idToken,
-    //   );
-    //   var auth = await _auth.signInWithCredential(credential);
-    //   var user = auth.user;
-    //   if (mounted) {
-    //     showDialog(
-    //       context: context,
-    //       builder: (context) {
-    //         return const Center(
-    //           child: CircularProgressIndicator(),
-    //         );
-    //       },
-    //     );
-    //     StorageServices.to.alreadyLogin = true;
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn
+          .signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+      var auth = await _auth.signInWithCredential(credential);
+      var user = auth.user;
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const Center(child: CircularProgressIndicator());
+          },
+        );
+        StorageServices.to.alreadyLogin = true;
 
-    //     var profile = Profile(
-    //       uid: user?.uid,
-    //       name: user?.displayName,
-    //       photo: user?.photoURL,
-    //       status: 'Hey there! Let\'s be friend',
-    //       email: user?.email,
-    //       visibility: true,
-    //     );
+        var profile = Profile(
+          uid: user?.uid,
+          name: user?.displayName,
+          photo: user?.photoURL,
+          status: 'Hey there! Let\'s be friend',
+          email: user?.email,
+          visibility: true,
+        );
 
-    //     await repository.saveUserProfile(profile);
+        await repository.saveUserProfile(profile);
 
-    //     Get.offAllNamed(AppRoutes.home);
-    //   }
-    // } on FirebaseAuthException catch (e) {
-    //   debugPrint(e.message);
-    // }
+        Get.offAllNamed(AppRoutes.home);
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.message);
+    }
   }
 }

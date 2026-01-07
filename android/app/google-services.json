@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "550134906790-bh2cbat36i7r8b3uif0vi3q9rjs2knq9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.zuludin.nyarios",
+            "certificate_hash": "f678c812b3dea59886ba7080650bf3fc0446ddaa"
+          }
+        },
+        {
           "client_id": "550134906790-ikjfu1uedfq2ueovpb9lbeuvbma96spn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -43,6 +51,14 @@
           "android_info": {
             "package_name": "com.app.zuludin.nyarios",
             "certificate_hash": "8aef6ac8b576c71f15de95226a06aab654fadb36"
+          }
+        },
+        {
+          "client_id": "550134906790-v8vufm9dau7g90ro3c4l5jprr7ot02ka.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.zuludin.nyarios",
+            "certificate_hash": "bec185b3922bbcc09dbc8153955e8851adb6834e"
           }
         },
         {
