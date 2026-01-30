@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/call.dart';
-import 'package:nyarios/data/repositories/call_repository.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/ui/home/widgets/call_history_item.dart';
 
-class CallHistoryNavigation extends StatelessWidget {
+class CallHistoryNavigation extends ConsumerWidget {
   const CallHistoryNavigation({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    var repository = CallRepository();
+  Widget build(BuildContext context, WidgetRef ref) {
+    var repository = ref.watch(callRepositoryProvider);
 
     return SafeArea(
       child: CustomScrollView(
@@ -54,14 +55,11 @@ class CallHistoryNavigation extends StatelessWidget {
               }
 
               return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    var data = snapshot.data!.docs[index];
-                    var chat = Call.fromMap(data.data());
-                    return CallHistoryItem(call: chat);
-                  },
-                  childCount: snapshot.data!.size,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  var data = snapshot.data!.docs[index];
+                  var chat = Call.fromMap(data.data());
+                  return CallHistoryItem(call: chat);
+                }, childCount: snapshot.data!.size),
               );
             },
           ),

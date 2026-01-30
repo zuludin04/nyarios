@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class ContactRepository {
-  final CollectionReference contactReference = FirebaseFirestore.instance
-      .collection('contact');
+  final FirebaseFirestore firestore;
 
-  // ProfileRepository profileRepository = ProfileRepository();
+  ContactRepository({required this.firestore});
 
   Future<void> saveContact(Contact contact, String profileId) async {
-    contactReference
+    firestore
+        .collection('contact')
         .doc(StorageServices.to.userId)
         .collection('friends')
         .doc(profileId)
@@ -19,7 +18,8 @@ class ContactRepository {
   }
 
   Future<bool> checkIfContactExist(String userId) async {
-    var doc = await contactReference
+    var doc = await firestore
+        .collection('contact')
         .doc(StorageServices.to.userId)
         .collection('friends')
         .doc(userId)
@@ -28,7 +28,8 @@ class ContactRepository {
   }
 
   Future<Contact?> loadSingleContact(String? profileId) async {
-    var ref = await contactReference
+    var ref = await firestore
+        .collection('contact')
         .doc(StorageServices.to.userId)
         .collection('friends')
         .doc(profileId)
@@ -38,7 +39,8 @@ class ContactRepository {
   }
 
   Future<void> changeBlockStatus(String? profileId, bool blocked) async {
-    contactReference
+    firestore
+        .collection('contact')
         .doc(StorageServices.to.userId)
         .collection('friends')
         .doc(profileId)
@@ -46,7 +48,8 @@ class ContactRepository {
   }
 
   Future<List<Contact>> loadContacts(bool blocked) async {
-    var results = await contactReference
+    var results = await firestore
+        .collection('contact')
         .doc(StorageServices.to.userId)
         .collection('friends')
         .where('alreadyFriend', isEqualTo: true)

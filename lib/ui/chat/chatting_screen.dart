@@ -1,6 +1,7 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/model/notification.dart' as notif;
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
@@ -23,14 +25,14 @@ import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 import 'widgets/chat_item.dart';
 
-class ChattingScreen extends StatefulWidget {
+class ChattingScreen extends ConsumerStatefulWidget {
   const ChattingScreen({super.key});
 
   @override
-  State<ChattingScreen> createState() => _ChattingScreenState();
+  ConsumerState<ChattingScreen> createState() => _ChattingScreenState();
 }
 
-class _ChattingScreenState extends State<ChattingScreen> {
+class _ChattingScreenState extends ConsumerState<ChattingScreen> {
   final chattingController = Get.find<ChattingController>();
 
   Contact contact = Get.arguments['contact'];
@@ -39,273 +41,270 @@ class _ChattingScreenState extends State<ChattingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar("",
-          titleWidget: GetBuilder<ChattingController>(
-            builder: (controller) {
-              return Text(controller.selectedChat.isEmpty
+      appBar: Toolbar.defaultToolbar(
+        "",
+        titleWidget: GetBuilder<ChattingController>(
+          builder: (controller) {
+            return Text(
+              controller.selectedChat.isEmpty
                   ? type == 'dm'
-                      ? contact.profile?.name ?? ""
-                      : contact.group?.name ?? ""
-                  : "${controller.selectedChat.length} ${"selected_chat".tr}");
-            },
+                        ? contact.profile?.name ?? ""
+                        : contact.group?.name ?? ""
+                  : "${controller.selectedChat.length} ${"selected_chat".tr}",
+            );
+          },
+        ),
+        leading: GetBuilder<ChattingController>(
+          builder: (controller) {
+            if (controller.selectedChat.isEmpty) {
+              return IconButton(
+                onPressed: Get.back,
+                icon: ImageAsset(
+                  assets: 'assets/icons/ic_back.png',
+                  color: Get.theme.iconTheme.color!,
+                ),
+              );
+            } else {
+              return IconButton(
+                onPressed: controller.clearSelectedChat,
+                icon: const Icon(Icons.close),
+              );
+            }
+          },
+        ),
+        stream: true,
+        uid: contact.profileId,
+        onTapTitle: () =>
+            Get.toNamed(AppRoutes.contactDetail, arguments: contact),
+        elevation: 0,
+        actions: [
+          Visibility(
+            visible: type == 'dm',
+            child: IconButton(
+              onPressed: () {
+                var callId = const Uuid().v4();
+                var profile = Profile(
+                  photo: StorageServices.to.userImage,
+                  name: StorageServices.to.userName,
+                  uid: StorageServices.to.userId,
+                  id: StorageServices.to.id,
+                );
+                var notification = notif.Notification(
+                  profile: profile,
+                  callingTime: DateTime.now().millisecondsSinceEpoch,
+                  type: 'video_call',
+                  callId: callId,
+                  chatId: contact.chatId,
+                );
+
+                saveCallHistory(callId, 'video_call');
+                FirebaseFirestore.instance
+                    .collection('notification')
+                    .doc(contact.profileId)
+                    .set(notification.toMap());
+
+                Get.toNamed(AppRoutes.callVideo, arguments: contact);
+              },
+              icon: ImageAsset(
+                assets: 'assets/icons/ic_video.png',
+                color: Get.theme.iconTheme.color!,
+              ),
+            ),
           ),
-          leading: GetBuilder<ChattingController>(
+          Visibility(
+            visible: type == 'dm',
+            child: IconButton(
+              onPressed: () {
+                var callId = const Uuid().v4();
+                var profile = Profile(
+                  photo: StorageServices.to.userImage,
+                  name: StorageServices.to.userName,
+                  uid: StorageServices.to.userId,
+                  id: StorageServices.to.id,
+                );
+                var notification = notif.Notification(
+                  profile: profile,
+                  callingTime: DateTime.now().millisecondsSinceEpoch,
+                  type: 'voice_call',
+                  callId: callId,
+                  chatId: contact.chatId,
+                );
+
+                saveCallHistory(callId, 'voice_call');
+                FirebaseFirestore.instance
+                    .collection('notification')
+                    .doc(contact.profileId)
+                    .set(notification.toMap());
+
+                Get.toNamed(AppRoutes.callVoice, arguments: contact);
+              },
+              icon: ImageAsset(
+                assets: 'assets/icons/ic_call.png',
+                color: Get.theme.iconTheme.color!,
+              ),
+            ),
+          ),
+          GetBuilder<ChattingController>(
             builder: (controller) {
-              if (controller.selectedChat.isEmpty) {
-                return IconButton(
-                  onPressed: Get.back,
+              return Visibility(
+                visible: !controller.isSelectionMode,
+                child: PopupMenuButton(
                   icon: ImageAsset(
-                    assets: 'assets/icons/ic_back.png',
+                    assets: 'assets/icons/ic_vert_more.png',
                     color: Get.theme.iconTheme.color!,
                   ),
-                );
-              } else {
-                return IconButton(
-                  onPressed: controller.clearSelectedChat,
-                  icon: const Icon(Icons.close),
-                );
-              }
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(value: 0, child: Text('view_contact'.tr)),
+                      if (type != 'dm')
+                        PopupMenuItem(value: 3, child: Text('add_member'.tr)),
+                      PopupMenuItem(value: 1, child: Text('search'.tr)),
+                      if (type == 'dm')
+                        PopupMenuItem(
+                          value: 2,
+                          child: Text(
+                            chattingController.blocked
+                                ? 'unblock'.tr
+                                : 'block'.tr,
+                          ),
+                        ),
+                      if (type != 'dm')
+                        PopupMenuItem(value: 4, child: Text('leave_group'.tr)),
+                    ];
+                  },
+                  onSelected: (value) {
+                    switch (value) {
+                      case 0:
+                        Get.toNamed(
+                          AppRoutes.contactDetail,
+                          arguments: contact,
+                        );
+                        break;
+                      case 1:
+                        Get.toNamed(
+                          AppRoutes.search,
+                          arguments: {
+                            'type': 'chats',
+                            'roomId': contact.chatId,
+                            'user': type == 'dm'
+                                ? contact.profile?.name ?? ""
+                                : contact.group?.name ?? "",
+                          },
+                        );
+                        break;
+                      case 2:
+                        chattingController.changeBlockStatus();
+                        break;
+                      case 3:
+                        Get.toNamed(
+                          AppRoutes.groupMemberPick,
+                          arguments: {'source': 'add', 'group': contact.group},
+                        );
+                        break;
+                      case 4:
+                        Get.dialog(
+                          AlertDialog(
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('leave_group_message'.tr),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                      onPressed: Get.back,
+                                      child: Text(
+                                        'cancel'.tr,
+                                        style: TextStyle(
+                                          color: StorageServices.to.darkMode
+                                              ? Colors.white
+                                              : const Color(0xffb3404a),
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        chattingController
+                                            .leaveAndRemoveGroup()
+                                            .then((value) {
+                                              Get.back();
+                                            });
+                                      },
+                                      child: Text(
+                                        'OK',
+                                        style: TextStyle(
+                                          color: StorageServices.to.darkMode
+                                              ? Colors.white
+                                              : const Color(0xffb3404a),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                        break;
+                    }
+                  },
+                ),
+              );
             },
           ),
-          stream: true,
-          uid: contact.profileId,
-          onTapTitle: () => Get.toNamed(
-                AppRoutes.contactDetail,
-                arguments: contact,
-              ),
-          elevation: 0,
-          actions: [
-            Visibility(
-              visible: type == 'dm',
-              child: IconButton(
-                onPressed: () {
-                  var callId = const Uuid().v4();
-                  var profile = Profile(
-                    photo: StorageServices.to.userImage,
-                    name: StorageServices.to.userName,
-                    uid: StorageServices.to.userId,
-                    id: StorageServices.to.id,
-                  );
-                  var notification = notif.Notification(
-                    profile: profile,
-                    callingTime: DateTime.now().millisecondsSinceEpoch,
-                    type: 'video_call',
-                    callId: callId,
-                    chatId: contact.chatId,
-                  );
-
-                  saveCallHistory(callId, 'video_call');
-                  FirebaseFirestore.instance
-                      .collection('notification')
-                      .doc(contact.profileId)
-                      .set(notification.toMap());
-
-                  Get.toNamed(AppRoutes.callVideo, arguments: contact);
-                },
-                icon: ImageAsset(
-                  assets: 'assets/icons/ic_video.png',
-                  color: Get.theme.iconTheme.color!,
+          GetBuilder<ChattingController>(
+            builder: (controller) {
+              return Visibility(
+                visible: controller.isSelectionMode,
+                child: IconButton(
+                  onPressed: () {
+                    var messages = controller.selectedChat
+                        .map((e) => _copiedMessage(e))
+                        .toList()
+                        .join();
+                    FlutterClipboard.copy(messages).then((value) {
+                      Get.rawSnackbar(
+                        message:
+                            "${controller.selectedChat.length} ${"messages_copied".tr}",
+                      );
+                      controller.clearSelectedChat();
+                    });
+                  },
+                  icon: ImageAsset(
+                    assets: 'assets/icons/ic_copy.png',
+                    color: Get.theme.iconTheme.color!,
+                  ),
                 ),
-              ),
-            ),
-            Visibility(
-              visible: type == 'dm',
-              child: IconButton(
-                onPressed: () {
-                  var callId = const Uuid().v4();
-                  var profile = Profile(
-                    photo: StorageServices.to.userImage,
-                    name: StorageServices.to.userName,
-                    uid: StorageServices.to.userId,
-                    id: StorageServices.to.id,
-                  );
-                  var notification = notif.Notification(
-                    profile: profile,
-                    callingTime: DateTime.now().millisecondsSinceEpoch,
-                    type: 'voice_call',
-                    callId: callId,
-                    chatId: contact.chatId,
-                  );
-
-                  saveCallHistory(callId, 'voice_call');
-                  FirebaseFirestore.instance
-                      .collection('notification')
-                      .doc(contact.profileId)
-                      .set(notification.toMap());
-
-                  Get.toNamed(AppRoutes.callVoice, arguments: contact);
-                },
-                icon: ImageAsset(
-                  assets: 'assets/icons/ic_call.png',
-                  color: Get.theme.iconTheme.color!,
+              );
+            },
+          ),
+          GetBuilder<ChattingController>(
+            builder: (controller) {
+              return Visibility(
+                visible: controller.isSelectionMode,
+                child: IconButton(
+                  onPressed: () {
+                    var messageRepo = ref.watch(messageRepositoryProvider);
+                    messageRepo
+                        .messagesBatchDelete(
+                          contact.chatId!,
+                          controller.selectedChat,
+                          contact.profile!,
+                        )
+                        .then((value) {
+                          controller.clearSelectedChat();
+                        });
+                  },
+                  icon: ImageAsset(
+                    assets: 'assets/icons/ic_delete.png',
+                    color: Get.theme.iconTheme.color!,
+                  ),
                 ),
-              ),
-            ),
-            GetBuilder<ChattingController>(
-              builder: (controller) {
-                return Visibility(
-                  visible: !controller.isSelectionMode,
-                  child: PopupMenuButton(
-                    icon: ImageAsset(
-                      assets: 'assets/icons/ic_vert_more.png',
-                      color: Get.theme.iconTheme.color!,
-                    ),
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                          value: 0,
-                          child: Text('view_contact'.tr),
-                        ),
-                        if (type != 'dm')
-                          PopupMenuItem(
-                            value: 3,
-                            child: Text('add_member'.tr),
-                          ),
-                        PopupMenuItem(
-                          value: 1,
-                          child: Text('search'.tr),
-                        ),
-                        if (type == 'dm')
-                          PopupMenuItem(
-                            value: 2,
-                            child: Text(chattingController.blocked
-                                ? 'unblock'.tr
-                                : 'block'.tr),
-                          ),
-                        if (type != 'dm')
-                          PopupMenuItem(
-                            value: 4,
-                            child: Text('leave_group'.tr),
-                          ),
-                      ];
-                    },
-                    onSelected: (value) {
-                      switch (value) {
-                        case 0:
-                          Get.toNamed(
-                            AppRoutes.contactDetail,
-                            arguments: contact,
-                          );
-                          break;
-                        case 1:
-                          Get.toNamed(
-                            AppRoutes.search,
-                            arguments: {
-                              'type': 'chats',
-                              'roomId': contact.chatId,
-                              'user': type == 'dm'
-                                  ? contact.profile?.name ?? ""
-                                  : contact.group?.name ?? "",
-                            },
-                          );
-                          break;
-                        case 2:
-                          chattingController.changeBlockStatus();
-                          break;
-                        case 3:
-                          Get.toNamed(AppRoutes.groupMemberPick, arguments: {
-                            'source': 'add',
-                            'group': contact.group,
-                          });
-                          break;
-                        case 4:
-                          Get.dialog(
-                            AlertDialog(
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text('leave_group_message'.tr),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        onPressed: Get.back,
-                                        child: Text(
-                                          'cancel'.tr,
-                                          style: TextStyle(
-                                            color: StorageServices.to.darkMode
-                                                ? Colors.white
-                                                : const Color(0xffb3404a),
-                                          ),
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          chattingController
-                                              .leaveAndRemoveGroup()
-                                              .then((value) {
-                                            Get.back();
-                                          });
-                                        },
-                                        child: Text(
-                                          'OK',
-                                          style: TextStyle(
-                                            color: StorageServices.to.darkMode
-                                                ? Colors.white
-                                                : const Color(0xffb3404a),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                          break;
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
-            GetBuilder<ChattingController>(
-              builder: (controller) {
-                return Visibility(
-                  visible: controller.isSelectionMode,
-                  child: IconButton(
-                    onPressed: () {
-                      var messages = controller.selectedChat
-                          .map((e) => _copiedMessage(e))
-                          .toList()
-                          .join();
-                      FlutterClipboard.copy(messages).then((value) {
-                        Get.rawSnackbar(
-                            message:
-                                "${controller.selectedChat.length} ${"messages_copied".tr}");
-                        controller.clearSelectedChat();
-                      });
-                    },
-                    icon: ImageAsset(
-                      assets: 'assets/icons/ic_copy.png',
-                      color: Get.theme.iconTheme.color!,
-                    ),
-                  ),
-                );
-              },
-            ),
-            GetBuilder<ChattingController>(
-              builder: (controller) {
-                return Visibility(
-                  visible: controller.isSelectionMode,
-                  child: IconButton(
-                    onPressed: () {
-                      controller.messageRepo
-                          .messagesBatchDelete(contact.chatId!,
-                              controller.selectedChat, contact.profile!)
-                          .then((value) {
-                        controller.clearSelectedChat();
-                      });
-                    },
-                    icon: ImageAsset(
-                      assets: 'assets/icons/ic_delete.png',
-                      color: Get.theme.iconTheme.color!,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ]),
+              );
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
           GetBuilder<ChattingController>(
@@ -325,7 +324,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
           const SizedBox(height: 16),
           Expanded(
             child: StreamBuilder(
-              stream: chattingController.messageRepo
+              stream: ref
+                  .watch(messageRepositoryProvider)
                   .loadChatMessages(contact.chatId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -336,11 +336,13 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   return const Center(child: CustomIndicator());
                 }
 
-                return _buildChatMessages(snapshot.data!.docs
-                    .map((e) => Message.fromMapWithMessageId(e.data(), e.id))
-                    .toList()
-                    .reversed
-                    .toList());
+                return _buildChatMessages(
+                  snapshot.data!.docs
+                      .map((e) => Message.fromMapWithMessageId(e.data(), e.id))
+                      .toList()
+                      .reversed
+                      .toList(),
+                );
               },
             ),
           ),
@@ -363,10 +365,8 @@ class _ChattingScreenState extends State<ChattingScreen> {
         return DateTime(date.year, date.month, date.day);
       },
       groupHeaderBuilder: _createGroupHeader,
-      itemBuilder: (_, Message chat) => ChatItem(
-        chat: chat,
-        key: Key(chat.sendDatetime.toString()),
-      ),
+      itemBuilder: (_, Message chat) =>
+          ChatItem(chat: chat, key: Key(chat.sendDatetime.toString())),
     );
   }
 
@@ -407,26 +407,28 @@ class _ChattingScreenState extends State<ChattingScreen> {
   }
 
   String _copiedMessage(Message chat) {
-    var date = DateFormat("MM/dd, hh:mm a")
-        .format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
+    var date = DateFormat(
+      "MM/dd, hh:mm a",
+    ).format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
     var user = chat.chatId == StorageServices.to.userId
         ? StorageServices.to.userName
         : type == 'dm'
-            ? contact.profile?.name ?? ""
-            : contact.group?.name ?? "";
+        ? contact.profile?.name ?? ""
+        : contact.group?.name ?? "";
     return "[$date] $user: ${chat.message}\n";
   }
 
   void saveCallHistory(String callId, String type) async {
-    var callRepo = CallRepository();
+    var callRepo = ref.watch(callRepositoryProvider);
 
     var call = Call(
-        callDate: DateTime.now().millisecondsSinceEpoch,
-        callId: callId,
-        profileId: contact.profileId,
-        status: 'outgoing_call',
-        type: type,
-        isAccepted: true);
+      callDate: DateTime.now().millisecondsSinceEpoch,
+      callId: callId,
+      profileId: contact.profileId,
+      status: 'outgoing_call',
+      type: type,
+      isAccepted: true,
+    );
 
     callRepo.saveCallHistory(StorageServices.to.userId, call);
   }

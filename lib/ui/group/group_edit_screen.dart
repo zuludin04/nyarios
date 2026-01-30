@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
@@ -12,19 +13,18 @@ import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_edit_bottom_sheet.dart';
 
-class GroupEditScreen extends StatefulWidget {
+class GroupEditScreen extends ConsumerStatefulWidget {
   const GroupEditScreen({super.key});
 
   @override
-  State<GroupEditScreen> createState() => _GroupEditScreenState();
+  ConsumerState<GroupEditScreen> createState() => _GroupEditScreenState();
 }
 
-class _GroupEditScreenState extends State<GroupEditScreen> {
-  final GroupRepository repository = GroupRepository();
-
+class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
   Group group = Get.arguments;
 
   @override
@@ -36,7 +36,9 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: StreamBuilder(
-              stream: repository.loadStreamGroup(group.groupId!),
+              stream: ref
+                  .watch(groupRepositoryProvider)
+                  .loadStreamGroup(group.groupId!),
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -68,8 +70,10 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text('name'.tr,
-                                      style: Get.textTheme.bodySmall),
+                                  Text(
+                                    'name'.tr,
+                                    style: Get.textTheme.bodySmall,
+                                  ),
                                   Text(
                                     snapshot.data?.name ?? "-",
                                     style: Get.textTheme.titleMedium,
@@ -130,13 +134,14 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
               var url = await storage
                   .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
                   .getDownloadURL();
-              repository
+              ref
+                  .watch(groupRepositoryProvider)
                   .updateImageGroup(group.groupId!, url)
                   .then((value) async {
-                await _updateGroupRecentMessage(group);
-                await _addGroupInfoMessage(group.chatId!);
-                Get.back();
-              });
+                    await _updateGroupRecentMessage(group);
+                    await _addGroupInfoMessage(group.chatId!);
+                    Get.back();
+                  });
               break;
           }
         });
@@ -145,7 +150,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
   }
 
   Future<void> _addGroupInfoMessage(String chatId) async {
-    var repo = MessageRepository();
+    var repo = ref.watch(messageRepositoryProvider);
 
     Message newMessage = Message(
       message: '${StorageServices.to.userName} update group image',
@@ -161,7 +166,7 @@ class _GroupEditScreenState extends State<GroupEditScreen> {
   }
 
   Future<void> _updateGroupRecentMessage(Group group) async {
-    var repo = ChatRepository();
+    var repo = ref.watch(chatRepositoryProvider);
 
     var chat = Chat(
       profileId: group.groupId,

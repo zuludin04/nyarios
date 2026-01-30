@@ -8,7 +8,7 @@ import 'package:nyarios/data/repositories/profile_repository.dart';
 
 class ContactMediaController extends GetxController {
   final Contact lastMessage = Get.arguments;
-  final repository = MessageRepository();
+  // final repository = MessageRepository();
 
   var mediaMessages = <Message>[];
   var loading = false;
@@ -19,7 +19,8 @@ class ContactMediaController extends GetxController {
   Future<void> loadChats(String type) async {
     loading = true;
 
-    var chats = await repository.loadMessageMedia(lastMessage.chatId);
+    // var chats = await repository.loadMessageMedia(lastMessage.chatId);
+    var chats = <Message>[];
 
     mediaMessages = chats.where((e) => e.type == type).toList();
     empty = mediaMessages.isEmpty;

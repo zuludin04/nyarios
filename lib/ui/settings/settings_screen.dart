@@ -4,8 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/profile_providers.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../../core/widgets/toolbar.dart';

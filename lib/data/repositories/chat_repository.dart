@@ -1,19 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/group.dart';
-import 'package:nyarios/data/repositories/group_repository.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class ChatRepository {
-  final CollectionReference chatReference = FirebaseFirestore.instance
-      .collection('chat');
+  final FirebaseFirestore firestore;
 
-  // final ProfileRepository profileRepository = ProfileRepository();
-  final GroupRepository groupRepository = GroupRepository();
+  ChatRepository({required this.firestore});
 
   Stream<QuerySnapshot<Map<String, dynamic>>> loadRecentChat() async* {
-    yield* chatReference
+    yield* firestore
+        .collection('chat')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .orderBy('lastMessageSent', descending: true)
@@ -21,7 +18,8 @@ class ChatRepository {
   }
 
   Future<List<Chat>> loadUserRecentChat() async {
-    var results = await chatReference
+    var results = await firestore
+        .collection('chat')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .where('type', isEqualTo: 'dm')
@@ -36,7 +34,8 @@ class ChatRepository {
   }
 
   void updateRecentChat(bool fromSender, Chat lastMessage) {
-    chatReference
+    firestore
+        .collection('chat')
         .doc(fromSender ? StorageServices.to.userId : lastMessage.profileId)
         .collection('receiver')
         .doc(fromSender ? lastMessage.profileId : StorageServices.to.userId)
@@ -45,7 +44,8 @@ class ChatRepository {
 
   Future<void> updateGroupRecentChat(Group group, Chat chat) async {
     for (var element in group.members!) {
-      await chatReference
+      await firestore
+          .collection('chat')
           .doc(element)
           .collection('receiver')
           .doc(group.groupId)
@@ -54,7 +54,8 @@ class ChatRepository {
   }
 
   Future<void> deleteGroupChat(String groupId) async {
-    await chatReference
+    await firestore
+        .collection('chat')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .doc(groupId)

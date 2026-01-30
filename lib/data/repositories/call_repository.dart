@@ -3,11 +3,13 @@ import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class CallRepository {
-  final CollectionReference callReference =
-      FirebaseFirestore.instance.collection('call');
+  final FirebaseFirestore firestore;
+
+  CallRepository({required this.firestore});
 
   Future<void> saveCallHistory(String profileId, Call call) async {
-    await callReference
+    await firestore
+        .collection('call')
         .doc(profileId)
         .collection('history')
         .doc(call.callId)
@@ -15,8 +17,12 @@ class CallRepository {
   }
 
   Future<void> updateCallStatus(
-      String profileId, String callId, bool isAccepted) async {
-    await callReference
+    String profileId,
+    String callId,
+    bool isAccepted,
+  ) async {
+    await firestore
+        .collection('call')
         .doc(profileId)
         .collection('history')
         .doc(callId)
@@ -24,7 +30,8 @@ class CallRepository {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> loadCallHistory() async* {
-    yield* callReference
+    yield* firestore
+        .collection('call')
         .doc(StorageServices.to.userId)
         .collection('history')
         .orderBy('callDate', descending: true)

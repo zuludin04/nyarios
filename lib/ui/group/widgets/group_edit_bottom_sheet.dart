@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/group.dart';
@@ -6,20 +7,21 @@ import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/services/storage_services.dart';
 
-class GroupEditBottomSheet extends StatefulWidget {
+class GroupEditBottomSheet extends ConsumerStatefulWidget {
   final Group group;
 
   const GroupEditBottomSheet({super.key, required this.group});
 
   @override
-  State<GroupEditBottomSheet> createState() => _GroupEditBottomSheetState();
+  ConsumerState<GroupEditBottomSheet> createState() =>
+      _GroupEditBottomSheetState();
 }
 
-class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
+class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
   final TextEditingController _textEditingController = TextEditingController();
-  final GroupRepository _repository = GroupRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +53,17 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
               TextButton(
                 onPressed: () {
                   if (_textEditingController.text.isNotEmpty) {
-                    _repository
+                    ref
+                        .watch(groupRepositoryProvider)
                         .updateGroupName(
-                            widget.group.groupId!, _textEditingController.text)
+                          widget.group.groupId!,
+                          _textEditingController.text,
+                        )
                         .then((value) async {
-                      await _updateGroupRecentMessage(widget.group);
-                      await _addGroupInfoMessage(widget.group.chatId!);
-                      Get.back();
-                    });
+                          await _updateGroupRecentMessage(widget.group);
+                          await _addGroupInfoMessage(widget.group.chatId!);
+                          Get.back();
+                        });
                   } else {
                     Get.rawSnackbar(message: 'fill_message'.tr);
                   }
@@ -80,7 +85,7 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
   }
 
   Future<void> _addGroupInfoMessage(String chatId) async {
-    var repo = MessageRepository();
+    var repo = ref.read(messageRepositoryProvider);
 
     Message newMessage = Message(
       message: '${StorageServices.to.userName} update group name',
@@ -96,7 +101,7 @@ class _GroupEditBottomSheetState extends State<GroupEditBottomSheet> {
   }
 
   Future<void> _updateGroupRecentMessage(Group group) async {
-    var repo = ChatRepository();
+    var repo = ref.read(chatRepositoryProvider);
 
     var chat = Chat(
       profileId: group.groupId,

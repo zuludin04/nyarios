@@ -2,26 +2,24 @@ import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/data/model/contact.dart';
-import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/main.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
-class CallVoiceScreen extends StatefulWidget {
+class CallVoiceScreen extends ConsumerStatefulWidget {
   const CallVoiceScreen({super.key});
 
   @override
-  State<CallVoiceScreen> createState() => _CallVoiceScreenState();
+  ConsumerState<CallVoiceScreen> createState() => _CallVoiceScreenState();
 }
 
-class _CallVoiceScreenState extends State<CallVoiceScreen> {
-  var callRepo = CallRepository();
-
+class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   int tokenRole = 1;
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
@@ -105,8 +103,9 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
                     onPressed: leave,
                   ),
                   CallActionButton(
-                    icon:
-                        isSpeaker ? Icons.volume_up_outlined : Icons.volume_off,
+                    icon: isSpeaker
+                        ? Icons.volume_up_outlined
+                        : Icons.volume_off,
                     color: Colors.white,
                     iconColor: Colors.black,
                     onPressed: () {
@@ -140,8 +139,10 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
         initialData: 0,
         builder: (context, snap) {
           final value = snap.data;
-          final displayTime =
-              StopWatchTimer.getDisplayTime(value!, milliSecond: false);
+          final displayTime = StopWatchTimer.getDisplayTime(
+            value!,
+            milliSecond: false,
+          );
           _stopWatchTimer.onStartTimer();
           return Text(
             displayTime,
@@ -175,7 +176,8 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
       join(newToken, channelName, uid);
     } else {
       throw Exception(
-          'Failed to fetch a token. Make sure that your server URL is valid');
+        'Failed to fetch a token. Make sure that your server URL is valid',
+      );
     }
   }
 
@@ -199,10 +201,14 @@ class _CallVoiceScreenState extends State<CallVoiceScreen> {
             _remoteUid = remoteUid;
           });
         },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          Get.back();
-        },
+        onUserOffline:
+            (
+              RtcConnection connection,
+              int remoteUid,
+              UserOfflineReasonType reason,
+            ) {
+              Get.back();
+            },
       ),
     );
   }

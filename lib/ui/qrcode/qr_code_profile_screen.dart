@@ -9,7 +9,7 @@ import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/profile_providers.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -22,6 +22,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final repository = ref.watch(profileRepositoryProvider);
+    final contactRepo = ref.watch(contactRepositoryProvider);
     return Scaffold(
       appBar: Toolbar.defaultToolbar("qr_code".tr),
       body: Column(
@@ -67,7 +68,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: () => _scan(repository),
+            onTap: () => _scan(repository, contactRepo),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -110,7 +111,10 @@ class QrCodeProfileScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _scan(ProfileRepository repository) async {
+  Future<void> _scan(
+    ProfileRepository repository,
+    ContactRepository contactRepo,
+  ) async {
     try {
       final result = await BarcodeScanner.scan(
         options: const ScanOptions(
@@ -126,7 +130,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
       );
 
       if (result.rawContent != '') {
-        _showProfileDialog(result.rawContent, repository);
+        _showProfileDialog(result.rawContent, repository, contactRepo);
       }
     } on PlatformException catch (e) {
       var message = e.code == BarcodeScanner.cameraAccessDenied
@@ -136,7 +140,11 @@ class QrCodeProfileScreen extends ConsumerWidget {
     }
   }
 
-  void _showProfileDialog(String barcode, ProfileRepository repository) {
+  void _showProfileDialog(
+    String barcode,
+    ProfileRepository repository,
+    ContactRepository contactRepo,
+  ) {
     Get.dialog(
       AlertDialog(
         content: FutureBuilder<Profile>(
@@ -168,7 +176,6 @@ class QrCodeProfileScreen extends ConsumerWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         Get.back();
-                        var repo = ContactRepository();
                         var profile = snapshot.data!;
                         var roomId = const Uuid().v4();
                         var contact = Contact(
@@ -177,7 +184,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
                           blocked: false,
                           chatId: roomId,
                         );
-                        repo.saveContact(contact, profile.uid!);
+                        contactRepo.saveContact(contact, profile.uid!);
 
                         Get.toNamed(
                           AppRoutes.chatting,

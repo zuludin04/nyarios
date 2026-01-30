@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/domain/profile_providers.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';

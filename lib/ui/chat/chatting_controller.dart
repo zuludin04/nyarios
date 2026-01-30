@@ -13,10 +13,6 @@ import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class ChattingController extends GetxController {
-  var contactRepo = ContactRepository();
-  var chatRepo = ChatRepository();
-  var messageRepo = MessageRepository();
-
   Contact contact = Get.arguments['contact'];
   String type = Get.arguments['type'];
 
@@ -35,27 +31,27 @@ class ChattingController extends GetxController {
   }
 
   void loadFriendBlockStatus() async {
-    var contact = await contactRepo.loadSingleContact(this.contact.profileId);
-    blocked = contact?.blocked ?? false;
-    alreadyAdded = contact?.alreadyFriend ?? false;
+    // var contact = await contactRepo.loadSingleContact(this.contact.profileId);
+    // blocked = contact?.blocked ?? false;
+    // alreadyAdded = contact?.alreadyFriend ?? false;
     update();
   }
 
   void addChatToContact() async {
-    var contact = Contact(
-      profileId: this.contact.profileId,
-      chatId: this.contact.chatId,
-      blocked: blocked,
-      alreadyFriend: true,
-    );
-    await contactRepo.saveContact(contact, this.contact.profileId!);
-    alreadyAdded = !alreadyAdded;
+    // var contact = Contact(
+    //   profileId: this.contact.profileId,
+    //   chatId: this.contact.chatId,
+    //   blocked: blocked,
+    //   alreadyFriend: true,
+    // );
+    // await contactRepo.saveContact(contact, this.contact.profileId!);
+    // alreadyAdded = !alreadyAdded;
     update();
   }
 
   void changeBlockStatus() async {
-    blocked = !blocked;
-    await contactRepo.changeBlockStatus(contact.profileId, blocked);
+    // blocked = !blocked;
+    // await contactRepo.changeBlockStatus(contact.profileId, blocked);
     update();
   }
 
@@ -83,18 +79,23 @@ class ChattingController extends GetxController {
       type: this.type,
     );
 
-    if (this.type == 'dm') {
-      chatRepo.updateRecentChat(true, chat);
-      chatRepo.updateRecentChat(false, chat);
-    } else {
-      chatRepo.updateGroupRecentChat(contact.group!, chat);
-    }
+    // if (this.type == 'dm') {
+    //   chatRepo.updateRecentChat(true, chat);
+    //   chatRepo.updateRecentChat(false, chat);
+    // } else {
+    //   chatRepo.updateGroupRecentChat(contact.group!, chat);
+    // }
 
-    messageRepo.sendNewMessage(newMessage);
+    // messageRepo.sendNewMessage(newMessage);
   }
 
-  void uploadSendFile(String path, String fileName, String fileSize, File file,
-      String type) async {
+  void uploadSendFile(
+    String path,
+    String fileName,
+    String fileSize,
+    File file,
+    String type,
+  ) async {
     var storage = FirebaseStorage.instance.ref();
     var uploadImage = storage.child('$path/$fileName').putFile(file);
 
@@ -135,30 +136,32 @@ class ChattingController extends GetxController {
       chatId: contact.chatId,
       type: type,
     );
-    chatRepo.updateGroupRecentChat(contact.group!, chat).then((value) async {
-      _addGroupInfoMessage(contact.chatId!);
-      contact.group!.members!.remove(StorageServices.to.userId);
-      await GroupRepository()
-          .updateGroupMember(contact.group!.groupId!, contact.group!.members!);
-      await chatRepo.deleteGroupChat(contact.group!.groupId!);
-      Get.back();
-    });
+    // chatRepo.updateGroupRecentChat(contact.group!, chat).then((value) async {
+    //   _addGroupInfoMessage(contact.chatId!);
+    //   contact.group!.members!.remove(StorageServices.to.userId);
+    //   await GroupRepository().updateGroupMember(
+    //     contact.group!.groupId!,
+    //     contact.group!.members!,
+    //   );
+    //   await chatRepo.deleteGroupChat(contact.group!.groupId!);
+    //   Get.back();
+    // });
   }
 
   Future<void> _addGroupInfoMessage(String chatId) async {
-    var repo = MessageRepository();
+    // var repo = MessageRepository();
 
-    Message newMessage = Message(
-      message: '${StorageServices.to.userName} left group',
-      type: 'info',
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      url: '',
-      fileSize: '',
-      profileId: StorageServices.to.userId,
-      chatId: chatId,
-    );
+    // Message newMessage = Message(
+    //   message: '${StorageServices.to.userName} left group',
+    //   type: 'info',
+    //   sendDatetime: DateTime.now().millisecondsSinceEpoch,
+    //   url: '',
+    //   fileSize: '',
+    //   profileId: StorageServices.to.userId,
+    //   chatId: chatId,
+    // );
 
-    repo.sendNewMessage(newMessage);
+    // repo.sendNewMessage(newMessage);
   }
 
   void selectChat(Message message) {

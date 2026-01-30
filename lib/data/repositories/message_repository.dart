@@ -1,24 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/data/repositories/chat_repository.dart';
 
 class MessageRepository {
-  final CollectionReference messageReference =
-      FirebaseFirestore.instance.collection('message');
+  final FirebaseFirestore firestore;
 
-  ChatRepository chatRepo = ChatRepository();
+  MessageRepository({required this.firestore});
 
   void sendNewMessage(Message message) {
-    messageReference
+    firestore
+        .collection('message')
         .doc(message.chatId)
         .collection('messages')
         .add(message.toMap());
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> loadChatMessages(String? roomId) {
-    return messageReference
+    return firestore
+        .collection('message')
         .doc(roomId)
         .collection('messages')
         .orderBy('sendDatetime')
@@ -26,7 +25,8 @@ class MessageRepository {
   }
 
   Future<List<Message>> loadMessageMedia(String? roomId) async {
-    var chats = await messageReference
+    var chats = await firestore
+        .collection('message')
         .doc(roomId)
         .collection('messages')
         .orderBy('sendDatetime')
@@ -36,30 +36,23 @@ class MessageRepository {
   }
 
   Future<void> messagesBatchDelete(
-      String roomId, List<Message> chatMessages, Profile profile) async {
-    CollectionReference messages =
-        messageReference.doc(roomId).collection('messages');
+    String roomId,
+    List<Message> chatMessages,
+    Profile profile,
+  ) async {
+    CollectionReference messages = firestore
+        .collection('message')
+        .doc(roomId)
+        .collection('messages');
 
     for (var message in chatMessages) {
       messages.doc(message.messageId).delete();
     }
-
-    var updatedMessages = await loadMessages(roomId);
-    var selectedMessage = updatedMessages[updatedMessages.length - 1];
-    Chat chat = Chat(
-      profileId: profile.uid,
-      lastMessage: selectedMessage.message,
-      lastMessageSent: selectedMessage.sendDatetime,
-      chatId: selectedMessage.chatId,
-      type: 'dm',
-    );
-
-    chatRepo.updateRecentChat(true, chat);
-    chatRepo.updateRecentChat(false, chat);
   }
 
   Future<List<Message>> loadMessages(String? roomId) async {
-    var chats = await messageReference
+    var chats = await firestore
+        .collection('message')
         .doc(roomId)
         .collection('messages')
         .orderBy('sendDatetime')

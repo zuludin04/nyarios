@@ -2,27 +2,27 @@ import 'dart:convert';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/main.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
-class CallVideoScreen extends StatefulWidget {
+class CallVideoScreen extends ConsumerStatefulWidget {
   const CallVideoScreen({super.key});
 
   @override
-  State<CallVideoScreen> createState() => _CallVideoScreenState();
+  ConsumerState<CallVideoScreen> createState() => _CallVideoScreenState();
 }
 
-class _CallVideoScreenState extends State<CallVideoScreen> {
-  var callRepo = CallRepository();
-
+class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
   int tokenRole = 1;
   String serverUrl = "https://agoranyarios.up.railway.app";
   String token = "";
@@ -40,7 +40,7 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
   @override
   void initState() {
     super.initState();
-    handleVideoCallPermission();
+    handleVideoCallPermission(ref.watch(callRepositoryProvider));
   }
 
   @override
@@ -84,16 +84,17 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
                             width: 120,
                             height: 160,
                             decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    offset: Offset(1, 1),
-                                    blurRadius: 1,
-                                    spreadRadius: 1,
-                                    color: Colors.black26,
-                                  ),
-                                ]),
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: const [
+                                BoxShadow(
+                                  offset: Offset(1, 1),
+                                  blurRadius: 1,
+                                  spreadRadius: 1,
+                                  color: Colors.black26,
+                                ),
+                              ],
+                            ),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -129,8 +130,9 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         CallActionButton(
-                          icon:
-                              isMuted ? Icons.mic_off_outlined : Icons.mic_none,
+                          icon: isMuted
+                              ? Icons.mic_off_outlined
+                              : Icons.mic_none,
                           color: Colors.white,
                           iconColor: Colors.black,
                           onPressed: () {
@@ -181,10 +183,7 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
       );
     } else {
       return const Center(
-        child: Text(
-          'Connecting video call',
-          textAlign: TextAlign.center,
-        ),
+        child: Text('Connecting video call', textAlign: TextAlign.center),
       );
     }
   }
@@ -199,7 +198,7 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
     );
   }
 
-  Future<void> handleVideoCallPermission() async {
+  Future<void> handleVideoCallPermission(CallRepository callRepo) async {
     await [Permission.microphone, Permission.camera].request();
 
     if (await Permission.microphone.isDenied) {
@@ -209,11 +208,11 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
       Get.back();
       Get.rawSnackbar(message: 'Need camera permission to make a video call');
     } else {
-      setupVideoSDKEngine();
+      setupVideoSDKEngine(callRepo);
     }
   }
 
-  Future<void> setupVideoSDKEngine() async {
+  Future<void> setupVideoSDKEngine(CallRepository callRepo) async {
     agoraEngine = createAgoraRtcEngine();
     await agoraEngine.initialize(const RtcEngineContext(appId: appId));
 
@@ -228,15 +227,19 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          saveCallHistory();
+          saveCallHistory(callRepo);
           setState(() {
             _remoteUid = remoteUid;
           });
         },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          Get.back();
-        },
+        onUserOffline:
+            (
+              RtcConnection connection,
+              int remoteUid,
+              UserOfflineReasonType reason,
+            ) {
+              Get.back();
+            },
       ),
     );
   }
@@ -253,7 +256,8 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
       setToken(newToken);
     } else {
       throw Exception(
-          'Failed to fetch a token. Make sure that your server URL is valid');
+        'Failed to fetch a token. Make sure that your server URL is valid',
+      );
     }
   }
 
@@ -287,16 +291,17 @@ class _CallVideoScreenState extends State<CallVideoScreen> {
     Get.back();
   }
 
-  void saveCallHistory() async {
+  void saveCallHistory(CallRepository callRepo) async {
     callId = const Uuid().v4();
 
     var call = Call(
-        callDate: DateTime.now().millisecondsSinceEpoch,
-        callId: callId,
-        profileId: contact.profileId,
-        status: 'incoming_call',
-        type: 'video_call',
-        isAccepted: true);
+      callDate: DateTime.now().millisecondsSinceEpoch,
+      callId: callId,
+      profileId: contact.profileId,
+      status: 'incoming_call',
+      type: 'video_call',
+      isAccepted: true,
+    );
 
     callRepo.saveCallHistory(StorageServices.to.userId, call);
   }

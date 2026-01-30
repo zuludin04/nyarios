@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/profile_providers.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/toolbar.dart';

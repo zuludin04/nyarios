@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/profile_providers.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 
 class CallHistoryItem extends ConsumerWidget {
   final Call call;

@@ -10,10 +10,6 @@ import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class GroupMemberPickController extends GetxController {
-  var contactRepo = ContactRepository();
-  var groupRepo = GroupRepository();
-  var chatRepo = ChatRepository();
-
   var selectedMembers = <Profile>[];
 
   void addGroupMembers(Group group) {
@@ -29,27 +25,27 @@ class GroupMemberPickController extends GetxController {
     members.addAll(group.members!);
     group.members = members;
 
-    groupRepo.updateGroupMember(group.groupId!, members).then((value) async {
-      chatRepo.updateGroupRecentChat(group, chat);
-      _addGroupInfoMessage(group.chatId!);
-      Get.back();
-    });
+    // groupRepo.updateGroupMember(group.groupId!, members).then((value) async {
+    //   chatRepo.updateGroupRecentChat(group, chat);
+    //   _addGroupInfoMessage(group.chatId!);
+    //   Get.back();
+    // });
   }
 
   Future<void> _addGroupInfoMessage(String chatId) async {
-    var repo = MessageRepository();
+    // var repo = MessageRepository();
 
-    Message newMessage = Message(
-      message: 'New group member is added',
-      type: 'info',
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      url: '',
-      fileSize: '',
-      profileId: StorageServices.to.userId,
-      chatId: chatId,
-    );
+    // Message newMessage = Message(
+    //   message: 'New group member is added',
+    //   type: 'info',
+    //   sendDatetime: DateTime.now().millisecondsSinceEpoch,
+    //   url: '',
+    //   fileSize: '',
+    //   profileId: StorageServices.to.userId,
+    //   chatId: chatId,
+    // );
 
-    repo.sendNewMessage(newMessage);
+    // repo.sendNewMessage(newMessage);
   }
 
   void addRemoveMember(bool remove, Profile profile) {

@@ -7,7 +7,7 @@ import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/profile_providers.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 
 import '../../../data/model/chat.dart';
 import '../../../routes/app_pages.dart';
@@ -20,6 +20,7 @@ class LastMessageItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final repository = ref.watch(profileRepositoryProvider);
+    final groupRepo = ref.watch(groupRepositoryProvider);
     return InkWell(
       onTap: () {
         Get.toNamed(
@@ -36,14 +37,14 @@ class LastMessageItem extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               children: [
-                _imageRecentChat(repository),
+                _imageRecentChat(repository, groupRepo),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _nameRecentChat(repository),
+                      _nameRecentChat(repository, groupRepo),
                       const SizedBox(height: 4),
                       Text(
                         lastMessage.lastMessage ?? "",
@@ -71,11 +72,14 @@ class LastMessageItem extends ConsumerWidget {
     );
   }
 
-  Widget _imageRecentChat(ProfileRepository repository) {
+  Widget _imageRecentChat(
+    ProfileRepository repository,
+    GroupRepository groupRepo,
+  ) {
     return StreamBuilder(
       stream: lastMessage.type == 'dm'
           ? repository.loadStreamProfile(lastMessage.profileId!)
-          : GroupRepository().loadStreamGroup(lastMessage.profileId!),
+          : groupRepo.loadStreamGroup(lastMessage.profileId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox();
@@ -104,11 +108,14 @@ class LastMessageItem extends ConsumerWidget {
     );
   }
 
-  Widget _nameRecentChat(ProfileRepository repositories) {
+  Widget _nameRecentChat(
+    ProfileRepository repositories,
+    GroupRepository groupRepo,
+  ) {
     return StreamBuilder(
       stream: lastMessage.type == 'dm'
           ? repositories.loadStreamProfile(lastMessage.profileId!)
-          : GroupRepository().loadStreamGroup(lastMessage.profileId!),
+          : groupRepo.loadStreamGroup(lastMessage.profileId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox();

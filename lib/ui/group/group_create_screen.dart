@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
@@ -14,21 +15,21 @@ import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-class GroupCreateScreen extends StatefulWidget {
+class GroupCreateScreen extends ConsumerStatefulWidget {
   const GroupCreateScreen({super.key});
 
   @override
-  State<GroupCreateScreen> createState() => _GroupCreateScreenState();
+  ConsumerState<GroupCreateScreen> createState() => _GroupCreateScreenState();
 }
 
-class _GroupCreateScreenState extends State<GroupCreateScreen> {
-  final _groupRepo = GroupRepository();
+class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
   final _groupTitleController = TextEditingController();
   File? _imageFile;
   List<Profile> members = [
@@ -100,14 +101,16 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4),
+                  crossAxisCount: 4,
+                ),
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return GestureDetector(
                       onTap: () async {
                         var result = await Get.toNamed(
-                            AppRoutes.groupMemberPick,
-                            arguments: {'source': 'create'});
+                          AppRoutes.groupMemberPick,
+                          arguments: {'source': 'create'},
+                        );
                         if (result != null) {
                           if (result is Profile) {
                             members.add(result);
@@ -177,7 +180,8 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
     var storage = FirebaseStorage.instance.ref();
     var uploadImage = storage
         .child(
-            'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg')
+          'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg',
+        )
         .putFile(file);
 
     Get.dialog(
@@ -209,10 +213,13 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
         case TaskState.success:
           var url = await storage
               .child(
-                  'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg')
+                'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg',
+              )
               .getDownloadURL();
           group.photo = url;
-          _groupRepo.createGroupChat(group).then((value) async {
+          ref.watch(groupRepositoryProvider).createGroupChat(group).then((
+            value,
+          ) async {
             await _updateGroupRecentMessage(group);
             await _addGroupInfoMessage(group.chatId!);
             Get.back();
@@ -224,7 +231,7 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
   }
 
   Future<void> _updateGroupRecentMessage(Group group) async {
-    var repo = ChatRepository();
+    var repo = ref.read(chatRepositoryProvider);
 
     var chat = Chat(
       profileId: group.groupId,
@@ -239,7 +246,7 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
   }
 
   Future<void> _addGroupInfoMessage(String chatId) async {
-    var repo = MessageRepository();
+    var repo = ref.read(messageRepositoryProvider);
 
     Message newMessage = Message(
       message: '${StorageServices.to.userName} create new group',
@@ -271,8 +278,12 @@ class _GroupCreateScreenState extends State<GroupCreateScreen> {
     final byteData = await rootBundle.load('assets/group.png');
 
     final file = File('${(await getTemporaryDirectory()).path}/group.png');
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await file.writeAsBytes(
+      byteData.buffer.asUint8List(
+        byteData.offsetInBytes,
+        byteData.lengthInBytes,
+      ),
+    );
 
     return file;
   }

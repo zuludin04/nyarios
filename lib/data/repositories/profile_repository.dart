@@ -79,15 +79,14 @@ class ProfileRepository {
   }
 
   Future<int> getIncrementedId() async {
-    var collection = FirebaseFirestore.instance.collection('incrementedId');
+    var collection = firestore.collection('incrementedId');
     var doc = await collection.doc('FvmJzscRcjO4J9AFFPEe').get();
     return doc.data()!['id'];
   }
 
   Future<void> updateIncrementedId(int id) async {
-    FirebaseFirestore.instance
-        .collection('incrementedId')
-        .doc('FvmJzscRcjO4J9AFFPEe')
-        .set({'id': id});
+    firestore.collection('incrementedId').doc('FvmJzscRcjO4J9AFFPEe').set({
+      'id': id,
+    });
   }
 }

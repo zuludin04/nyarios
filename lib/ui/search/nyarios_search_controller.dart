@@ -6,10 +6,6 @@ import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 
 class NyariosSearchController extends GetxController {
-  final repository = MessageRepository();
-  final chatRepo = ChatRepository();
-  final contactRepo = ContactRepository();
-
   String type = Get.arguments['type'];
   String roomId = Get.arguments['roomId'];
   String user = Get.arguments['user'];
@@ -37,8 +33,11 @@ class NyariosSearchController extends GetxController {
 
     if (term.isNotEmpty) {
       var filter = recentChats
-          .where((element) =>
-              element.profile!.name!.toLowerCase().contains(term.toLowerCase()))
+          .where(
+            (element) => element.profile!.name!.toLowerCase().contains(
+              term.toLowerCase(),
+            ),
+          )
           .toList();
       filterRecentChat.value = filter;
     } else {
@@ -52,8 +51,10 @@ class NyariosSearchController extends GetxController {
 
     if (term.isNotEmpty) {
       var filter = messages
-          .where((element) =>
-              element.message!.toLowerCase().contains(term.toLowerCase()))
+          .where(
+            (element) =>
+                element.message!.toLowerCase().contains(term.toLowerCase()),
+          )
           .toList();
       filterMessage.value = filter;
     } else {
@@ -63,14 +64,14 @@ class NyariosSearchController extends GetxController {
   }
 
   void loadRecentChat() async {
-    var recent = await chatRepo.loadUserRecentChat();
-    filterRecentChat.value = recent;
-    recentChats.value = recent;
+    // var recent = await chatRepo.loadUserRecentChat();
+    // filterRecentChat.value = recent;
+    // recentChats.value = recent;
   }
 
   void loadMessages() async {
-    var chats = await repository.loadMessages(roomId);
-    filterMessage.value = chats;
-    messages.value = chats;
+    // var chats = await repository.loadMessages(roomId);
+    // filterMessage.value = chats;
+    // messages.value = chats;
   }
 }

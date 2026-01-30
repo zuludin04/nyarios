@@ -2,42 +2,37 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/data/model/group.dart';
 
 class GroupRepository {
-  final CollectionReference contactReference =
-      FirebaseFirestore.instance.collection('group');
+  final FirebaseFirestore firestore;
+
+  GroupRepository({required this.firestore});
 
   Future<void> createGroupChat(Group group) async {
-    var groupId = contactReference.doc().id;
+    var groupId = firestore.collection('group').doc().id;
     group.groupId = groupId;
-    await contactReference.doc(groupId).set(group.toMap());
+    await firestore.collection('group').doc(groupId).set(group.toMap());
   }
 
   Future<Group> loadSingleGroup(String groupId) async {
-    var ref =
-        await FirebaseFirestore.instance.collection('group').doc(groupId).get();
+    var ref = await firestore.collection('group').doc(groupId).get();
     return Group.fromJson(ref.data()!);
   }
 
   Stream<Group> loadStreamGroup(String uid) async* {
-    var profile =
-        FirebaseFirestore.instance.collection('group').doc(uid).snapshots();
+    var profile = firestore.collection('group').doc(uid).snapshots();
     yield* profile.map((event) => Group.fromJson(event.data()!));
   }
 
   Future<void> updateGroupMember(String groupId, List<String> members) async {
-    await contactReference.doc(groupId).update({'members': members});
+    await firestore.collection('group').doc(groupId).update({
+      'members': members,
+    });
   }
 
   Future<void> updateImageGroup(String groupId, String url) async {
-    FirebaseFirestore.instance
-        .collection('group')
-        .doc(groupId)
-        .update({'photo': url});
+    firestore.collection('group').doc(groupId).update({'photo': url});
   }
 
   Future<void> updateGroupName(String groupId, String name) async {
-    FirebaseFirestore.instance
-        .collection('group')
-        .doc(groupId)
-        .update({'name': name});
+    firestore.collection('group').doc(groupId).update({'name': name});
   }
 }

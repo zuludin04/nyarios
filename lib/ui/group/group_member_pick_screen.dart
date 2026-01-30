@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
@@ -6,17 +7,19 @@ import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/group/controllers/group_member_pick_controller.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 
-class GroupMemberPickScreen extends StatefulWidget {
+class GroupMemberPickScreen extends ConsumerStatefulWidget {
   const GroupMemberPickScreen({super.key});
 
   @override
-  State<GroupMemberPickScreen> createState() => _GroupMemberPickScreenState();
+  ConsumerState<GroupMemberPickScreen> createState() =>
+      _GroupMemberPickScreenState();
 }
 
-class _GroupMemberPickScreenState extends State<GroupMemberPickScreen> {
+class _GroupMemberPickScreenState extends ConsumerState<GroupMemberPickScreen> {
   var controller = Get.find<GroupMemberPickController>();
 
   String source = Get.arguments['source'] ?? "create";
@@ -40,7 +43,7 @@ class _GroupMemberPickScreenState extends State<GroupMemberPickScreen> {
         },
       ),
       body: FutureBuilder<List<Contact>>(
-        future: controller.contactRepo.loadContacts(false),
+        future: ref.watch(contactRepositoryProvider).loadContacts(false),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('something_went_wrong'.tr));

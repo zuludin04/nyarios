@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/bottom_navigation.dart';
@@ -9,6 +10,7 @@ import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/notification.dart' as notif;
 import 'package:nyarios/data/repositories/call_repository.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/home_controller.dart';
@@ -16,20 +18,20 @@ import 'package:nyarios/ui/home/nav/call_history_navigation.dart';
 import 'package:nyarios/ui/home/nav/recent_chat_navigation.dart';
 import 'package:nyarios/ui/home/nav/settings_navigation.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   late Stream<DocumentSnapshot<Map<String, dynamic>>> notifStream;
 
   @override
   void initState() {
     super.initState();
-    listenFirebaseNotification();
+    listenFirebaseNotification(ref.read(callRepositoryProvider));
   }
 
   @override
@@ -53,14 +55,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   assets: 'assets/icons/ic_search.png',
                   color: Get.theme.iconTheme.color!,
                 ),
-              )
+              ),
             ],
           ),
           floatingActionButton: Visibility(
             visible: controller.selectedIndex != 2,
             child: FloatingActionButton(
               onPressed: () => Get.toNamed(AppRoutes.contactFriend),
-              child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
+              child: const ImageAsset(
+                assets: 'assets/icons/ic_new_message.png',
+              ),
             ),
           ),
           bottomNavigationBar: BottomNavigation(
@@ -85,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void listenFirebaseNotification() {
+  void listenFirebaseNotification(CallRepository callRepo) {
     notifStream = FirebaseFirestore.instance
         .collection('notification')
         .doc(StorageServices.to.userId)
@@ -94,12 +98,15 @@ class _HomeScreenState extends State<HomeScreen> {
     notifStream.listen((event) {
       if (event.exists) {
         var notification = notif.Notification.fromMap(event.data()!);
-        showCallNotification(notification);
+        showCallNotification(notification, callRepo);
       }
     });
   }
 
-  void showCallNotification(notif.Notification notification) {
+  void showCallNotification(
+    notif.Notification notification,
+    CallRepository callRepo,
+  ) {
     Flushbar(
       boxShadows: [
         BoxShadow(
@@ -147,7 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           DateFormat("HH:mm a").format(
                             DateTime.fromMillisecondsSinceEpoch(
-                                notification.callingTime!),
+                              notification.callingTime!,
+                            ),
                           ),
                           style: const TextStyle(
                             fontSize: 13,
@@ -156,9 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    Text(notification.type == 'video_call'
-                        ? 'Incoming video call'
-                        : 'Incoming voice call'),
+                    Text(
+                      notification.type == 'video_call'
+                          ? 'Incoming video call'
+                          : 'Incoming voice call',
+                    ),
                   ],
                 ),
               ),
@@ -180,10 +190,18 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: TextButton(
                   onPressed: () {
-                    saveCallHistory(notification.callId!,
-                        notification.profile!.uid!, notification.type!, false);
+                    saveCallHistory(
+                      notification.callId!,
+                      notification.profile!.uid!,
+                      notification.type!,
+                      false,
+                      callRepo,
+                    );
                     updateCallingStatus(
-                        notification.profile!.uid!, notification.callId!);
+                      notification.profile!.uid!,
+                      notification.callId!,
+                      callRepo,
+                    );
                     FirebaseFirestore.instance
                         .collection('notification')
                         .doc(StorageServices.to.userId)
@@ -199,21 +217,27 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: TextButton(
                   onPressed: () {
-                    saveCallHistory(notification.callId!,
-                        notification.profile!.uid!, notification.type!, true);
+                    saveCallHistory(
+                      notification.callId!,
+                      notification.profile!.uid!,
+                      notification.type!,
+                      true,
+                      callRepo,
+                    );
                     FirebaseFirestore.instance
                         .collection('notification')
                         .doc(StorageServices.to.userId)
                         .delete();
                     Get.back();
                     Get.toNamed(
-                        notification.type == 'voice_call'
-                            ? AppRoutes.callVoice
-                            : AppRoutes.callVideo,
-                        arguments: Contact(
-                          profile: notification.profile,
-                          chatId: notification.chatId,
-                        ));
+                      notification.type == 'voice_call'
+                          ? AppRoutes.callVoice
+                          : AppRoutes.callVideo,
+                      arguments: Contact(
+                        profile: notification.profile,
+                        chatId: notification.chatId,
+                      ),
+                    );
                   },
                   child: const Text(
                     'Answer',
@@ -230,22 +254,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void saveCallHistory(
-      String callId, String profileId, String type, bool isAccepted) async {
-    var callRepo = CallRepository();
-
+    String callId,
+    String profileId,
+    String type,
+    bool isAccepted,
+    CallRepository callRepo,
+  ) async {
     var call = Call(
-        callDate: DateTime.now().millisecondsSinceEpoch,
-        callId: callId,
-        profileId: profileId,
-        status: 'incoming_call',
-        type: type,
-        isAccepted: isAccepted);
+      callDate: DateTime.now().millisecondsSinceEpoch,
+      callId: callId,
+      profileId: profileId,
+      status: 'incoming_call',
+      type: type,
+      isAccepted: isAccepted,
+    );
 
     callRepo.saveCallHistory(StorageServices.to.userId, call);
   }
 
-  void updateCallingStatus(String profileId, String callId) async {
-    var callRepo = CallRepository();
+  void updateCallingStatus(
+    String profileId,
+    String callId,
+    CallRepository callRepo,
+  ) async {
     callRepo.updateCallStatus(profileId, callId, false);
   }
 }
