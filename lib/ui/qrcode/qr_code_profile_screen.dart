@@ -5,13 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/data/repositories/contact_repository.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
+import 'package:nyarios/ui/qrcode/provider/qr_code_profile_provider.dart';
+import 'package:nyarios/ui/qrcode/provider/state/qr_code_profile_state.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
@@ -21,8 +19,24 @@ class QrCodeProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final repository = ref.watch(profileRepositoryProvider);
-    final contactRepo = ref.watch(contactRepositoryProvider);
+    ref.listen(qrCodeProfileNotifierProvider.select((value) => value), (
+      prev,
+      next,
+    ) {
+      if (next is SuccessLoadProfile) {
+        _showProfileDialog(next.profile, (roomId) {
+          ref
+              .read(qrCodeProfileNotifierProvider.notifier)
+              .saveContact(next.profile.uid!, roomId);
+        });
+      } else if (next is SuccessSaveContact) {
+        Get.toNamed(
+          AppRoutes.chatting,
+          arguments: {'contact': next.contact, 'type': 'dm'},
+        );
+      }
+    });
+
     return Scaffold(
       appBar: Toolbar.defaultToolbar("qr_code".tr),
       body: Column(
@@ -68,7 +82,11 @@ class QrCodeProfileScreen extends ConsumerWidget {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: () => _scan(repository, contactRepo),
+            onTap: () => _scan(
+              (profileId) => ref
+                  .read(qrCodeProfileNotifierProvider.notifier)
+                  .loadProfile(profileId),
+            ),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -111,10 +129,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _scan(
-    ProfileRepository repository,
-    ContactRepository contactRepo,
-  ) async {
+  Future<void> _scan(Function(String) onScanComplete) async {
     try {
       final result = await BarcodeScanner.scan(
         options: const ScanOptions(
@@ -130,7 +145,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
       );
 
       if (result.rawContent != '') {
-        _showProfileDialog(result.rawContent, repository, contactRepo);
+        onScanComplete(result.rawContent);
       }
     } on PlatformException catch (e) {
       var message = e.code == BarcodeScanner.cameraAccessDenied
@@ -140,64 +155,39 @@ class QrCodeProfileScreen extends ConsumerWidget {
     }
   }
 
-  void _showProfileDialog(
-    String barcode,
-    ProfileRepository repository,
-    ContactRepository contactRepo,
-  ) {
+  void _showProfileDialog(Profile profile, Function(String) onSaveContact) {
     Get.dialog(
       AlertDialog(
-        content: FutureBuilder<Profile>(
-          future: repository.loadSingleProfile(barcode),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image.network(
-                      snapshot.data!.photo!,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Text(snapshot.data?.name ?? ""),
-                  Text(
-                    snapshot.data?.status ?? "",
-                    style: const TextStyle(fontSize: 13, color: Colors.black54),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Get.back();
-                        var profile = snapshot.data!;
-                        var roomId = const Uuid().v4();
-                        var contact = Contact(
-                          profileId: profile.uid!,
-                          alreadyFriend: true,
-                          blocked: false,
-                          chatId: roomId,
-                        );
-                        contactRepo.saveContact(contact, profile.uid!);
-
-                        Get.toNamed(
-                          AppRoutes.chatting,
-                          arguments: {'contact': contact, 'type': 'dm'},
-                        );
-                      },
-                      child: Text('add_friend'.tr),
-                    ),
-                  ),
-                ],
-              );
-            }
-          },
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.network(
+                profile.photo!,
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Text(profile.name ?? ""),
+            Text(
+              profile.status ?? "",
+              style: const TextStyle(fontSize: 13, color: Colors.black54),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Get.back();
+                  var roomId = const Uuid().v4();
+                  onSaveContact(roomId);
+                },
+                child: Text('add_friend'.tr),
+              ),
+            ),
+          ],
         ),
       ),
     );

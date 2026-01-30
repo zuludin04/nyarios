@@ -11,7 +11,7 @@ class CallHistoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var provider = ref.read(callHistoryProviderProvider);
+    var provider = ref.watch(callHistoryProviderProvider);
 
     return SafeArea(
       child: CustomScrollView(
