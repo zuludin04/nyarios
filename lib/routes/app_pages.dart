@@ -19,7 +19,6 @@ import '../ui/language/language_setting_screen.dart';
 import '../ui/profile/profile_edit_screen.dart';
 import '../ui/search/search_binding.dart';
 import '../ui/search/search_screen.dart';
-import '../ui/settings/settings_screen.dart';
 import '../ui/splash/splash_screen.dart';
 
 part 'app_routes.dart';
@@ -39,7 +38,6 @@ class AppPages {
       page: () => const ChattingScreen(),
       binding: ChattingBinding(),
     ),
-    GetPage(name: AppRoutes.settings, page: () => const SettingsScreen()),
     GetPage(
       name: AppRoutes.language,
       page: () => const LanguageSettingScreen(),
