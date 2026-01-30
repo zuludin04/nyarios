@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/firebase_options.dart';
 
 import 'core/utils/custom_theme.dart';
@@ -18,7 +19,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GetStorage.init();
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(child: LifecycleListnerWrapper(child: MyApp())));
 }
 
 class MyApp extends StatefulWidget {

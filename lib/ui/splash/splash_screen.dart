@@ -1,34 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/language_service.dart';
 import 'package:nyarios/services/storage_services.dart';
-import 'package:nyarios/ui/splash/provider/splash_provider.dart';
 
-class SplashScreen extends ConsumerStatefulWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen>
-    with WidgetsBindingObserver {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     Get.updateLocale(LanguageService.deviceLocale);
     splashTime();
-
-    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.read(splashProviderProvider(true));
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

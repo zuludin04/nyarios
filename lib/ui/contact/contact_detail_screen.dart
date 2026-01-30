@@ -75,7 +75,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
           return [
             SliverToBoxAdapter(
               child: Container(
-                color: Get.theme.colorScheme.background,
+                color: Get.theme.colorScheme.surface,
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -163,7 +163,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                   tabs: [
                     if (detailGroup)
                       Container(
-                        color: Get.theme.colorScheme.background,
+                        color: Get.theme.colorScheme.surface,
                         width: double.infinity,
                         child: Tab(
                           icon: Text(
@@ -173,7 +173,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                         ),
                       ),
                     Container(
-                      color: Get.theme.colorScheme.background,
+                      color: Get.theme.colorScheme.surface,
                       width: double.infinity,
                       child: Tab(
                         icon: Text(
@@ -183,7 +183,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                       ),
                     ),
                     Container(
-                      color: Get.theme.colorScheme.background,
+                      color: Get.theme.colorScheme.surface,
                       width: double.infinity,
                       child: Tab(
                         icon: Text(
