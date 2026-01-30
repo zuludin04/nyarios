@@ -1,46 +1,34 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/services/language_service.dart';
+import 'package:nyarios/services/storage_services.dart';
+import 'package:nyarios/ui/splash/provider/splash_provider.dart';
 
-import '../../routes/app_pages.dart';
-import '../../services/language_service.dart';
-import '../../services/storage_services.dart';
-
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with WidgetsBindingObserver {
-  // final ProfileRepository repository = ProfileRepository();
-
   @override
   void initState() {
     Get.updateLocale(LanguageService.deviceLocale);
     splashTime();
 
     WidgetsBinding.instance.addObserver(this);
-    // repository.updateOnlineStatus(true);
     super.initState();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    // if (state == AppLifecycleState.resumed) {
-    //   repository.updateOnlineStatus(true);
-    // } else {
-    //   repository.updateOnlineStatus(false);
-    // }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    ref.read(splashProviderProvider(true));
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
