@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
+import 'package:nyarios/ui/auth/provider/signin_provider.dart';
+import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
 
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
@@ -28,6 +30,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(signInNotifierProvider);
+    ref.listen(signInNotifierProvider.select((value) => value), (prev, next) {
+      if (next is Success) {
+        Get.offAllNamed(AppRoutes.home);
+      } else if (next is Error) {
+        Get.back();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.message)));
+      }
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -66,32 +80,38 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await signInGoogle();
+                            await ref
+                                .read(signInNotifierProvider.notifier)
+                                .signIn();
                           },
                           style: ButtonStyle(
                             padding: WidgetStatePropertyAll(
                               const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/google.png',
-                                width: 24,
-                                color: Colors.white,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Get Started',
-                                style: TextStyle(
+                          child: state == SignInState.loading()
+                              ? const CircularProgressIndicator(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/google.png',
+                                      width: 24,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    const Text(
+                                      'Get Started',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ),
