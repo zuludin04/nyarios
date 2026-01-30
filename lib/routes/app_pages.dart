@@ -8,7 +8,6 @@ import 'package:nyarios/ui/group/bindings/group_member_pick_binding.dart';
 import 'package:nyarios/ui/group/group_create_screen.dart';
 import 'package:nyarios/ui/group/group_edit_screen.dart';
 import 'package:nyarios/ui/group/group_member_pick_screen.dart';
-import 'package:nyarios/ui/home/home_binding.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_screen.dart';
 
 import '../ui/auth/signin_screen.dart';
@@ -31,40 +30,21 @@ class AppPages {
   static const initial = AppRoutes.splash;
 
   static final pages = [
-    GetPage(
-      name: AppRoutes.splash,
-      page: () => const SplashScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.signIn,
-      page: () => const SignInScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.contactFriend,
-      page: () => const ContactFriends(),
-    ),
-    GetPage(
-      name: AppRoutes.home,
-      page: () => const HomeScreen(),
-      binding: HomeBinding(),
-    ),
+    GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
+    GetPage(name: AppRoutes.signIn, page: () => const SignInScreen()),
+    GetPage(name: AppRoutes.contactFriend, page: () => const ContactFriends()),
+    GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
     GetPage(
       name: AppRoutes.chatting,
       page: () => const ChattingScreen(),
       binding: ChattingBinding(),
     ),
-    GetPage(
-      name: AppRoutes.settings,
-      page: () => const SettingsScreen(),
-    ),
+    GetPage(name: AppRoutes.settings, page: () => const SettingsScreen()),
     GetPage(
       name: AppRoutes.language,
       page: () => const LanguageSettingScreen(),
     ),
-    GetPage(
-      name: AppRoutes.profileEdit,
-      page: () => const ProfileEditScreen(),
-    ),
+    GetPage(name: AppRoutes.profileEdit, page: () => const ProfileEditScreen()),
     GetPage(
       name: AppRoutes.contactDetail,
       page: () => const ContactDetailScreen(),
@@ -83,26 +63,14 @@ class AppPages {
       name: AppRoutes.contactBlock,
       page: () => const ContactBlockScreen(),
     ),
-    GetPage(
-      name: AppRoutes.groupCreate,
-      page: () => const GroupCreateScreen(),
-    ),
+    GetPage(name: AppRoutes.groupCreate, page: () => const GroupCreateScreen()),
     GetPage(
       name: AppRoutes.groupMemberPick,
       page: () => const GroupMemberPickScreen(),
       binding: GroupMemberPickBinding(),
     ),
-    GetPage(
-      name: AppRoutes.groupEdit,
-      page: () => const GroupEditScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.callVideo,
-      page: () => const CallVideoScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.callVoice,
-      page: () => const CallVoiceScreen(),
-    ),
+    GetPage(name: AppRoutes.groupEdit, page: () => const GroupEditScreen()),
+    GetPage(name: AppRoutes.callVideo, page: () => const CallVideoScreen()),
+    GetPage(name: AppRoutes.callVoice, page: () => const CallVoiceScreen()),
   ];
 }

@@ -9,14 +9,14 @@ import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-class SettingsNavigation extends StatefulWidget {
-  const SettingsNavigation({super.key});
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
 
   @override
-  State<SettingsNavigation> createState() => _SettingsNavigationState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsNavigationState extends State<SettingsNavigation> {
+class _SettingsScreenState extends State<SettingsScreen> {
   bool darkMode = StorageServices.to.darkMode;
 
   @override

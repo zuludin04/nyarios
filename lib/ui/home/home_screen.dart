@@ -13,10 +13,9 @@ import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
-import 'package:nyarios/ui/home/home_controller.dart';
-import 'package:nyarios/ui/home/nav/call_history_navigation.dart';
-import 'package:nyarios/ui/home/nav/recent_chat_navigation.dart';
-import 'package:nyarios/ui/home/nav/settings_navigation.dart';
+import 'package:nyarios/ui/home/call_history/call_history_screen.dart';
+import 'package:nyarios/ui/home/recent_chat/recent_chat_screen.dart';
+import 'package:nyarios/ui/home/settings/settings_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -28,6 +27,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late Stream<DocumentSnapshot<Map<String, dynamic>>> notifStream;
 
+  int selectedNav = 0;
+
   @override
   void initState() {
     super.initState();
@@ -36,56 +37,54 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeController>(
-      builder: (controller) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            title: const Text(
-              'Nyarios',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        title: const Text(
+          'Nyarios',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => Get.toNamed(
+              AppRoutes.search,
+              arguments: {'type': 'lastMessage', 'roomId': '', 'user': ''},
             ),
-            actions: [
-              IconButton(
-                onPressed: () => Get.toNamed(
-                  AppRoutes.search,
-                  arguments: {'type': 'lastMessage', 'roomId': '', 'user': ''},
-                ),
-                icon: ImageAsset(
-                  assets: 'assets/icons/ic_search.png',
-                  color: Get.theme.iconTheme.color!,
-                ),
-              ),
-            ],
-          ),
-          floatingActionButton: Visibility(
-            visible: controller.selectedIndex != 2,
-            child: FloatingActionButton(
-              onPressed: () => Get.toNamed(AppRoutes.contactFriend),
-              child: const ImageAsset(
-                assets: 'assets/icons/ic_new_message.png',
-              ),
+            icon: ImageAsset(
+              assets: 'assets/icons/ic_search.png',
+              color: Get.theme.iconTheme.color!,
             ),
           ),
-          bottomNavigationBar: BottomNavigation(
-            currentIndex: controller.selectedIndex,
-            navMenus: [
-              NavMenu(label: 'Chat', icon: 'ic_chat'),
-              NavMenu(label: 'Call', icon: 'ic_call_history'),
-              NavMenu(label: 'Settings', icon: 'ic_settings'),
-            ],
-            onSelectedMenu: controller.changeNavIndex,
-          ),
-          body: IndexedStack(
-            index: controller.selectedIndex,
-            children: const [
-              RecentChatNavigation(),
-              CallHistoryNavigation(),
-              SettingsNavigation(),
-            ],
-          ),
-        );
-      },
+        ],
+      ),
+      floatingActionButton: Visibility(
+        visible: selectedNav != 2,
+        child: FloatingActionButton(
+          onPressed: () => Get.toNamed(AppRoutes.contactFriend),
+          child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
+        ),
+      ),
+      bottomNavigationBar: BottomNavigation(
+        currentIndex: selectedNav,
+        navMenus: [
+          NavMenu(label: 'Chat', icon: 'ic_chat'),
+          NavMenu(label: 'Call', icon: 'ic_call_history'),
+          NavMenu(label: 'Settings', icon: 'ic_settings'),
+        ],
+        onSelectedMenu: (int index) {
+          setState(() {
+            selectedNav = index;
+          });
+        },
+      ),
+      body: IndexedStack(
+        index: selectedNav,
+        children: const [
+          RecentChatScreen(),
+          CallHistoryScreen(),
+          SettingsScreen(),
+        ],
+      ),
     );
   }
 
@@ -118,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ],
       borderRadius: BorderRadius.circular(16),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       margin: const EdgeInsets.all(16),
       flushbarPosition: FlushbarPosition.TOP,
       flushbarStyle: FlushbarStyle.FLOATING,

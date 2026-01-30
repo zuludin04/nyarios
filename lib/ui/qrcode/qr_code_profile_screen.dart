@@ -75,7 +75,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Get.theme.colorScheme.onPrimary.withOpacity(0.4),
+                  color: Get.theme.colorScheme.onPrimary.withValues(alpha: 0.4),
                 ),
                 borderRadius: BorderRadius.circular(5),
               ),

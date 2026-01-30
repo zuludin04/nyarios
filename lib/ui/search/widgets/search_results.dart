@@ -6,7 +6,7 @@ import 'package:nyarios/data/model/message.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../../services/storage_services.dart';
-import '../../home/widgets/last_message_item.dart';
+import '../../home/recent_chat/last_message_item.dart';
 import '../nyarios_search_controller.dart';
 
 class SearchResults extends StatelessWidget {
@@ -37,7 +37,8 @@ class SearchResults extends StatelessWidget {
                 itemBuilder: (context, index) {
                   if (controller.type == 'lastMessage') {
                     return LastMessageItem(
-                        lastMessage: controller.filterRecentChat[index]);
+                      lastMessage: controller.filterRecentChat[index],
+                    );
                   } else {
                     return _chatSearchItem(
                       controller.filterMessage[index],
@@ -65,9 +66,11 @@ class SearchResults extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(chat.profileId == StorageServices.to.userId
-                  ? 'you'.tr
-                  : controller.user),
+              Text(
+                chat.profileId == StorageServices.to.userId
+                    ? 'you'.tr
+                    : controller.user,
+              ),
               Text(_lastMessageDate(chat.sendDatetime)),
             ],
           ),
