@@ -49,6 +49,7 @@ dependencies:
   riverpod_annotation: ^3.0.3
   freezed_annotation: ^3.1.0
   riverpod: ^3.0.3
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +66,7 @@ flutter:
   assets:
     - assets/
     - assets/icons/
+    - .env
 
   fonts:
     - family: Nunito

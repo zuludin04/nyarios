@@ -9,7 +9,8 @@ import 'package:nyarios/di/firebase_module.dart';
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   final firestore = firestoreProvider(ref);
-  return ProfileRepository(firestore: firestore);
+  final auth = firebaseAuthProvider(ref);
+  return ProfileRepository(firestore: firestore, auth: auth);
 });
 
 final callRepositoryProvider = Provider<CallRepository>((ref) {

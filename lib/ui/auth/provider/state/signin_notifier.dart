@@ -1,40 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
 
 class SignInNotifier extends StateNotifier<SignInState> {
   final ProfileRepository repository;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId:
-        "550134906790-eo0ouqv3snr01ehpv91gq267js91rogv.apps.googleusercontent.com",
-    scopes: ['email'],
-  );
-
   SignInNotifier({required this.repository})
     : super(const SignInState.initial());
 
-  Future<void> signIn() async {
+  Future<void> signIn(String? accessToken, String? idToken) async {
     try {
-      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn
-          .signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount!.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-
-      var auth = await _auth.signInWithCredential(credential);
-      var user = auth.user;
+      final user = await repository.signInCredential(accessToken, idToken);
       if (mounted) {
         state = const SignInState.loading();
-        StorageServices.to.alreadyLogin = true;
 
         var profile = Profile(
           uid: user?.uid,

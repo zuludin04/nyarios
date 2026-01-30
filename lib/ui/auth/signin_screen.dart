@@ -1,35 +1,16 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
+import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/services/google_signin_service.dart';
 import 'package:nyarios/ui/auth/provider/signin_provider.dart';
 import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
 
-import '../../routes/app_pages.dart';
-import '../../services/storage_services.dart';
-
-class SignInScreen extends ConsumerStatefulWidget {
+class SignInScreen extends ConsumerWidget {
   const SignInScreen({super.key});
 
   @override
-  ConsumerState<SignInScreen> createState() => _SignInScreenState();
-}
-
-class _SignInScreenState extends ConsumerState<SignInScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId:
-        "550134906790-eo0ouqv3snr01ehpv91gq267js91rogv.apps.googleusercontent.com",
-    scopes: ['email'],
-  );
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(signInNotifierProvider);
     ref.listen(signInNotifierProvider.select((value) => value), (prev, next) {
       if (next is Success) {
@@ -80,9 +61,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await ref
+                            final googleAuth = await signInGoogle();
+                            ref
                                 .read(signInNotifierProvider.notifier)
-                                .signIn();
+                                .signIn(
+                                  googleAuth.accessToken,
+                                  googleAuth.idToken,
+                                );
                           },
                           style: ButtonStyle(
                             padding: WidgetStatePropertyAll(
@@ -123,45 +108,5 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> signInGoogle() async {
-    try {
-      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn
-          .signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount!.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
-      final repository = ref.watch(profileRepositoryProvider);
-      var auth = await _auth.signInWithCredential(credential);
-      var user = auth.user;
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return const Center(child: CircularProgressIndicator());
-          },
-        );
-        StorageServices.to.alreadyLogin = true;
-
-        var profile = Profile(
-          uid: user?.uid,
-          name: user?.displayName,
-          photo: user?.photoURL,
-          status: 'Hey there! Let\'s be friend',
-          email: user?.email,
-          visibility: true,
-        );
-
-        await repository.saveUserProfile(profile);
-
-        Get.offAllNamed(AppRoutes.home);
-      }
-    } on FirebaseAuthException catch (e) {
-      debugPrint(e.message);
-    }
   }
 }

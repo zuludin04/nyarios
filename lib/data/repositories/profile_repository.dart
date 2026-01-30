@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class ProfileRepository {
   final FirebaseFirestore firestore;
+  final FirebaseAuth auth;
 
-  ProfileRepository({required this.firestore});
+  ProfileRepository({required this.firestore, required this.auth});
 
   Future<void> saveUserProfile(Profile profile) async {
     var exist = await checkIfUserExist(profile.uid!);
@@ -29,6 +31,17 @@ class ProfileRepository {
       StorageServices.to.userImage = userProfile.photo ?? "";
       StorageServices.to.id = userProfile.id ?? 0;
     }
+  }
+
+  Future<User?> signInCredential(String? accessToken, String? idToken) async {
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: accessToken,
+      idToken: idToken,
+    );
+
+    var credentialAuth = await auth.signInWithCredential(credential);
+    StorageServices.to.alreadyLogin = true;
+    return credentialAuth.user;
   }
 
   Future<bool> checkIfUserExist(String userId) async {
