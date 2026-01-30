@@ -13,11 +13,7 @@ part of 'call_history_provider.dart';
 const callHistoryProviderProvider = CallHistoryProviderProvider._();
 
 final class CallHistoryProviderProvider
-    extends
-        $StreamNotifierProvider<
-          CallHistoryProvider,
-          QuerySnapshot<Map<String, dynamic>>
-        > {
+    extends $StreamNotifierProvider<CallHistoryProvider, List<Call>> {
   const CallHistoryProviderProvider._()
     : super(
         from: null,
@@ -38,29 +34,20 @@ final class CallHistoryProviderProvider
 }
 
 String _$callHistoryProviderHash() =>
-    r'968556e62deef5f9c9a07a4cb0008d3fadb3453f';
+    r'37fc859f09523c11a096a029a8505ad05fae9ac0';
 
-abstract class _$CallHistoryProvider
-    extends $StreamNotifier<QuerySnapshot<Map<String, dynamic>>> {
-  Stream<QuerySnapshot<Map<String, dynamic>>> build();
+abstract class _$CallHistoryProvider extends $StreamNotifier<List<Call>> {
+  Stream<List<Call>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref =
-        this.ref
-            as $Ref<
-              AsyncValue<QuerySnapshot<Map<String, dynamic>>>,
-              QuerySnapshot<Map<String, dynamic>>
-            >;
+    final ref = this.ref as $Ref<AsyncValue<List<Call>>, List<Call>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<QuerySnapshot<Map<String, dynamic>>>,
-                QuerySnapshot<Map<String, dynamic>>
-              >,
-              AsyncValue<QuerySnapshot<Map<String, dynamic>>>,
+              AnyNotifier<AsyncValue<List<Call>>, List<Call>>,
+              AsyncValue<List<Call>>,
               Object?,
               Object?
             >;

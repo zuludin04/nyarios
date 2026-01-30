@@ -63,6 +63,11 @@ class ProfileRepository {
     yield* profile.map((event) => Profile.fromMap(event.data()!));
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamProfiles() async* {
+    var profile = firestore.collection("profile").snapshots();
+    yield* profile;
+  }
+
   Future<void> updateImageProfile(String profileId, String url) async {
     firestore.collection("profile").doc(profileId).update({'photo': url});
   }

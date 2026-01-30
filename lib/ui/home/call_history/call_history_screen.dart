@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
-import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/ui/home/call_history/call_history_provider.dart';
 import 'package:nyarios/ui/home/call_history/call_history_item.dart';
 
@@ -21,10 +20,9 @@ class CallHistoryScreen extends ConsumerWidget {
           provider.when(
             data: (items) => SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-                var data = items.docs[index];
-                var chat = Call.fromMap(data.data());
-                return CallHistoryItem(call: chat);
-              }, childCount: items.size),
+                var call = items[index];
+                return CallHistoryItem(call: call);
+              }, childCount: items.length),
             ),
             error: (_, _) => SliverFillRemaining(
               child: Center(child: Text('something_went_wrong'.tr)),

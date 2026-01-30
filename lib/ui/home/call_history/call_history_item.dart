@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/call.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 
 class CallHistoryItem extends ConsumerWidget {
   final Call call;
@@ -13,21 +11,20 @@ class CallHistoryItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final repository = ref.watch(profileRepositoryProvider);
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             children: [
-              _imageRecentChat(repository),
+              _imageRecentChat(call.profile?.photo),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _nameRecentChat(repository),
+                    _nameRecentChat(call.profile?.name),
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -64,46 +61,32 @@ class CallHistoryItem extends ConsumerWidget {
     );
   }
 
-  Widget _imageRecentChat(ProfileRepository repositories) {
-    return StreamBuilder(
-      stream: repositories.loadStreamProfile(call.profileId!),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox();
-        } else {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(40),
-            child: Image.network(
-              snapshot.data!.photo!,
-              width: 40,
-              height: 40,
-              fit: BoxFit.cover,
-            ),
-          );
-        }
-      },
-    );
+  Widget _imageRecentChat(String? imageUrl) {
+    if (imageUrl != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(40),
+        child: Image.network(
+          imageUrl,
+          width: 40,
+          height: 40,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 
-  Widget _nameRecentChat(ProfileRepository repositories) {
-    return StreamBuilder(
-      stream: repositories.loadStreamProfile(call.profileId!),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox();
-        } else {
-          return Text(
-            snapshot.data?.name ?? "",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 16,
-              color: call.isAccepted! ? Colors.green : Colors.red,
-              fontWeight: FontWeight.w600,
-            ),
-          );
-        }
-      },
+  Widget _nameRecentChat(String? name) {
+    return Text(
+      name ?? "",
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        fontSize: 16,
+        color: call.isAccepted! ? Colors.green : Colors.red,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 }

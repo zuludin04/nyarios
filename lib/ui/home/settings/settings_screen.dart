@@ -4,23 +4,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
+import 'package:nyarios/ui/home/settings/settings_provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool darkMode = StorageServices.to.darkMode;
 
   @override
   Widget build(BuildContext context) {
+    final provider = ref.watch(settingsProviderProvider);
+
     return SettingsList(
       physics: const BouncingScrollPhysics(),
       lightTheme: const SettingsThemeData(
@@ -36,9 +38,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SettingsSection(
           tiles: [
             SettingsTile(
-              leading: const ProfileStreamWidget(type: 1),
-              title: const ProfileStreamWidget(type: 2),
-              description: const ProfileStreamWidget(type: 3),
+              leading: provider.when(
+                data: (profile) => profile.photo == null
+                    ? Container(
+                        width: 50,
+                        height: 50,
+                        decoration: const BoxDecoration(
+                          color: Colors.grey,
+                          shape: BoxShape.circle,
+                        ),
+                      )
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.network(
+                          profile.photo!,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                error: (_, _) => SizedBox(),
+                loading: () => SizedBox(),
+              ),
+              title: provider.when(
+                data: (profile) => Text(profile.name ?? "-"),
+                error: (_, _) => SizedBox(),
+                loading: () => SizedBox(),
+              ),
+              description: provider.when(
+                data: (profile) => Text(profile.status ?? "-"),
+                error: (_, _) => SizedBox(),
+                loading: () => SizedBox(),
+              ),
               onPressed: (context) => Get.toNamed(AppRoutes.profileEdit),
             ),
             SettingsTile(
@@ -142,47 +173,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } catch (e) {
       debugPrint("error sign out");
     }
-  }
-}
-
-class ProfileStreamWidget extends ConsumerWidget {
-  final int type;
-
-  const ProfileStreamWidget({super.key, required this.type});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final repository = ref.watch(profileRepositoryProvider);
-    return StreamBuilder(
-      stream: repository.loadStreamProfile(StorageServices.to.userId),
-      builder: (context, snapshot) {
-        if (type == 1) {
-          return snapshot.data?.photo == null
-              ? Container(
-                  width: 50,
-                  height: 50,
-                  decoration: const BoxDecoration(
-                    color: Colors.grey,
-                    shape: BoxShape.circle,
-                  ),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    snapshot.data!.photo!,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                );
-        } else {
-          return Text(
-            type == 2
-                ? snapshot.data?.name ?? "-"
-                : snapshot.data?.status ?? "-",
-          );
-        }
-      },
-    );
   }
 }

@@ -6,7 +6,7 @@ import 'package:nyarios/data/model/message.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../../services/storage_services.dart';
-import '../../home/recent_chat/last_message_item.dart';
+import '../../home/recent_chat/recent_chat_item.dart';
 import '../nyarios_search_controller.dart';
 
 class SearchResults extends StatelessWidget {

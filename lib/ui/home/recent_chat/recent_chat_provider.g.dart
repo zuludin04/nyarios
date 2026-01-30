@@ -13,11 +13,7 @@ part of 'recent_chat_provider.dart';
 const recentChatProviderProvider = RecentChatProviderProvider._();
 
 final class RecentChatProviderProvider
-    extends
-        $StreamNotifierProvider<
-          RecentChatProvider,
-          QuerySnapshot<Map<String, dynamic>>
-        > {
+    extends $StreamNotifierProvider<RecentChatProvider, List<Chat>> {
   const RecentChatProviderProvider._()
     : super(
         from: null,
@@ -38,29 +34,20 @@ final class RecentChatProviderProvider
 }
 
 String _$recentChatProviderHash() =>
-    r'7893481b13a30a5c7325ae7728bd75d7c6597431';
+    r'9f06615429ec4b5a71f752d7c75ef3135ec34b45';
 
-abstract class _$RecentChatProvider
-    extends $StreamNotifier<QuerySnapshot<Map<String, dynamic>>> {
-  Stream<QuerySnapshot<Map<String, dynamic>>> build();
+abstract class _$RecentChatProvider extends $StreamNotifier<List<Chat>> {
+  Stream<List<Chat>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref =
-        this.ref
-            as $Ref<
-              AsyncValue<QuerySnapshot<Map<String, dynamic>>>,
-              QuerySnapshot<Map<String, dynamic>>
-            >;
+    final ref = this.ref as $Ref<AsyncValue<List<Chat>>, List<Chat>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<QuerySnapshot<Map<String, dynamic>>>,
-                QuerySnapshot<Map<String, dynamic>>
-              >,
-              AsyncValue<QuerySnapshot<Map<String, dynamic>>>,
+              AnyNotifier<AsyncValue<List<Chat>>, List<Chat>>,
+              AsyncValue<List<Chat>>,
               Object?,
               Object?
             >;

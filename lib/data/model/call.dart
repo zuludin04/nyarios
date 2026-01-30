@@ -1,3 +1,5 @@
+import 'package:nyarios/data/model/profile.dart';
+
 class Call {
   int? callDate;
   String? callId;
@@ -6,6 +8,8 @@ class Call {
   String? type;
   bool? isAccepted;
 
+  Profile? profile;
+
   Call({
     this.callDate,
     this.callId,
@@ -13,6 +17,7 @@ class Call {
     this.status,
     this.type,
     this.isAccepted,
+    this.profile,
   });
 
   factory Call.fromMap(Map<String, dynamic> map) {

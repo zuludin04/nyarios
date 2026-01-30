@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
-import 'package:nyarios/data/model/chat.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_provider.dart';
-import 'package:nyarios/ui/home/recent_chat/last_message_item.dart';
+import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
 
 class RecentChatScreen extends ConsumerWidget {
   const RecentChatScreen({super.key});
@@ -21,10 +20,9 @@ class RecentChatScreen extends ConsumerWidget {
           provider.when(
             data: (items) => SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-                var data = items.docs[index];
-                var chat = Chat.fromMap(data.data());
+                var chat = items[index];
                 return LastMessageItem(lastMessage: chat);
-              }, childCount: items.size),
+              }, childCount: items.length),
             ),
             error: (_, _) => SliverFillRemaining(
               child: Center(child: Text('something_went_wrong'.tr)),
