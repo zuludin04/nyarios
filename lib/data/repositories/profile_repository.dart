@@ -56,7 +56,6 @@ class ProfileRepository {
 
   Future<void> updateOnlineStatus(bool status) async {
     var exist = await checkIfUserExist(StorageServices.to.userId);
-    print("is user exist : $exist");
     if (exist) {
       firestore.collection("profile").doc(StorageServices.to.userId).update({
         'visibility': status,

@@ -6,8 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
+import 'package:nyarios/ui/profile/profile_edit_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/toolbar.dart';
@@ -27,7 +26,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final repository = ref.watch(profileRepositoryProvider);
+    final provider = ref.watch(profileEditProviderProvider.notifier);
+
     return Scaffold(
       appBar: Toolbar.defaultToolbar('profile'.tr),
       body: Column(
@@ -44,7 +44,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: StreamBuilder(
-              stream: repository.loadStreamProfile(StorageServices.to.userId),
+              stream: provider.loadStreamProfile(StorageServices.to.userId),
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -53,7 +53,12 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       child: ImageProfile(
                         url: snapshot.data?.photo,
                         onTap: () {
-                          _pickImage(false, repository);
+                          _pickImage(false, (url) {
+                            provider.updateImageProfile(
+                              StorageServices.to.userId,
+                              url,
+                            );
+                          });
                         },
                       ),
                     ),
@@ -62,16 +67,37 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       icon: 'assets/icons/ic_profile.png',
                       title: 'name'.tr,
                       data: snapshot.data?.name ?? "-",
+                      onUpdateProfile: (userId, value, isName) {
+                        provider.updateProfile(
+                          StorageServices.to.userId,
+                          value,
+                          isName,
+                        );
+                      },
                     ),
                     ProfileInfoWidget(
                       icon: 'assets/icons/ic_status.png',
                       title: 'Status',
                       data: snapshot.data?.status ?? "-",
+                      onUpdateProfile: (userId, value, isName) {
+                        provider.updateProfile(
+                          StorageServices.to.userId,
+                          value,
+                          isName,
+                        );
+                      },
                     ),
                     ProfileInfoWidget(
                       icon: 'assets/icons/ic_email.png',
                       title: 'E-Mail',
                       data: snapshot.data?.email ?? "-",
+                      onUpdateProfile: (userId, value, isName) {
+                        provider.updateProfile(
+                          StorageServices.to.userId,
+                          value,
+                          isName,
+                        );
+                      },
                     ),
                   ],
                 );
@@ -83,7 +109,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     );
   }
 
-  void _pickImage(bool fromGallery, ProfileRepository repository) async {
+  void _pickImage(bool fromGallery, Function(String) updateProfileImage) async {
     final pickedFile = await ImagePicker().pickImage(
       source: fromGallery ? ImageSource.gallery : ImageSource.camera,
       imageQuality: 50,
@@ -120,7 +146,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
             var url = await storage
                 .child('nyarios/profile/${StorageServices.to.userId}.jpg')
                 .getDownloadURL();
-            repository.updateImageProfile(StorageServices.to.userId, url);
+            updateProfileImage(url);
             StorageServices.to.userImage = url;
             setState(() {
               upload = false;

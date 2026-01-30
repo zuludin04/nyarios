@@ -1,34 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 
 import '../../../services/storage_services.dart';
 
-class ProfileEditBottomSheet extends ConsumerStatefulWidget {
+class ProfileEditBottomSheet extends StatefulWidget {
   final bool updateName;
   final String initialValue;
+  final Function(String, String) onUpdateProfile;
 
   const ProfileEditBottomSheet({
     super.key,
     required this.updateName,
     required this.initialValue,
+    required this.onUpdateProfile,
   });
 
   @override
-  ConsumerState<ProfileEditBottomSheet> createState() =>
-      _ProfileEditBottomSheetState();
+  State<ProfileEditBottomSheet> createState() => _ProfileEditBottomSheetState();
 }
 
-class _ProfileEditBottomSheetState
-    extends ConsumerState<ProfileEditBottomSheet> {
+class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final repository = ref.watch(profileRepositoryProvider);
     return Container(
-      color: Get.theme.colorScheme.background,
+      color: Get.theme.colorScheme.surface,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -55,10 +52,9 @@ class _ProfileEditBottomSheetState
               TextButton(
                 onPressed: () {
                   if (_textEditingController.text.isNotEmpty) {
-                    repository.updateProfile(
+                    widget.onUpdateProfile(
                       StorageServices.to.userId,
                       _textEditingController.text,
-                      widget.updateName,
                     );
                     Get.back();
                   } else {

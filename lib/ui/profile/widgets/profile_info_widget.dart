@@ -8,12 +8,14 @@ class ProfileInfoWidget extends StatelessWidget {
   final String icon;
   final String title;
   final String data;
+  final Function(String, String, bool) onUpdateProfile;
 
   const ProfileInfoWidget({
     super.key,
     required this.icon,
     required this.title,
     required this.data,
+    required this.onUpdateProfile,
   });
 
   @override
@@ -21,20 +23,22 @@ class ProfileInfoWidget extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (title != 'E-Mail') {
-          Get.bottomSheet(ProfileEditBottomSheet(
-            initialValue: data,
-            updateName: title == 'name'.tr,
-          ));
+          Get.bottomSheet(
+            ProfileEditBottomSheet(
+              initialValue: data,
+              updateName: title == 'name'.tr,
+              onUpdateProfile: (userId, value) {
+                onUpdateProfile(userId, value, title == 'name'.tr);
+              },
+            ),
+          );
         }
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            ImageAsset(
-              assets: icon,
-              color: Get.theme.iconTheme.color!,
-            ),
+            ImageAsset(assets: icon, color: Get.theme.iconTheme.color!),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
