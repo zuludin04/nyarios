@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/data/model/contact.dart';
@@ -6,23 +7,28 @@ import 'package:nyarios/data/model/group.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/domain/profile_providers.dart';
 
 import '../../../data/model/chat.dart';
 import '../../../routes/app_pages.dart';
 
-class LastMessageItem extends StatelessWidget {
+class LastMessageItem extends ConsumerWidget {
   final Chat lastMessage;
 
   const LastMessageItem({super.key, required this.lastMessage});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.watch(profileRepositoryProvider);
     return InkWell(
       onTap: () {
-        Get.toNamed(AppRoutes.chatting, arguments: {
-          'contact': Contact.fromLastMessage(lastMessage),
-          'type': lastMessage.type,
-        });
+        Get.toNamed(
+          AppRoutes.chatting,
+          arguments: {
+            'contact': Contact.fromLastMessage(lastMessage),
+            'type': lastMessage.type,
+          },
+        );
       },
       child: Column(
         children: [
@@ -30,14 +36,14 @@ class LastMessageItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Row(
               children: [
-                _imageRecentChat(),
+                _imageRecentChat(repository),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _nameRecentChat(),
+                      _nameRecentChat(repository),
                       const SizedBox(height: 4),
                       Text(
                         lastMessage.lastMessage ?? "",
@@ -65,10 +71,10 @@ class LastMessageItem extends StatelessWidget {
     );
   }
 
-  Widget _imageRecentChat() {
+  Widget _imageRecentChat(ProfileRepository repository) {
     return StreamBuilder(
       stream: lastMessage.type == 'dm'
-          ? ProfileRepository().loadStreamProfile(lastMessage.profileId!)
+          ? repository.loadStreamProfile(lastMessage.profileId!)
           : GroupRepository().loadStreamGroup(lastMessage.profileId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -98,10 +104,10 @@ class LastMessageItem extends StatelessWidget {
     );
   }
 
-  Widget _nameRecentChat() {
+  Widget _nameRecentChat(ProfileRepository repositories) {
     return StreamBuilder(
       stream: lastMessage.type == 'dm'
-          ? ProfileRepository().loadStreamProfile(lastMessage.profileId!)
+          ? repositories.loadStreamProfile(lastMessage.profileId!)
           : GroupRepository().loadStreamGroup(lastMessage.profileId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -119,10 +125,7 @@ class LastMessageItem extends StatelessWidget {
             name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           );
         }
       },

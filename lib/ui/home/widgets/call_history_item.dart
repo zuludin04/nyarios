@@ -1,30 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/call.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/domain/profile_providers.dart';
 
-class CallHistoryItem extends StatelessWidget {
+class CallHistoryItem extends ConsumerWidget {
   final Call call;
 
   const CallHistoryItem({super.key, required this.call});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.watch(profileRepositoryProvider);
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             children: [
-              _imageRecentChat(),
+              _imageRecentChat(repository),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _nameRecentChat(),
+                    _nameRecentChat(repository),
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -61,9 +64,9 @@ class CallHistoryItem extends StatelessWidget {
     );
   }
 
-  Widget _imageRecentChat() {
+  Widget _imageRecentChat(ProfileRepository repositories) {
     return StreamBuilder(
-      stream: ProfileRepository().loadStreamProfile(call.profileId!),
+      stream: repositories.loadStreamProfile(call.profileId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox();
@@ -82,9 +85,9 @@ class CallHistoryItem extends StatelessWidget {
     );
   }
 
-  Widget _nameRecentChat() {
+  Widget _nameRecentChat(ProfileRepository repositories) {
     return StreamBuilder(
-      stream: ProfileRepository().loadStreamProfile(call.profileId!),
+      stream: repositories.loadStreamProfile(call.profileId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SizedBox();

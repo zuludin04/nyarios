@@ -18,7 +18,8 @@ class Toolbar {
     Widget? titleWidget,
   }) {
     return AppBar(
-      leading: leading ??
+      leading:
+          leading ??
           IconButton(
             onPressed: Get.back,
             icon: ImageAsset(
@@ -47,24 +48,36 @@ class Toolbar {
     String? uid,
   ) {
     if (stream) {
-      return StreamBuilder(
-        stream: ProfileRepository().getOnlineStatus(uid),
-        builder: (context, snapshot) {
-          bool online = snapshot.data?.data()?["visibility"] ?? false;
-          return Visibility(
-            visible:
-                snapshot.connectionState == ConnectionState.active && online,
-            child: Text(
-              online ? "Online" : "Offline",
-              style: TextStyle(
-                fontSize: 14,
-                color: StorageServices.to.darkMode
-                    ? Colors.white70
-                    : Colors.black54,
-              ),
-            ),
-          );
-        },
+      // return StreamBuilder(
+      //   stream: ProfileRepository().getOnlineStatus(uid),
+      //   builder: (context, snapshot) {
+      //     bool online = snapshot.data?.data()?["visibility"] ?? false;
+      //     return Visibility(
+      //       visible:
+      //           snapshot.connectionState == ConnectionState.active && online,
+      //       child: Text(
+      //         online ? "Online" : "Offline",
+      //         style: TextStyle(
+      //           fontSize: 14,
+      //           color: StorageServices.to.darkMode
+      //               ? Colors.white70
+      //               : Colors.black54,
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // );
+      return Visibility(
+        visible: false,
+        child: Text(
+          "Offline",
+          style: TextStyle(
+            fontSize: 14,
+            color: StorageServices.to.darkMode
+                ? Colors.white70
+                : Colors.black54,
+          ),
+        ),
       );
     } else {
       return Visibility(
@@ -73,8 +86,9 @@ class Toolbar {
           subtitle,
           style: TextStyle(
             fontSize: 14,
-            color:
-                StorageServices.to.darkMode ? Colors.white70 : Colors.black54,
+            color: StorageServices.to.darkMode
+                ? Colors.white70
+                : Colors.black54,
           ),
         ),
       );

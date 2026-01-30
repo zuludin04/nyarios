@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/domain/profile_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/ui/contact/contact_media_controller.dart';
 
@@ -12,14 +14,15 @@ import '../../core/widgets/toolbar.dart';
 import '../../services/storage_services.dart';
 import 'contact_media_tab.dart';
 
-class ContactDetailScreen extends StatefulWidget {
+class ContactDetailScreen extends ConsumerStatefulWidget {
   const ContactDetailScreen({super.key});
 
   @override
-  State<ContactDetailScreen> createState() => _ContactDetailScreenState();
+  ConsumerState<ContactDetailScreen> createState() =>
+      _ContactDetailScreenState();
 }
 
-class _ContactDetailScreenState extends State<ContactDetailScreen>
+class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
     with SingleTickerProviderStateMixin {
   final Contact lastMessage = Get.arguments;
 
@@ -41,29 +44,32 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final repository = ref.watch(profileRepositoryProvider);
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('', elevation: 0, actions: [
-        if (detailGroup)
-          PopupMenuButton(
-            icon: ImageAsset(
-              assets: 'assets/icons/ic_vert_more.png',
-              color: Get.theme.iconTheme.color!,
+      appBar: Toolbar.defaultToolbar(
+        '',
+        elevation: 0,
+        actions: [
+          if (detailGroup)
+            PopupMenuButton(
+              icon: ImageAsset(
+                assets: 'assets/icons/ic_vert_more.png',
+                color: Get.theme.iconTheme.color!,
+              ),
+              itemBuilder: (context) {
+                return [PopupMenuItem(value: 0, child: Text('edit_group'.tr))];
+              },
+              onSelected: (value) {
+                if (value == 0) {
+                  Get.toNamed(
+                    AppRoutes.groupEdit,
+                    arguments: lastMessage.group!,
+                  );
+                }
+              },
             ),
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  value: 0,
-                  child: Text('edit_group'.tr),
-                ),
-              ];
-            },
-            onSelected: (value) {
-              if (value == 0) {
-                Get.toNamed(AppRoutes.groupEdit, arguments: lastMessage.group!);
-              }
-            },
-          ),
-      ]),
+        ],
+      ),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -111,17 +117,19 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    _detailInfo(),
+                    _detailInfo(repository),
                     const SizedBox(height: 16),
                     if (!detailGroup)
                       StreamBuilder(
-                        stream: ProfileRepository()
-                            .getOnlineStatus(lastMessage.profileId),
+                        stream: repository.getOnlineStatus(
+                          lastMessage.profileId,
+                        ),
                         builder: (context, snapshot) {
                           bool online =
                               snapshot.data?.data()?["visibility"] ?? false;
                           return Visibility(
-                            visible: snapshot.connectionState ==
+                            visible:
+                                snapshot.connectionState ==
                                     ConnectionState.active &&
                                 online,
                             child: Container(
@@ -137,7 +145,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
                             ),
                           );
                         },
-                      )
+                      ),
                   ],
                 ),
               ),
@@ -203,7 +211,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
     );
   }
 
-  Widget _detailInfo() {
+  Widget _detailInfo(ProfileRepository repositories) {
     if (detailGroup) {
       return GetBuilder<ContactMediaController>(
         builder: (controller) =>
@@ -211,7 +219,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen>
       );
     } else {
       return FutureBuilder(
-        future: ProfileRepository().loadUserStatus(lastMessage.profileId),
+        future: repositories.loadUserStatus(lastMessage.profileId),
         builder: (context, snapshot) {
           return Text(snapshot.data ?? "");
         },
@@ -224,13 +232,14 @@ class SliverPersistentHeaderDelegateImpl
     extends SliverPersistentHeaderDelegate {
   final TabBar tabBar;
 
-  SliverPersistentHeaderDelegateImpl({
-    required this.tabBar,
-  });
+  SliverPersistentHeaderDelegateImpl({required this.tabBar});
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(child: tabBar);
   }
 
@@ -284,8 +293,10 @@ class _GroupMembersTabState extends State<GroupMembersTab>
               return Column(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
                     child: Row(
                       children: [
                         ClipRRect(

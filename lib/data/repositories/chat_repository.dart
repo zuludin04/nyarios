@@ -6,10 +6,10 @@ import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class ChatRepository {
-  final CollectionReference chatReference =
-      FirebaseFirestore.instance.collection('chat');
+  final CollectionReference chatReference = FirebaseFirestore.instance
+      .collection('chat');
 
-  final ProfileRepository profileRepository = ProfileRepository();
+  // final ProfileRepository profileRepository = ProfileRepository();
   final GroupRepository groupRepository = GroupRepository();
 
   Stream<QuerySnapshot<Map<String, dynamic>>> loadRecentChat() async* {
@@ -28,8 +28,8 @@ class ChatRepository {
         .get();
     var recent = results.docs.map((e) async {
       var chat = Chat.fromMap(e.data());
-      var profile = await profileRepository.loadSingleProfile(chat.profileId);
-      chat.profile = profile;
+      // var profile = await profileRepository.loadSingleProfile(chat.profileId);
+      // chat.profile = profile;
       return chat;
     }).toList();
     return Future.wait(recent);

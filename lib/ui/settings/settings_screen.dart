@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/domain/profile_providers.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 import '../../core/widgets/toolbar.dart';
@@ -149,15 +151,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-class ProfileStreamWidget extends StatelessWidget {
+class ProfileStreamWidget extends ConsumerWidget {
   final int type;
 
   const ProfileStreamWidget({super.key, required this.type});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.watch(profileRepositoryProvider);
     return StreamBuilder(
-      stream: ProfileRepository().loadStreamProfile(StorageServices.to.userId),
+      stream: repository.loadStreamProfile(StorageServices.to.userId),
       builder: (context, snapshot) {
         if (type == 1) {
           return snapshot.data?.photo == null

@@ -29,15 +29,15 @@ class ContactMediaController extends GetxController {
   }
 
   Future<void> loadMembers(String groupId) async {
-    var repo = ProfileRepository();
-    var groupRepo = GroupRepository();
+    // var repo = ProfileRepository();
+    // var groupRepo = GroupRepository();
 
-    var group = await groupRepo.loadSingleGroup(groupId);
+    // var group = await groupRepo.loadSingleGroup(groupId);
 
-    for (var element in group.members!) {
-      var profile = await repo.loadSingleProfile(element);
-      profiles.add(profile);
-    }
+    // for (var element in group.members!) {
+    //   var profile = await repo.loadSingleProfile(element);
+    //   profiles.add(profile);
+    // }
 
     update();
   }

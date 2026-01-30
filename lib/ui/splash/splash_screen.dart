@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with WidgetsBindingObserver {
-  final ProfileRepository repository = ProfileRepository();
+  // final ProfileRepository repository = ProfileRepository();
 
   @override
   void initState() {
@@ -25,18 +25,18 @@ class _SplashScreenState extends State<SplashScreen>
     splashTime();
 
     WidgetsBinding.instance.addObserver(this);
-    repository.updateOnlineStatus(true);
+    // repository.updateOnlineStatus(true);
     super.initState();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      repository.updateOnlineStatus(true);
-    } else {
-      repository.updateOnlineStatus(false);
-    }
+    // if (state == AppLifecycleState.resumed) {
+    //   repository.updateOnlineStatus(true);
+    // } else {
+    //   repository.updateOnlineStatus(false);
+    // }
   }
 
   @override
@@ -46,18 +46,13 @@ class _SplashScreenState extends State<SplashScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: Image.asset("assets/logo.png", width: 100),
-          ),
+          Expanded(child: Image.asset("assets/logo.png", width: 100)),
           Padding(
             padding: const EdgeInsets.all(24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/my_icon.png',
-                  width: 32,
-                ),
+                Image.asset('assets/my_icon.png', width: 32),
                 Text(
                   '\t by Zulfikar Mauludin',
                   style: Get.textTheme.titleMedium,

@@ -2,30 +2,32 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/domain/profile_providers.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../../core/widgets/toolbar.dart';
 import '../../services/storage_services.dart';
 import 'widgets/profile_info_widget.dart';
 
-class ProfileEditScreen extends StatefulWidget {
+class ProfileEditScreen extends ConsumerStatefulWidget {
   const ProfileEditScreen({super.key});
 
   @override
-  State<ProfileEditScreen> createState() => _ProfileEditScreenState();
+  ConsumerState<ProfileEditScreen> createState() => _ProfileEditScreenState();
 }
 
-class _ProfileEditScreenState extends State<ProfileEditScreen> {
-  final ProfileRepository repository = ProfileRepository();
+class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   String uploadIndicator = '0';
   bool upload = false;
 
   @override
   Widget build(BuildContext context) {
+    final repository = ref.watch(profileRepositoryProvider);
     return Scaffold(
       appBar: Toolbar.defaultToolbar('profile'.tr),
       body: Column(
@@ -51,7 +53,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       child: ImageProfile(
                         url: snapshot.data?.photo,
                         onTap: () {
-                          _pickImage(false);
+                          _pickImage(false, repository);
                         },
                       ),
                     ),
@@ -81,7 +83,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  void _pickImage(bool fromGallery) async {
+  void _pickImage(bool fromGallery, ProfileRepository repository) async {
     final pickedFile = await ImagePicker().pickImage(
       source: fromGallery ? ImageSource.gallery : ImageSource.camera,
       imageQuality: 50,

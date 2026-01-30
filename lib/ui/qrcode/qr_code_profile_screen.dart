@@ -1,6 +1,7 @@
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
@@ -8,17 +9,19 @@ import 'package:nyarios/data/model/contact.dart';
 import 'package:nyarios/data/model/profile.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/domain/profile_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
-class QrCodeProfileScreen extends StatelessWidget {
+class QrCodeProfileScreen extends ConsumerWidget {
   const QrCodeProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repository = ref.watch(profileRepositoryProvider);
     return Scaffold(
       appBar: Toolbar.defaultToolbar("qr_code".tr),
       body: Column(
@@ -64,7 +67,7 @@ class QrCodeProfileScreen extends StatelessWidget {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: _scan,
+            onTap: () => _scan(repository),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -107,7 +110,7 @@ class QrCodeProfileScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _scan() async {
+  Future<void> _scan(ProfileRepository repository) async {
     try {
       final result = await BarcodeScanner.scan(
         options: const ScanOptions(
@@ -123,7 +126,7 @@ class QrCodeProfileScreen extends StatelessWidget {
       );
 
       if (result.rawContent != '') {
-        _showProfileDialog(result.rawContent);
+        _showProfileDialog(result.rawContent, repository);
       }
     } on PlatformException catch (e) {
       var message = e.code == BarcodeScanner.cameraAccessDenied
@@ -133,11 +136,11 @@ class QrCodeProfileScreen extends StatelessWidget {
     }
   }
 
-  void _showProfileDialog(String barcode) {
+  void _showProfileDialog(String barcode, ProfileRepository repository) {
     Get.dialog(
       AlertDialog(
         content: FutureBuilder<Profile>(
-          future: ProfileRepository().loadSingleProfile(barcode),
+          future: repository.loadSingleProfile(barcode),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

@@ -2,30 +2,29 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/data/model/profile.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/domain/profile_providers.dart';
 
 import '../../routes/app_pages.dart';
 import '../../services/storage_services.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId:
         "550134906790-eo0ouqv3snr01ehpv91gq267js91rogv.apps.googleusercontent.com",
     scopes: ['email'],
   );
-
-  final repository = ProfileRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
+      final repository = ref.watch(profileRepositoryProvider);
       var auth = await _auth.signInWithCredential(credential);
       var user = auth.user;
       if (mounted) {
