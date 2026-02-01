@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:nyarios/services/storage_services.dart';
+
 class Message {
   String? messageId;
   String? message;
@@ -7,6 +11,8 @@ class Message {
   String? fileSize;
   String? chatId;
   String? profileId;
+  bool isUploading;
+  bool isSelected;
 
   Message({
     this.messageId,
@@ -17,6 +23,8 @@ class Message {
     this.fileSize,
     this.profileId,
     this.chatId,
+    this.isUploading = false,
+    this.isSelected = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -36,8 +44,9 @@ class Message {
       messageId: map['messageId'] != null ? map['messageId'] as String : null,
       message: map['message'] != null ? map['message'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
-      sendDatetime:
-          map['sendDatetime'] != null ? map['sendDatetime'] as int : null,
+      sendDatetime: map['sendDatetime'] != null
+          ? map['sendDatetime'] as int
+          : null,
       url: map['url'] != null ? map['url'] as String : null,
       fileSize: map['fileSize'] != null ? map['fileSize'] as String : null,
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
@@ -45,17 +54,35 @@ class Message {
     );
   }
 
-  factory Message.fromMapWithMessageId(Map<String, dynamic> map, String messageId) {
+  factory Message.fromMapWithMessageId(
+    Map<String, dynamic> map,
+    String messageId,
+  ) {
     return Message(
       messageId: messageId,
       message: map['message'] != null ? map['message'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
-      sendDatetime:
-      map['sendDatetime'] != null ? map['sendDatetime'] as int : null,
+      sendDatetime: map['sendDatetime'] != null
+          ? map['sendDatetime'] as int
+          : null,
       url: map['url'] != null ? map['url'] as String : null,
       fileSize: map['fileSize'] != null ? map['fileSize'] as String : null,
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
+    );
+  }
+
+  factory Message.uploading({
+    required String uploadId,
+    required File localFile,
+    required int sendDatetime,
+  }) {
+    return Message(
+      messageId: uploadId,
+      isUploading: true,
+      sendDatetime: sendDatetime,
+      type: 'image',
+      profileId: StorageServices.to.userId,
     );
   }
 }

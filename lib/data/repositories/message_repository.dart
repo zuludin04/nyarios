@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/data/model/profile.dart';
 
@@ -15,13 +18,43 @@ class MessageRepository {
         .add(message.toMap());
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadChatMessages(String? roomId) {
+  Stream<List<Message>> loadChatMessages(String? roomId) {
     return firestore
         .collection('message')
         .doc(roomId)
         .collection('messages')
         .orderBy('sendDatetime')
-        .snapshots();
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((e) {
+            return Message.fromMapWithMessageId(e.data(), e.id);
+          }).toList();
+        });
+  }
+
+  Stream<double> uploadFile({
+    required File file,
+    required String path,
+    required String fileName,
+  }) async* {
+    var storage = FirebaseStorage.instance;
+    final ref = storage.ref('$path/$fileName');
+    final task = ref.putFile(file);
+
+    await for (final event in task.snapshotEvents) {
+      yield event.bytesTransferred / event.totalBytes;
+    }
+  }
+
+  Future<String> getImageUrl({
+    required String path,
+    required String fileName,
+  }) async {
+    final storage = FirebaseStorage.instance;
+    final ref = storage.ref('$path/$fileName');
+    final url = await ref.getDownloadURL();
+
+    return url;
   }
 
   Future<List<Message>> loadMessageMedia(String? roomId) async {
@@ -38,7 +71,6 @@ class MessageRepository {
   Future<void> messagesBatchDelete(
     String roomId,
     List<Message> chatMessages,
-    Profile profile,
   ) async {
     CollectionReference messages = firestore
         .collection('message')

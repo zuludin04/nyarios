@@ -6,15 +6,22 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/data/model/message.dart';
 import 'package:nyarios/services/storage_services.dart';
-import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ChatItem extends StatefulWidget {
   final Message chat;
+  final double? progress;
+  final Function(String) onSelectMessage;
+  final bool isSelectMode;
 
-  const ChatItem({super.key, required this.chat});
+  const ChatItem({
+    super.key,
+    required this.chat,
+    required this.progress,
+    required this.onSelectMessage,
+    required this.isSelectMode,
+  });
 
   @override
   State<ChatItem> createState() => _ChatItemState();
@@ -31,188 +38,186 @@ class _ChatItemState extends State<ChatItem> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ChattingController>(
-      builder: (controller) {
-        return GestureDetector(
-          onTap: () async {
-            if (controller.isSelectionMode) {
-              controller.selectChat(widget.chat);
-            } else {
-              if (widget.chat.type == "image") {
-                showImageDialog(context);
-              }
+    if (widget.progress != null) {
+      final percent = (widget.progress! * 100).clamp(0, 100).toInt();
+      return Text("Percent $percent%");
+    }
+    return GestureDetector(
+      onTap: () async {
+        if (widget.isSelectMode) {
+          widget.onSelectMessage(widget.chat.messageId!);
+        } // else {
+        //   if (widget.chat.type == "image") {
+        //     showImageDialog(context);
+        //   }
 
-              if (widget.chat.type == "text") {
-                if (_isLink(widget.chat.message!)) {
-                  launchUrl(Uri(path: widget.chat.message!));
-                }
-              }
+        //   if (widget.chat.type == "text") {
+        //     if (_isLink(widget.chat.message!)) {
+        //       launchUrl(Uri(path: widget.chat.message!));
+        //     }
+        //   }
 
-              if (widget.chat.type == "file") {
-                var savePath = await getExternalStorageDirectory();
-                File file =
-                    File("${savePath!.path}/files/${widget.chat.message}");
-                bool exist = await file.exists();
+        //   if (widget.chat.type == "file") {
+        //     var savePath = await getExternalStorageDirectory();
+        //     File file = File("${savePath!.path}/files/${widget.chat.message}");
+        //     bool exist = await file.exists();
 
-                if (!exist) {
-                  _downloadFile(
-                    widget.chat.url!,
-                    "${savePath.path}/files/${widget.chat.message}",
-                    () {},
-                  );
-                } else {
-                  Get.rawSnackbar(message: "File is already exist");
-                }
-              }
-            }
-          },
-          onLongPress: () {
-            controller.selectChat(widget.chat);
-          },
-          child: widget.chat.type == 'info'
-              ? Align(
+        //     if (!exist) {
+        //       _downloadFile(
+        //         widget.chat.url!,
+        //         "${savePath.path}/files/${widget.chat.message}",
+        //         () {},
+        //       );
+        //     } else {
+        //       Get.rawSnackbar(message: "File is already exist");
+        //     }
+        //   }
+        // }
+      },
+      onLongPress: () {
+        widget.onSelectMessage(widget.chat.messageId!);
+      },
+      child: widget.chat.type == 'info'
+          ? Align(
+              child: Container(
+                margin: const EdgeInsets.only(top: 8),
+                decoration: BoxDecoration(
+                  color: Get.theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: const [
+                    BoxShadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 1,
+                      spreadRadius: 1,
+                      color: Colors.black12,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.chat.message ?? "",
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            )
+          : Stack(
+              children: [
+                Align(
+                  alignment: widget.chat.profileId != StorageServices.to.userId
+                      ? Alignment.centerLeft
+                      : Alignment.centerRight,
                   child: Container(
-                    margin: const EdgeInsets.only(top: 8),
+                    padding: const EdgeInsets.all(8),
+                    margin: EdgeInsets.only(
+                      top: 8,
+                      bottom: 8,
+                      left: widget.chat.profileId != StorageServices.to.userId
+                          ? 16
+                          : 75,
+                      right: widget.chat.profileId != StorageServices.to.userId
+                          ? 75
+                          : 16,
+                    ),
                     decoration: BoxDecoration(
-                      color: Get.theme.colorScheme.background,
-                      borderRadius: BorderRadius.circular(10),
+                      color: widget.chat.profileId != StorageServices.to.userId
+                          ? Colors.grey
+                          : const Color(0xffb3404a),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(10),
+                        topRight: const Radius.circular(10),
+                        bottomLeft: Radius.circular(
+                          widget.chat.profileId != StorageServices.to.userId
+                              ? 0
+                              : 10,
+                        ),
+                        bottomRight: Radius.circular(
+                          widget.chat.profileId != StorageServices.to.userId
+                              ? 10
+                              : 0,
+                        ),
+                      ),
                       boxShadow: const [
                         BoxShadow(
-                          offset: Offset(1, 1),
+                          offset: Offset(0, 0),
                           blurRadius: 1,
                           spreadRadius: 1,
                           color: Colors.black12,
                         ),
                       ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        widget.chat.message ?? "",
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _showChatType(widget.chat.type!),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              DateFormat("hh:mm a")
+                                  .format(
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                      widget.chat.sendDatetime ?? 0,
+                                    ),
+                                  )
+                                  .toLowerCase(),
+                              style: const TextStyle(
+                                color: Colors.white54,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                )
-              : Stack(
-                  children: [
-                    Align(
-                      alignment:
-                          widget.chat.profileId != StorageServices.to.userId
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        margin: EdgeInsets.only(
-                          top: 8,
-                          bottom: 8,
-                          left:
-                              widget.chat.profileId != StorageServices.to.userId
-                                  ? 16
-                                  : 75,
-                          right:
-                              widget.chat.profileId != StorageServices.to.userId
-                                  ? 75
-                                  : 16,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              widget.chat.profileId != StorageServices.to.userId
-                                  ? Colors.grey
-                                  : const Color(0xffb3404a),
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(10),
-                            topRight: const Radius.circular(10),
-                            bottomLeft: Radius.circular(widget.chat.profileId !=
-                                    StorageServices.to.userId
-                                ? 0
-                                : 10),
-                            bottomRight: Radius.circular(
-                                widget.chat.profileId !=
-                                        StorageServices.to.userId
-                                    ? 10
-                                    : 0),
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              offset: Offset(0, 0),
-                              blurRadius: 1,
-                              spreadRadius: 1,
-                              color: Colors.black12,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            _showChatType(widget.chat.type!),
-                            const SizedBox(height: 4),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  DateFormat("hh:mm a")
-                                      .format(
-                                        DateTime.fromMillisecondsSinceEpoch(
-                                            widget.chat.sendDatetime ?? 0),
-                                      )
-                                      .toLowerCase(),
-                                  style: const TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: controller.selectedChat.contains(widget.chat),
-                      child: Positioned.fill(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 2),
-                          color: const Color(0xffb3404a).withOpacity(0.3),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
-        );
-      },
+                Visibility(
+                  visible: widget.chat.isSelected,
+                  child: Positioned.fill(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 2),
+                      color: const Color(0xffb3404a).withValues(alpha: 0.3),
+                    ),
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
   Widget _showChatType(String type) {
     switch (type) {
       case 'image':
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: Stack(
-            children: [
-              Image.network(widget.chat.url!),
-              Positioned(
-                bottom: 5,
-                right: 10,
-                child: Text(
-                  widget.chat.fileSize ?? "",
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.white,
+        if (widget.chat.url != null) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Stack(
+              children: [
+                Image.network(widget.chat.url!),
+                Positioned(
+                  bottom: 5,
+                  right: 10,
+                  child: Text(
+                    widget.chat.fileSize ?? "",
+                    style: const TextStyle(fontSize: 13, color: Colors.white),
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
+              ],
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
       case 'file':
         return Container(
           decoration: BoxDecoration(
             color: widget.chat.profileId != StorageServices.to.userId
-                ? Colors.black.withOpacity(0.1)
-                : Colors.red.withOpacity(0.3),
+                ? Colors.black.withValues(alpha: 0.1)
+                : Colors.red.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(10),
           ),
           padding: const EdgeInsets.all(12),
@@ -225,8 +230,8 @@ class _ChatItemState extends State<ChatItem> {
                 lineWidth: 2,
                 progressColor:
                     widget.chat.profileId != StorageServices.to.userId
-                        ? Colors.black
-                        : Colors.red,
+                    ? Colors.black
+                    : Colors.red,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -259,8 +264,9 @@ class _ChatItemState extends State<ChatItem> {
         return Text(
           widget.chat.message!,
           style: TextStyle(
-            color:
-                _isLink(widget.chat.message!) ? Colors.blueGrey : Colors.white,
+            color: _isLink(widget.chat.message!)
+                ? Colors.blueGrey
+                : Colors.white,
             fontSize: 16,
             decoration: _isLink(widget.chat.message!)
                 ? TextDecoration.underline
@@ -272,12 +278,16 @@ class _ChatItemState extends State<ChatItem> {
 
   bool _isLink(String input) {
     final matcher = RegExp(
-        r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)");
+      r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
+    );
     return matcher.hasMatch(input);
   }
 
   void _downloadFile(
-      String downloadUrl, String savePath, Function() downloadCallback) async {
+    String downloadUrl,
+    String savePath,
+    Function() downloadCallback,
+  ) async {
     Dio dio = Dio();
 
     try {
@@ -333,17 +343,15 @@ class _ChatItemState extends State<ChatItem> {
                             () {
                               Get.back();
                               Get.rawSnackbar(
-                                  message: "Success downloading file");
+                                message: "Success downloading file",
+                              );
                             },
                           );
                         } else {
                           Get.rawSnackbar(message: "File is already exist");
                         }
                       },
-                      icon: const Icon(
-                        Icons.download,
-                        color: Colors.white,
-                      ),
+                      icon: const Icon(Icons.download, color: Colors.white),
                     ),
                   ),
                 ),
@@ -351,10 +359,7 @@ class _ChatItemState extends State<ChatItem> {
                   color: Colors.transparent,
                   child: IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.close, color: Colors.white),
                   ),
                 ),
               ],

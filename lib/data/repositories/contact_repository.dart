@@ -8,7 +8,7 @@ class ContactRepository {
 
   ContactRepository({required this.firestore});
 
-  Future<void> saveContact(Contact contact, String profileId) async {
+  Future<void> saveContact(Contact contact, String? profileId) async {
     firestore
         .collection('contact')
         .doc(StorageServices.to.userId)
