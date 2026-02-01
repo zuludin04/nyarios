@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/core/widgets/custom_indicator.dart';
-import 'package:nyarios/core/widgets/empty_widget.dart';
-import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/routes/app_pages.dart';
-import 'package:nyarios/ui/contact/contact_media_controller.dart';
-
-import '../../core/widgets/toolbar.dart';
-import '../../services/storage_services.dart';
-import 'contact_media_tab.dart';
+import 'package:nyarios/services/storage_services.dart';
+import 'package:nyarios/ui/contact/contact_detail_provider.dart';
+import 'package:nyarios/ui/contact/contact_media_tab.dart';
 
 class ContactDetailScreen extends ConsumerStatefulWidget {
   const ContactDetailScreen({super.key});
@@ -27,12 +20,10 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
   final Contact lastMessage = Get.arguments;
 
   late TabController tabController;
-  late bool detailGroup;
 
   @override
   void initState() {
-    detailGroup = lastMessage.group != null;
-    tabController = TabController(length: detailGroup ? 3 : 2, vsync: this);
+    tabController = TabController(length: 2, vsync: this);
     super.initState();
   }
 
@@ -44,32 +35,15 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
 
   @override
   Widget build(BuildContext context) {
-    final repository = ref.watch(profileRepositoryProvider);
-    return Scaffold(
-      appBar: Toolbar.defaultToolbar(
-        '',
-        elevation: 0,
-        actions: [
-          if (detailGroup)
-            PopupMenuButton(
-              icon: ImageAsset(
-                assets: 'assets/icons/ic_vert_more.png',
-                color: Get.theme.iconTheme.color!,
-              ),
-              itemBuilder: (context) {
-                return [PopupMenuItem(value: 0, child: Text('edit_group'.tr))];
-              },
-              onSelected: (value) {
-                if (value == 0) {
-                  Get.toNamed(
-                    AppRoutes.groupEdit,
-                    arguments: lastMessage.group!,
-                  );
-                }
-              },
-            ),
-        ],
+    final chatAsync = ref.watch(
+      contactDetailProviderProvider(
+        lastMessage.chatId!,
+        lastMessage.profileId!,
       ),
+    );
+
+    return Scaffold(
+      appBar: Toolbar.defaultToolbar('', elevation: 0),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -97,9 +71,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            detailGroup
-                                ? lastMessage.group!.photo!
-                                : lastMessage.profile!.photo!,
+                            lastMessage.profile!.photo!,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -109,43 +81,32 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      detailGroup
-                          ? lastMessage.group!.name!
-                          : lastMessage.profile!.name!,
+                      lastMessage.profile!.name!,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    _detailInfo(repository),
+                    Text(chatAsync.value?.userStatus ?? "-"),
                     const SizedBox(height: 16),
-                    if (!detailGroup)
-                      StreamBuilder(
-                        stream: repository.getOnlineStatus(
-                          lastMessage.profileId,
+                    chatAsync.when(
+                      data: (data) => Visibility(
+                        visible: data.isOnline,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            "Online",
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ),
-                        builder: (context, snapshot) {
-                          bool online =
-                              snapshot.data?.data()?["visibility"] ?? false;
-                          return Visibility(
-                            visible:
-                                snapshot.connectionState ==
-                                    ConnectionState.active &&
-                                online,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                online ? "Online" : "Offline",
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          );
-                        },
                       ),
+                      error: (_, _) => SizedBox(),
+                      loading: () => SizedBox(),
+                    ),
                   ],
                 ),
               ),
@@ -161,17 +122,6 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                   unselectedLabelColor: const Color(0xffBDBDBD),
                   controller: tabController,
                   tabs: [
-                    if (detailGroup)
-                      Container(
-                        color: Get.theme.colorScheme.surface,
-                        width: double.infinity,
-                        child: Tab(
-                          icon: Text(
-                            'members'.tr,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ),
                     Container(
                       color: Get.theme.colorScheme.surface,
                       width: double.infinity,
@@ -201,30 +151,22 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
         body: TabBarView(
           controller: tabController,
           children: [
-            if (detailGroup)
-              GroupMembersTab(groupId: lastMessage.group!.groupId!),
-            const ContactMediaTab(type: "image"),
-            const ContactMediaTab(type: "file"),
+            chatAsync.when(
+              data: (data) {
+                return ContactMediaTab(messages: data.mediaMessages);
+              },
+              error: (_, _) => Text("There is Something Wrong"),
+              loading: () => CircularProgressIndicator(),
+            ),
+            chatAsync.when(
+              data: (data) => ContactMediaTab(messages: data.docMessages),
+              error: (_, _) => Text("There is Something Wrong"),
+              loading: () => CircularProgressIndicator(),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  Widget _detailInfo(ProfileRepository repositories) {
-    if (detailGroup) {
-      return GetBuilder<ContactMediaController>(
-        builder: (controller) =>
-            Text('${controller.profiles.length} ${'members'.tr}'),
-      );
-    } else {
-      return FutureBuilder(
-        future: repositories.loadUserStatus(lastMessage.profileId),
-        builder: (context, snapshot) {
-          return Text(snapshot.data ?? "");
-        },
-      );
-    }
   }
 }
 
@@ -252,81 +194,5 @@ class SliverPersistentHeaderDelegateImpl
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
     return false;
-  }
-}
-
-class GroupMembersTab extends StatefulWidget {
-  final String groupId;
-
-  const GroupMembersTab({super.key, required this.groupId});
-
-  @override
-  State<GroupMembersTab> createState() => _GroupMembersTabState();
-}
-
-class _GroupMembersTabState extends State<GroupMembersTab>
-    with AutomaticKeepAliveClientMixin {
-  final ContactMediaController controller = Get.find();
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    controller.loadMembers(widget.groupId);
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return GetBuilder<ContactMediaController>(
-      builder: (controller) {
-        if (controller.loading) {
-          return const Center(child: CustomIndicator());
-        } else if (controller.empty) {
-          return Center(child: EmptyWidget(message: 'empty_member'.tr));
-        } else {
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              var profile = controller.profiles[index];
-              return Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(40),
-                          child: Image.network(
-                            profile.photo ?? "",
-                            width: 40,
-                            height: 40,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            profile.name ?? "",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-            itemCount: controller.profiles.length,
-          );
-        }
-      },
-    );
   }
 }

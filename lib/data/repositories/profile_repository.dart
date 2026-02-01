@@ -54,8 +54,11 @@ class ProfileRepository {
     return Profile.fromMap(ref.data()!);
   }
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> getOnlineStatus(String? uid) {
-    return firestore.collection("profile").doc(uid).snapshots();
+  Stream<bool> getOnlineStatus(String? uid) {
+    return firestore.collection("profile").doc(uid).snapshots().map((snapshot) {
+      Profile profile = Profile.fromMap(snapshot.data()!);
+      return profile.visibility ?? false;
+    });
   }
 
   Stream<Profile> loadStreamProfile(String uid) async* {

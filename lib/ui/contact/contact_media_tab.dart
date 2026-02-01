@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/message.dart';
 
-import '../../core/widgets/custom_indicator.dart';
-import '../../core/widgets/empty_widget.dart';
-import 'contact_media_controller.dart';
-
 class ContactMediaTab extends StatefulWidget {
-  final String type;
+  final List<Message> messages;
 
-  const ContactMediaTab({super.key, required this.type});
+  const ContactMediaTab({super.key, required this.messages});
 
   @override
   State<ContactMediaTab> createState() => _ContactMediaTabState();
@@ -18,42 +14,27 @@ class ContactMediaTab extends StatefulWidget {
 
 class _ContactMediaTabState extends State<ContactMediaTab>
     with AutomaticKeepAliveClientMixin {
-  final ContactMediaController controller = Get.find();
-
   @override
   bool get wantKeepAlive => true;
 
   @override
-  void initState() {
-    controller.loadChats(widget.type);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     super.build(context);
-    return GetBuilder<ContactMediaController>(
-      id: widget.type,
-      builder: (controller) {
-        if (controller.loading) {
-          return const Center(child: CustomIndicator());
-        } else if (controller.empty) {
-          return Center(child: EmptyWidget(message: 'empty_media'.tr));
-        } else {
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              var message = controller.mediaMessages[index];
-              if (widget.type == "file") {
-                return _buildDocItem(message);
-              } else {
-                return _buildMediaItem(message);
-              }
-            },
-            itemCount: controller.mediaMessages.length,
-          );
-        }
-      },
-    );
+    if (widget.messages.isEmpty) {
+      return EmptyWidget(message: "Empty Media");
+    } else {
+      return ListView.builder(
+        itemBuilder: (context, index) {
+          var message = widget.messages[index];
+          if (message.type == "file") {
+            return _buildDocItem(message);
+          } else {
+            return _buildMediaItem(message);
+          }
+        },
+        itemCount: widget.messages.length,
+      );
+    }
   }
 
   Widget _buildDocItem(Message message) {
