@@ -5,16 +5,15 @@ import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';
-import 'package:nyarios/ui/contact/friend/friend_item.dart';
+import 'package:nyarios/ui/friend/friend_controller.dart';
 
-class ContactFriends extends ConsumerWidget {
-  const ContactFriends({super.key});
+class FriendScreen extends ConsumerWidget {
+  const FriendScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var repository = ref.watch(contactRepositoryProvider);
+    final controller = ref.watch(friendControllerProvider);
 
     return Scaffold(
       appBar: Toolbar.defaultToolbar('contact'.tr),
@@ -69,22 +68,9 @@ class ContactFriends extends ConsumerWidget {
               ],
             ),
           ),
-          FutureBuilder<List<Contact>>(
-            future: repository.loadContacts(false),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return SliverFillRemaining(
-                  child: Center(child: Text('something_went_wrong'.tr)),
-                );
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SliverFillRemaining(
-                  child: Center(child: CustomIndicator()),
-                );
-              }
-
-              if (snapshot.data!.isEmpty) {
+          controller.when(
+            data: (List<Contact> data) {
+              if (data.isEmpty) {
                 return SliverFillRemaining(
                   child: Center(
                     child: Column(
@@ -104,16 +90,71 @@ class ContactFriends extends ConsumerWidget {
                     ),
                   ),
                 );
+              } else {
+                return SliverList.separated(
+                  itemBuilder: (context, index) =>
+                      _FriendItem(contact: data[index]),
+                  itemCount: data.length,
+                  separatorBuilder: (context, index) => Divider(),
+                );
               }
-
-              return SliverList.builder(
-                itemBuilder: (context, index) =>
-                    FriendItem(contact: snapshot.data![index]),
-                itemCount: snapshot.data!.length,
-              );
             },
+            error: (_, _) => SliverFillRemaining(
+              child: Center(child: Text('something_went_wrong'.tr)),
+            ),
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CustomIndicator()),
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FriendItem extends StatelessWidget {
+  final Contact contact;
+
+  const _FriendItem({required this.contact});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Get.toNamed(
+        AppRoutes.chatting,
+        arguments: {'contact': contact, 'type': 'dm'},
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: Image.network(
+                contact.profile?.photo ?? "",
+                width: 40,
+                height: 40,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    contact.profile?.name ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(contact.profile?.status ?? ""),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

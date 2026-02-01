@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/data/repositories/profile_repository.dart';
-
-import '../../services/storage_services.dart';
+import 'package:nyarios/services/storage_services.dart';
 
 class Toolbar {
   static AppBar defaultToolbar(

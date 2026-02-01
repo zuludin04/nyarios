@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:nyarios/ui/call/call_video_screen.dart';
 import 'package:nyarios/ui/call/call_voice_screen.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_screen.dart';
-import 'package:nyarios/ui/contact/friend/contact_friends_screen.dart';
+import 'package:nyarios/ui/friend/friend_screen.dart';
 import 'package:nyarios/ui/group/bindings/group_member_pick_binding.dart';
 import 'package:nyarios/ui/group/group_create_screen.dart';
 import 'package:nyarios/ui/group/group_edit_screen.dart';
@@ -29,7 +29,7 @@ class AppPages {
   static final pages = [
     GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
     GetPage(name: AppRoutes.signIn, page: () => const SignInScreen()),
-    GetPage(name: AppRoutes.contactFriend, page: () => const ContactFriends()),
+    GetPage(name: AppRoutes.contactFriend, page: () => const FriendScreen()),
     GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
     GetPage(name: AppRoutes.chatting, page: () => const ChattingScreen()),
     GetPage(
