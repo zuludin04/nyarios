@@ -4,9 +4,6 @@ import 'package:get/get.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/data/repositories/chat_repository.dart';
-import 'package:nyarios/data/repositories/group_repository.dart';
-import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/services/storage_services.dart';
 
@@ -26,7 +23,7 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Get.theme.colorScheme.background,
+      color: Get.theme.colorScheme.surface,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,

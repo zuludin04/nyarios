@@ -6,42 +6,45 @@ class BottomNavigation extends StatelessWidget {
   final Function(int) onSelectedMenu;
 
   const BottomNavigation({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.navMenus,
     required this.onSelectedMenu,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
             offset: const Offset(0, -1),
             blurRadius: 1,
-            color: Colors.black26.withOpacity(0.3),
+            color: Colors.black26.withValues(alpha: 0.3),
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: navMenus
-            .map((e) => InkWell(
-                  onTap: () => onSelectedMenu(navMenus.indexOf(e)),
-                  child: SizedBox.fromSize(
-                    size: Size(
-                        MediaQuery.of(context).size.width / navMenus.length,
-                        64),
-                    child: _BottomNavItem(
-                      menu: e,
-                      selected: currentIndex == navMenus.indexOf(e),
-                      index: navMenus.indexOf(e),
-                    ),
+            .map(
+              (e) => InkWell(
+                onTap: () => onSelectedMenu(navMenus.indexOf(e)),
+                child: SizedBox.fromSize(
+                  size: Size(
+                    MediaQuery.of(context).size.width / navMenus.length,
+                    64,
                   ),
-                ))
+                  child: _BottomNavItem(
+                    menu: e,
+                    selected: currentIndex == navMenus.indexOf(e),
+                    index: navMenus.indexOf(e),
+                  ),
+                ),
+              ),
+            )
             .toList(),
       ),
     );

@@ -17,7 +17,7 @@ class TextEditField extends StatefulWidget {
   final String initial;
 
   const TextEditField({
-    Key? key,
+    super.key,
     required this.hint,
     required this.validator,
     this.onSaved,
@@ -31,7 +31,7 @@ class TextEditField extends StatefulWidget {
     this.communityField = false,
     this.initial = "",
     this.tall = false,
-  }) : super(key: key);
+  });
 
   @override
   State<TextEditField> createState() => _TextEditFieldState();
@@ -54,11 +54,7 @@ class _TextEditFieldState extends State<TextEditField> {
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 3.0,
-            spreadRadius: 1.0,
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 3.0, spreadRadius: 1.0),
         ],
         borderRadius: BorderRadius.circular(10.0),
       ),
@@ -87,9 +83,7 @@ class _TextEditFieldState extends State<TextEditField> {
                 disabledBorder: _fieldBorder(),
                 filled: widget.filled,
                 fillColor: widget.fillColor,
-                hintStyle: const TextStyle(
-                  color: Color(0xffBDBDBD),
-                ),
+                hintStyle: const TextStyle(color: Color(0xffBDBDBD)),
               ),
             ),
           ),
@@ -110,7 +104,9 @@ class _TextEditFieldState extends State<TextEditField> {
   InputBorder _fieldBorder() {
     if (widget.communityField) {
       return OutlineInputBorder(
-        borderSide: BorderSide(color: const Color(0xff828282).withOpacity(.3)),
+        borderSide: BorderSide(
+          color: const Color(0xff828282).withValues(alpha: 0.3),
+        ),
         borderRadius: BorderRadius.circular(10),
       );
     } else {
