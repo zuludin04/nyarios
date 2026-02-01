@@ -23,60 +23,55 @@ class LastMessageItem extends ConsumerWidget {
           },
         );
       },
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Row(
-              children: [
-                _imageRecentChat(lastMessage.profile?.photo ?? ""),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _nameRecentChat(lastMessage.profile?.name ?? ""),
-                      const SizedBox(height: 4),
-                      Text(
-                        lastMessage.lastMessage ?? "",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: Image.network(
+                lastMessage.profile?.photo ?? "",
+                width: 40,
+                height: 40,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    lastMessage.profile?.name ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(_lastMessageDate(lastMessage.lastMessageSent)),
-                    const SizedBox(height: 4),
-                  ],
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    lastMessage.lastMessage ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(_lastMessageDate(lastMessage.lastMessageSent)),
+                const SizedBox(height: 4),
               ],
             ),
-          ),
-          const Divider(),
-        ],
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _imageRecentChat(String imageUrl) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(40),
-      child: Image.network(imageUrl, width: 40, height: 40, fit: BoxFit.cover),
-    );
-  }
-
-  Widget _nameRecentChat(String name) {
-    return Text(
-      name,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     );
   }
 

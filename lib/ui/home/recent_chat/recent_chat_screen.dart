@@ -16,13 +16,14 @@ class RecentChatScreen extends ConsumerWidget {
       child: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
           provider.when(
-            data: (items) => SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
+            data: (items) => SliverList.separated(
+              itemBuilder: (context, index) {
                 var chat = items[index];
                 return LastMessageItem(lastMessage: chat);
-              }, childCount: items.length),
+              },
+              itemCount: items.length,
+              separatorBuilder: (BuildContext context, int index) => Divider(),
             ),
             error: (_, _) => SliverFillRemaining(
               child: Center(child: Text('something_went_wrong'.tr)),
