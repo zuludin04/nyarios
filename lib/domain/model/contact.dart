@@ -1,4 +1,4 @@
-import 'package:nyarios/data/model/chat.dart';
+import 'package:nyarios/domain/model/chat.dart';
 
 import 'group.dart';
 import 'profile.dart';
@@ -34,8 +34,9 @@ class Contact {
     return Contact(
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
-      alreadyFriend:
-          map['alreadyFriend'] != null ? map['alreadyFriend'] as bool : null,
+      alreadyFriend: map['alreadyFriend'] != null
+          ? map['alreadyFriend'] as bool
+          : null,
       blocked: map['blocked'] != null ? map['blocked'] as bool : null,
       profile: profile,
     );
@@ -45,8 +46,9 @@ class Contact {
     return Contact(
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
-      alreadyFriend:
-      map['alreadyFriend'] != null ? map['alreadyFriend'] as bool : null,
+      alreadyFriend: map['alreadyFriend'] != null
+          ? map['alreadyFriend'] as bool
+          : null,
       blocked: map['blocked'] != null ? map['blocked'] as bool : null,
     );
   }

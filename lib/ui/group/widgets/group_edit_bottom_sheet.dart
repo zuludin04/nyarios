@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/chat.dart';
-import 'package:nyarios/data/model/group.dart';
-import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/domain/model/chat.dart';
+import 'package:nyarios/domain/model/group.dart';
+import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';

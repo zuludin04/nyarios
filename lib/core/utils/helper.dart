@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/model/picked_message_file.dart';
 
 String? emailValidator(String? value) {

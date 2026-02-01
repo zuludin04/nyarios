@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
-import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/domain/model/message.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 import '../../../services/storage_services.dart';

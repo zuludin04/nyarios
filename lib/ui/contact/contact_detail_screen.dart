@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_pages.dart';

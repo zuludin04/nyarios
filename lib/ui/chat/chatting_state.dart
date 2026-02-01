@@ -1,4 +1,4 @@
-import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/domain/model/message.dart';
 
 class ChattingState {
   final List<Message> messages;

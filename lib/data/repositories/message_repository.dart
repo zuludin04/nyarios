@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:nyarios/data/model/message.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/domain/model/profile.dart';
 
 class MessageRepository {
   final FirebaseFirestore firestore;

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class ProfileRepository {

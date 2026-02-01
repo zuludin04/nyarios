@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nyarios/data/model/group.dart';
+import 'package:nyarios/domain/model/group.dart';
 
 class GroupRepository {
   final FirebaseFirestore firestore;

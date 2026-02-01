@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/data/model/call.dart';
+import 'package:nyarios/domain/model/call.dart';
 
 class CallHistoryItem extends ConsumerWidget {
   final Call call;

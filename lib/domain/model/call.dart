@@ -1,4 +1,4 @@
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/profile.dart';
 
 class Call {
   int? callDate;

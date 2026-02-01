@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
 

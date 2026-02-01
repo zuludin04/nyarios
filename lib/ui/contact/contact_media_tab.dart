@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/domain/model/message.dart';
 
 import '../../core/widgets/custom_indicator.dart';
 import '../../core/widgets/empty_widget.dart';
@@ -75,7 +75,8 @@ class _ContactMediaTabState extends State<ContactMediaTab>
                   Text(
                     DateFormat("dd/MM/yyyy").format(
                       DateTime.fromMillisecondsSinceEpoch(
-                          message.sendDatetime ?? 0),
+                        message.sendDatetime ?? 0,
+                      ),
                     ),
                   ),
                 ],
@@ -105,9 +106,11 @@ class _ContactMediaTabState extends State<ContactMediaTab>
               const SizedBox(height: 8),
               Text(
                 DateFormat("dd/MM/yyyy").format(
-                    DateTime.fromMillisecondsSinceEpoch(
-                        message.sendDatetime ?? 0)),
-              )
+                  DateTime.fromMillisecondsSinceEpoch(
+                    message.sendDatetime ?? 0,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

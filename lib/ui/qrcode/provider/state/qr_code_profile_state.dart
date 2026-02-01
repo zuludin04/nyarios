@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:nyarios/data/model/contact.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/domain/model/profile.dart';
 
 part 'qr_code_profile_state.freezed.dart';
 

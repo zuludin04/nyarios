@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/data/model/chat.dart';
-import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/domain/model/chat.dart';
+import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/routes/app_pages.dart';
 
 class LastMessageItem extends ConsumerWidget {

@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/chat.dart';
-import 'package:nyarios/data/model/group.dart';
-import 'package:nyarios/data/model/message.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/chat.dart';
+import 'package:nyarios/domain/model/group.dart';
+import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';

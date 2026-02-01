@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:nyarios/data/model/chat.dart';
-import 'package:nyarios/data/model/contact.dart';
-import 'package:nyarios/data/model/message.dart';
+import 'package:nyarios/domain/model/chat.dart';
+import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class GroupMemberItem extends StatelessWidget {

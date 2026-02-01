@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/ui/qrcode/provider/state/qr_code_profile_state.dart';

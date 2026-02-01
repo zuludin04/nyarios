@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/contact.dart';
+import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/routes/app_pages.dart';
 
 class FriendItem extends StatelessWidget {
@@ -11,8 +11,10 @@ class FriendItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.chatting,
-          arguments: {'contact': contact, 'type': 'dm'}),
+      onTap: () => Get.toNamed(
+        AppRoutes.chatting,
+        arguments: {'contact': contact, 'type': 'dm'},
+      ),
       child: Column(
         children: [
           Container(

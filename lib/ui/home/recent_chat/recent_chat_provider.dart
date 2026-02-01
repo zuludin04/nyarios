@@ -1,5 +1,5 @@
-import 'package:nyarios/data/model/chat.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/chat.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart';

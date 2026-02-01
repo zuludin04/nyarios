@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
-import 'package:nyarios/data/model/contact.dart';
-import 'package:nyarios/data/model/message.dart';
-import 'package:nyarios/data/model/profile.dart';
+import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
