@@ -17,20 +17,18 @@ class ChatRepository {
         .snapshots();
   }
 
-  Future<List<Chat>> loadUserRecentChat() async {
+  Future<List<Chat>> loadDmChat() async {
     var results = await firestore
         .collection('chat')
         .doc(StorageServices.to.userId)
         .collection('receiver')
         .where('type', isEqualTo: 'dm')
         .get();
-    var recent = results.docs.map((e) async {
+    var result = results.docs.map((e) {
       var chat = Chat.fromMap(e.data());
-      // var profile = await profileRepository.loadSingleProfile(chat.profileId);
-      // chat.profile = profile;
       return chat;
     }).toList();
-    return Future.wait(recent);
+    return result;
   }
 
   void updateRecentChat(bool fromSender, Chat lastMessage) {

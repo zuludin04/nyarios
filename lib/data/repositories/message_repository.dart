@@ -81,7 +81,7 @@ class MessageRepository {
     }
   }
 
-  Future<List<Message>> loadMessages(String? roomId) async {
+  Future<List<Message>> searchMessages(String? roomId) async {
     var chats = await firestore
         .collection('message')
         .doc(roomId)

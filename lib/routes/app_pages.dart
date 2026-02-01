@@ -15,7 +15,6 @@ import '../ui/contact/contact_detail_screen.dart';
 import '../ui/home/home_screen.dart';
 import '../ui/language/language_setting_screen.dart';
 import '../ui/profile/profile_edit_screen.dart';
-import '../ui/search/search_binding.dart';
 import '../ui/search/search_screen.dart';
 import '../ui/splash/splash_screen.dart';
 
@@ -41,11 +40,7 @@ class AppPages {
       name: AppRoutes.contactDetail,
       page: () => const ContactDetailScreen(),
     ),
-    GetPage(
-      name: AppRoutes.search,
-      page: () => const SearchScreen(),
-      binding: SearchBinding(),
-    ),
+    GetPage(name: AppRoutes.search, page: () => const SearchScreen()),
     GetPage(
       name: AppRoutes.qrCodeProfile,
       page: () => const QrCodeProfileScreen(),
