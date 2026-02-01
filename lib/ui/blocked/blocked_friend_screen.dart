@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:nyarios/core/widgets/custom_indicator.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/ui/blocked/blocked_friend_controller.dart';
+
+class BlockedFriendScreen extends ConsumerWidget {
+  const BlockedFriendScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.watch(blockedFriendControllerProvider);
+
+    return Scaffold(
+      appBar: Toolbar.defaultToolbar('blocked_friend'.tr),
+      body: controller.when(
+        data: (data) {
+          if (data.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const ImageAsset(
+                    assets: 'assets/icons/ic_profile_not_found.png',
+                    size: 80,
+                  ),
+                  Text('empty_blocked_friend'.tr),
+                ],
+              ),
+            );
+          } else {
+            return ListView.separated(
+              itemBuilder: (context, index) =>
+                  _BlockedFriendItem(contact: data[index]),
+              itemCount: data.length,
+              separatorBuilder: (context, index) => Divider(),
+            );
+          }
+        },
+        error: (_, _) => Center(child: Text('something_went_wrong'.tr)),
+        loading: () => const Center(child: CustomIndicator()),
+      ),
+    );
+  }
+}
+
+class _BlockedFriendItem extends StatelessWidget {
+  final Contact contact;
+
+  const _BlockedFriendItem({required this.contact});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Get.toNamed(
+        AppRoutes.chatting,
+        arguments: {'contact': contact, 'type': 'dm'},
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: Image.network(
+                contact.profile?.photo ?? "",
+                width: 40,
+                height: 40,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    contact.profile?.name ?? "",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(contact.profile?.status ?? ""),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
