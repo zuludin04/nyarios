@@ -65,7 +65,17 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
           Visibility(
             visible: type == 'dm',
             child: IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                final token = await controller.generateAgoraToken(
+                  channelName: contact.chatId!,
+                  uid: contact.profile!.id!.toString(),
+                );
+
+                Get.toNamed(
+                  AppRoutes.callVideo,
+                  arguments: {'contact': contact, 'token': token},
+                );
+              },
               icon: ImageAsset(
                 assets: 'assets/icons/ic_video.png',
                 color: Get.theme.iconTheme.color!,
@@ -75,7 +85,17 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
           Visibility(
             visible: type == 'dm',
             child: IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                final token = await controller.generateAgoraToken(
+                  channelName: contact.chatId!,
+                  uid: contact.profile!.id!.toString(),
+                );
+
+                Get.toNamed(
+                  AppRoutes.callVoice,
+                  arguments: {'contact': contact, 'token': token},
+                );
+              },
               icon: ImageAsset(
                 assets: 'assets/icons/ic_call.png',
                 color: Get.theme.iconTheme.color!,

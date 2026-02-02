@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:nyarios/data/repositories/agora_repository.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/message.dart';
@@ -20,6 +21,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
   late final MessageRepository messageRepo;
   late final ChatRepository chatRepo;
   late final ContactRepository contactRepo;
+  late final AgoraRepository agoraRepo;
 
   StreamSubscription<List<Message>>? messageSub;
 
@@ -28,6 +30,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     messageRepo = ref.read(messageRepositoryProvider);
     chatRepo = ref.read(chatRepositoryProvider);
     contactRepo = ref.read(contactRepositoryProvider);
+    agoraRepo = ref.read(agoraRepositoryProvider);
 
     state = const AsyncData(ChattingState());
     var contact = await contactRepo.loadSingleContact(profileId);
@@ -195,5 +198,16 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     }).toList();
     await messageRepo.messagesBatchDelete(chatId, selectedMessages);
     clearSelectedChat();
+  }
+
+  Future<String> generateAgoraToken({
+    required String channelName,
+    required String uid,
+  }) async {
+    final token = await agoraRepo.loadAgoraToken(
+      channel: channelName,
+      uid: uid,
+    );
+    return token;
   }
 }

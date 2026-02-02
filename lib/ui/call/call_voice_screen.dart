@@ -1,13 +1,10 @@
-import 'dart:convert';
-
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/main.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -20,12 +17,8 @@ class CallVoiceScreen extends ConsumerStatefulWidget {
 }
 
 class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
-  int tokenRole = 1;
-  String serverUrl = "https://agoranyarios.up.railway.app";
-  String token = "";
-  String callId = "";
-
-  Contact contact = Get.arguments;
+  Contact contact = Get.arguments['contact'];
+  String token = Get.arguments['token'];
 
   int? _remoteUid;
   bool _isJoined = false;
@@ -164,30 +157,15 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     }
   }
 
-  Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
-    String url =
-        '$serverUrl/rtc/$channelName/${tokenRole.toString()}/userAccount/${uid.toString()}';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> json = jsonDecode(response.body);
-      String newToken = json['rtcToken'];
-      join(newToken, channelName, uid);
-    } else {
-      throw Exception(
-        'Failed to fetch a token. Make sure that your server URL is valid',
-      );
-    }
-  }
-
   Future<void> setupVoiceSDKEngine() async {
     await [Permission.microphone].request();
 
     agoraEngine = createAgoraRtcEngine();
-    await agoraEngine?.initialize(const RtcEngineContext(appId: appId));
 
-    fetchToken(contact.profile!.id!, contact.chatId!, tokenRole);
+    final appId = dotenv.env["AGORA_APP_ID"];
+    await agoraEngine?.initialize(RtcEngineContext(appId: appId));
+
+    join(token, contact.chatId!, contact.profile!.id!);
 
     agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(

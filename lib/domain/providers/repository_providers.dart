@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nyarios/data/repositories/agora_repository.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/di/dio_module.dart';
 import 'package:nyarios/di/firebase_module.dart';
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
@@ -36,4 +38,9 @@ final groupRepositoryProvider = Provider<GroupRepository>((ref) {
 final messageRepositoryProvider = Provider<MessageRepository>((ref) {
   final firestore = firestoreProvider(ref);
   return MessageRepository(firestore: firestore);
+});
+
+final agoraRepositoryProvider = Provider<AgoraRepository>((ref) {
+  final dio = dioProvider(ref);
+  return AgoraRepository(dio: dio);
 });

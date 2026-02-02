@@ -1,19 +1,11 @@
-import 'dart:convert';
-
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:nyarios/domain/model/call.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/data/repositories/call_repository.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/main.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:uuid/uuid.dart';
 
 class CallVideoScreen extends ConsumerStatefulWidget {
   const CallVideoScreen({super.key});
@@ -23,12 +15,8 @@ class CallVideoScreen extends ConsumerStatefulWidget {
 }
 
 class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
-  int tokenRole = 1;
-  String serverUrl = "https://agoranyarios.up.railway.app";
-  String token = "";
-  String callId = "";
-
-  Contact contact = Get.arguments;
+  Contact contact = Get.arguments['contact'];
+  String token = Get.arguments['token'];
 
   bool isMuted = false;
   bool isSpeaker = false;
@@ -40,7 +28,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
   @override
   void initState() {
     super.initState();
-    handleVideoCallPermission(ref.watch(callRepositoryProvider));
+    handleVideoCallPermission();
   }
 
   @override
@@ -196,7 +184,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
     );
   }
 
-  Future<void> handleVideoCallPermission(CallRepository callRepo) async {
+  Future<void> handleVideoCallPermission() async {
     await [Permission.microphone, Permission.camera].request();
 
     if (await Permission.microphone.isDenied) {
@@ -206,16 +194,17 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       Get.back();
       Get.rawSnackbar(message: 'Need camera permission to make a video call');
     } else {
-      setupVideoSDKEngine(callRepo);
+      setupVideoSDKEngine();
     }
   }
 
-  Future<void> setupVideoSDKEngine(CallRepository callRepo) async {
+  Future<void> setupVideoSDKEngine() async {
     agoraEngine = createAgoraRtcEngine();
-    await agoraEngine.initialize(const RtcEngineContext(appId: appId));
+    final appId = dotenv.env["AGORA_APP_ID"];
+    await agoraEngine.initialize(RtcEngineContext(appId: appId));
 
     await agoraEngine.enableVideo();
-    fetchToken(contact.profile!.id!, contact.chatId!, tokenRole);
+    join(token);
 
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
@@ -225,7 +214,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          saveCallHistory(callRepo);
+          saveCallHistory();
           setState(() {
             _remoteUid = remoteUid;
           });
@@ -240,28 +229,6 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
             },
       ),
     );
-  }
-
-  Future<void> fetchToken(int uid, String channelName, int tokenRole) async {
-    String url =
-        '$serverUrl/rtc/$channelName/${tokenRole.toString()}/userAccount/${uid.toString()}';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> json = jsonDecode(response.body);
-      String newToken = json['rtcToken'];
-      setToken(newToken);
-    } else {
-      throw Exception(
-        'Failed to fetch a token. Make sure that your server URL is valid',
-      );
-    }
-  }
-
-  void setToken(String newToken) async {
-    token = newToken;
-    join(token);
   }
 
   void join(String token) async {
@@ -289,18 +256,18 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
     Get.back();
   }
 
-  void saveCallHistory(CallRepository callRepo) async {
-    callId = const Uuid().v4();
+  void saveCallHistory() async {
+    // final callId = const Uuid().v4();
 
-    var call = Call(
-      callDate: DateTime.now().millisecondsSinceEpoch,
-      callId: callId,
-      profileId: contact.profileId,
-      status: 'incoming_call',
-      type: 'video_call',
-      isAccepted: true,
-    );
+    // var call = Call(
+    //   callDate: DateTime.now().millisecondsSinceEpoch,
+    //   callId: callId,
+    //   profileId: contact.profileId,
+    //   status: 'incoming_call',
+    //   type: 'video_call',
+    //   isAccepted: true,
+    // );
 
-    callRepo.saveCallHistory(StorageServices.to.userId, call);
+    // callRepo.saveCallHistory(StorageServices.to.userId, call);
   }
 }
