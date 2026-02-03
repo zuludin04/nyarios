@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -15,10 +17,27 @@ import 'routes/app_pages.dart';
 import 'services/language_service.dart';
 import 'services/storage_services.dart';
 
+@pragma('vm:entry-point')
 Future<void> _backgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupFlutterNotifications();
   showFlutterNotifications(message);
+}
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  // ignore: avoid_print
+  print(
+    'notification(${notificationResponse.id}) action tapped: '
+    '${notificationResponse.actionId} with'
+    ' payload: ${notificationResponse.payload}',
+  );
+  if (notificationResponse.input?.isNotEmpty ?? false) {
+    // ignore: avoid_print
+    print(
+      'notification action tapped with input: ${notificationResponse.input}',
+    );
+  }
 }
 
 late AndroidNotificationChannel channel;
@@ -30,14 +49,27 @@ Future<void> setupFlutterNotifications() async {
     return;
   }
 
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('app_icon');
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    settings: initializationSettings,
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+    onDidReceiveNotificationResponse: onNotificationTap,
+  );
+
   channel = const AndroidNotificationChannel(
     'hig_importance_channel',
     'High Important Channel',
     description: 'This channer is for important notification',
     importance: Importance.high,
   );
-
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<
@@ -54,22 +86,53 @@ Future<void> setupFlutterNotifications() async {
   isFlutterLocalNotificationsInitialized = true;
 }
 
+void onNotificationTap(NotificationResponse response) {
+  if (response.actionId == 'id_1') {
+    debugPrint("accept call");
+  } else if (response.actionId == 'id_2') {
+    debugPrint("reject call");
+  }
+}
+
 void showFlutterNotifications(RemoteMessage message) {
   RemoteNotification? notification = message.notification;
   AndroidNotification? android = message.notification?.android;
 
   if (notification != null && android != null && !kIsWeb) {
+    var androidNotifDetails = AndroidNotificationDetails(
+      channel.id,
+      channel.name,
+      channelDescription: channel.description,
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      groupAlertBehavior: GroupAlertBehavior.all,
+      setAsGroupSummary: false,
+      actions: [
+        AndroidNotificationAction(
+          'id_1',
+          'Accept',
+          titleColor: Colors.green,
+          icon: DrawableResourceAndroidBitmap('call_accept'),
+          contextual: true,
+          showsUserInterface: true,
+        ),
+        AndroidNotificationAction(
+          'id_2',
+          'Reject',
+          titleColor: Color.fromARGB(255, 255, 0, 0),
+          icon: DrawableResourceAndroidBitmap('call_reject'),
+          contextual: true,
+          showsUserInterface: true,
+        ),
+      ],
+    );
+
     flutterLocalNotificationsPlugin.show(
-      id: notification.hashCode,
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title: notification.title,
       body: notification.body,
-      notificationDetails: NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          icon: 'launch_background',
-        ),
-      ),
+      notificationDetails: NotificationDetails(android: androidNotifDetails),
     );
   }
 }
@@ -107,14 +170,6 @@ class _MyAppState extends State<MyApp> {
     Get.changeThemeMode(darkMode ? ThemeMode.dark : ThemeMode.light);
     firebaseMessaging.requestPermission(provisional: true);
     FirebaseMessaging.onMessage.listen(showFlutterNotifications);
-    firebaseMessaging.getInitialMessage().then((message) {
-      if (message != null) {
-        showFlutterNotifications(message);
-      }
-    });
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print("message is clicked ${message.messageId}");
-    });
     loadToken();
   }
 
@@ -138,6 +193,6 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> loadToken() async {
     final token = await firebaseMessaging.getToken();
-    print("token $token");
+    debugPrint("token $token");
   }
 }
