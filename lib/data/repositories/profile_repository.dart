@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/services/storage_services.dart';
 
@@ -10,11 +11,15 @@ class ProfileRepository {
   ProfileRepository({required this.firestore, required this.auth});
 
   Future<void> saveUserProfile(Profile profile) async {
-    var exist = await checkIfUserExist(profile.uid!);
+    final exist = await checkIfUserExist(profile.uid!);
+    final fcmToken = await loadFcmToken();
     if (!exist) {
-      var id = await getIncrementedId();
-      var userId = id + 1;
+      final id = await getIncrementedId();
+      final userId = id + 1;
+
       profile.id = userId;
+      profile.fcmToken = fcmToken;
+
       updateIncrementedId(userId);
       firestore.collection("profile").doc(profile.uid).set(profile.toMap());
 
@@ -24,7 +29,8 @@ class ProfileRepository {
       StorageServices.to.userImage = profile.photo ?? "";
       StorageServices.to.id = userId;
     } else {
-      var userProfile = await loadSingleProfile(profile.uid);
+      final userProfile = await loadSingleProfile(profile.uid);
+      await updateFcmToken(fcmToken, userProfile.uid);
       StorageServices.to.userId = userProfile.uid ?? "";
       StorageServices.to.userName = userProfile.name ?? "";
       StorageServices.to.email = userProfile.email ?? "";
@@ -99,6 +105,11 @@ class ProfileRepository {
     firestore.collection("profile").doc(profileId).update(updateData);
   }
 
+  Future<void> updateFcmToken(String? token, String? profileId) async {
+    var updateData = {'fcmToken': token};
+    firestore.collection("profile").doc(profileId).update(updateData);
+  }
+
   Future<int> getIncrementedId() async {
     var collection = firestore.collection('incrementedId');
     var doc = await collection.doc('FvmJzscRcjO4J9AFFPEe').get();
@@ -109,5 +120,11 @@ class ProfileRepository {
     firestore.collection('incrementedId').doc('FvmJzscRcjO4J9AFFPEe').set({
       'id': id,
     });
+  }
+
+  Future<String?> loadFcmToken() async {
+    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    final token = await firebaseMessaging.getToken();
+    return token;
   }
 }

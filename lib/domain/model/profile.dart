@@ -6,6 +6,7 @@ class Profile {
   String? status;
   String? email;
   bool? visibility;
+  String? fcmToken;
 
   Profile({
     this.id,
@@ -15,6 +16,7 @@ class Profile {
     this.status,
     this.email,
     this.visibility,
+    this.fcmToken,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class Profile {
       'status': status,
       'email': email,
       'visibility': visibility,
+      'fcmToken': fcmToken,
     };
   }
 
@@ -37,6 +40,7 @@ class Profile {
       photo: map['photo'] != null ? map['photo'] as String : null,
       status: map['status'] != null ? map['status'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
+      fcmToken: map['fcmToken'] != null ? map['fcmToken'] as String : null,
       visibility: map['visibility'] != null ? map['visibility'] as bool : null,
     );
   }
