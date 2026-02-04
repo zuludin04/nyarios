@@ -2,11 +2,11 @@ import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/qrcode/provider/qr_code_profile_provider.dart';
 import 'package:nyarios/ui/qrcode/provider/state/qr_code_profile_state.dart';
@@ -24,28 +24,27 @@ class QrCodeProfileScreen extends ConsumerWidget {
       next,
     ) {
       if (next is SuccessLoadProfile) {
-        _showProfileDialog(next.profile, (roomId) {
+        _showProfileDialog(context, next.profile, (roomId) {
           ref
               .read(qrCodeProfileNotifierProvider.notifier)
               .saveContact(next.profile.uid!, roomId);
         });
       } else if (next is SuccessSaveContact) {
-        Get.toNamed(
-          AppRoutes.chatting,
-          arguments: {'contact': next.contact, 'type': 'dm'},
-        );
+        context.pushNamed('${AppPages.chatting}/dm', extra: next.contact);
       }
     });
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar("qr_code".tr),
+      appBar: Toolbar.defaultToolbar("QR Code"),
       body: Column(
         children: [
           const SizedBox(height: 32),
           Center(
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Get.theme.colorScheme.onPrimary),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
               child: QrImageView(
                 data: StorageServices.to.userId,
@@ -54,26 +53,26 @@ class QrCodeProfileScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 dataModuleStyle: QrDataModuleStyle(
                   dataModuleShape: QrDataModuleShape.circle,
-                  color: Get.theme.colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
                 eyeStyle: QrEyeStyle(
                   eyeShape: QrEyeShape.circle,
-                  color: Get.theme.colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ),
           ),
           const SizedBox(height: 8),
-          Text('scan_qr_message'.tr, textAlign: TextAlign.center),
+          Text('Scan QR Message', textAlign: TextAlign.center),
           const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _qrActions('copy_link'.tr, 'assets/icons/ic_copy.png', () {
+              _qrActions(context, 'Copy Link', 'assets/icons/ic_copy.png', () {
                 Clipboard.setData(const ClipboardData(text: ""));
-                Get.rawSnackbar(message: "copy_clipboard".tr);
+                // Get.rawSnackbar(message: "copy_clipboard".tr);
               }),
-              _qrActions('share'.tr, 'assets/icons/ic_share.png', () {
+              _qrActions(context, 'Share', 'assets/icons/ic_share.png', () {
                 SharePlus.instance.share(
                   ShareParams(text: 'check out my website https://example.com'),
                 );
@@ -93,7 +92,9 @@ class QrCodeProfileScreen extends ConsumerWidget {
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Get.theme.colorScheme.onPrimary.withValues(alpha: 0.4),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onPrimary.withValues(alpha: 0.4),
                 ),
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -103,10 +104,10 @@ class QrCodeProfileScreen extends ConsumerWidget {
                 children: [
                   ImageAsset(
                     assets: 'assets/icons/ic_qr_scan.png',
-                    color: Get.theme.iconTheme.color!,
+                    color: Theme.of(context).iconTheme.color!,
                   ),
                   const SizedBox(width: 8),
-                  Text('scan_qr_code'.tr),
+                  Text('Scan QR Code'),
                 ],
               ),
             ),
@@ -116,12 +117,17 @@ class QrCodeProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _qrActions(String title, String icon, Function() onTap) {
+  Widget _qrActions(
+    BuildContext context,
+    String title,
+    String icon,
+    Function() onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         children: [
-          ImageAsset(assets: icon, color: Get.theme.iconTheme.color!),
+          ImageAsset(assets: icon, color: Theme.of(context).iconTheme.color!),
           const SizedBox(height: 4),
           Text(title),
         ],
@@ -155,9 +161,14 @@ class QrCodeProfileScreen extends ConsumerWidget {
     }
   }
 
-  void _showProfileDialog(Profile profile, Function(String) onSaveContact) {
-    Get.dialog(
-      AlertDialog(
+  void _showProfileDialog(
+    BuildContext context,
+    Profile profile,
+    Function(String) onSaveContact,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -180,11 +191,11 @@ class QrCodeProfileScreen extends ConsumerWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  Get.back();
+                  context.pop();
                   var roomId = const Uuid().v4();
                   onSaveContact(roomId);
                 },
-                child: Text('add_friend'.tr),
+                child: Text('Add Friend'),
               ),
             ),
           ],

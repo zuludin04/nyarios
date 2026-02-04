@@ -1,62 +1,22 @@
-import 'package:get/get.dart';
-import 'package:nyarios/ui/call/call_video_screen.dart';
-import 'package:nyarios/ui/call/call_voice_screen.dart';
-import 'package:nyarios/ui/blocked/blocked_friend_screen.dart';
-import 'package:nyarios/ui/friend/friend_screen.dart';
-import 'package:nyarios/ui/group/bindings/group_member_pick_binding.dart';
-import 'package:nyarios/ui/group/group_create_screen.dart';
-import 'package:nyarios/ui/group/group_edit_screen.dart';
-import 'package:nyarios/ui/group/group_member_pick_screen.dart';
-import 'package:nyarios/ui/qrcode/qr_code_profile_screen.dart';
+part of 'app_routes.dart';
 
-import '../ui/auth/signin_screen.dart';
-import '../ui/chat/chatting_screen.dart';
-import '../ui/contact/contact_detail_screen.dart';
-import '../ui/home/home_screen.dart';
-import '../ui/language/language_setting_screen.dart';
-import '../ui/profile/profile_edit_screen.dart';
-import '../ui/search/search_screen.dart';
-import '../ui/splash/splash_screen.dart';
-
-part 'app_routes.dart';
-
-class AppPages {
+abstract class AppPages {
   AppPages._();
 
-  static const initial = AppRoutes.splash;
-
-  static final pages = [
-    GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
-    GetPage(name: AppRoutes.signIn, page: () => const SignInScreen()),
-    GetPage(name: AppRoutes.contactFriend, page: () => const FriendScreen()),
-    GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
-    GetPage(name: AppRoutes.chatting, page: () => const ChattingScreen()),
-    GetPage(
-      name: AppRoutes.language,
-      page: () => const LanguageSettingScreen(),
-    ),
-    GetPage(name: AppRoutes.profileEdit, page: () => const ProfileEditScreen()),
-    GetPage(
-      name: AppRoutes.contactDetail,
-      page: () => const ContactDetailScreen(),
-    ),
-    GetPage(name: AppRoutes.search, page: () => const SearchScreen()),
-    GetPage(
-      name: AppRoutes.qrCodeProfile,
-      page: () => const QrCodeProfileScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.contactBlock,
-      page: () => const BlockedFriendScreen(),
-    ),
-    GetPage(name: AppRoutes.groupCreate, page: () => const GroupCreateScreen()),
-    GetPage(
-      name: AppRoutes.groupMemberPick,
-      page: () => const GroupMemberPickScreen(),
-      binding: GroupMemberPickBinding(),
-    ),
-    GetPage(name: AppRoutes.groupEdit, page: () => const GroupEditScreen()),
-    GetPage(name: AppRoutes.callVideo, page: () => const CallVideoScreen()),
-    GetPage(name: AppRoutes.callVoice, page: () => const CallVoiceScreen()),
-  ];
+  static const splash = '/';
+  static const home = '/home';
+  static const signIn = '/sign_in';
+  static const contactFriend = '/contact_friend';
+  static const chatting = '/chatting';
+  static const language = '/language';
+  static const profileEdit = '/profile_edit';
+  static const contactDetail = '/contact_detail';
+  static const search = '/search';
+  static const qrCodeProfile = '/qr_code_profile';
+  static const contactBlock = '/contact_block';
+  static const groupCreate = '/group_create';
+  static const groupMemberPick = '/group_member_pick';
+  static const groupEdit = '/group_edit';
+  static const callVideo = '/call_video';
+  static const callVoice = '/call_voice';
 }

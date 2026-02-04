@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_provider.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
@@ -26,7 +25,7 @@ class RecentChatScreen extends ConsumerWidget {
               separatorBuilder: (BuildContext context, int index) => Divider(),
             ),
             error: (_, _) => SliverFillRemaining(
-              child: Center(child: Text('something_went_wrong'.tr)),
+              child: Center(child: Text('Something Went Wrong')),
             ),
             loading: () =>
                 SliverFillRemaining(child: Center(child: CustomIndicator())),

@@ -9,13 +9,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:nyarios/core/utils/custom_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/firebase_options.dart';
-
-import 'core/utils/custom_theme.dart';
-import 'routes/app_pages.dart';
-import 'services/language_service.dart';
-import 'services/storage_services.dart';
+import 'package:nyarios/routes/app_routes.dart';
 
 @pragma('vm:entry-point')
 Future<void> _backgroundHandler(RemoteMessage message) async {
@@ -170,29 +167,18 @@ class _MyAppState extends State<MyApp> {
     Get.changeThemeMode(darkMode ? ThemeMode.dark : ThemeMode.light);
     firebaseMessaging.requestPermission(provisional: true);
     FirebaseMessaging.onMessage.listen(showFlutterNotifications);
-    loadToken();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp.router(
       title: 'Nyarios',
       theme: CustomTheme.defaultTheme,
       darkTheme: CustomTheme.darkTheme,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      initialBinding: BindingsBuilder(() {
-        Get.put(StorageServices());
-      }),
-      getPages: AppPages.pages,
-      translations: LanguageService(),
       locale: const Locale('en', 'US'),
-      fallbackLocale: const Locale('en', 'US'),
+      routerConfig: AppRoutes().appRoutes,
     );
-  }
-
-  Future<void> loadToken() async {
-    final token = await firebaseMessaging.getToken();
-    debugPrint("token $token");
   }
 }

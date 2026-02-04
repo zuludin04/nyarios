@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/routes/app_routes.dart';
 
 class LastMessageItem extends ConsumerWidget {
   final Chat lastMessage;
@@ -15,12 +15,9 @@ class LastMessageItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: () {
-        Get.toNamed(
-          AppRoutes.chatting,
-          arguments: {
-            'contact': Contact.fromLastMessage(lastMessage),
-            'type': lastMessage.type,
-          },
+        context.pushNamed(
+          "${AppPages.chatting}/${lastMessage.type}",
+          extra: Contact.fromLastMessage(lastMessage),
         );
       },
       child: Container(
@@ -82,7 +79,7 @@ class LastMessageItem extends ConsumerWidget {
     if (date.day == today.day) {
       return DateFormat("hh:mm a").format(date).toLowerCase();
     } else if ((today.day - date.day) == 1) {
-      return "yesterday".tr;
+      return "Yesterday";
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }

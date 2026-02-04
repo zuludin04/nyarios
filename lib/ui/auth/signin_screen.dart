@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/services/google_signin_service.dart';
 import 'package:nyarios/ui/auth/provider/signin_provider.dart';
 import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
@@ -14,9 +14,9 @@ class SignInScreen extends ConsumerWidget {
     final state = ref.watch(signInNotifierProvider);
     ref.listen(signInNotifierProvider.select((value) => value), (prev, next) {
       if (next is Success) {
-        Get.offAllNamed(AppRoutes.home);
+        context.go(AppPages.home);
       } else if (next is Error) {
-        Get.back();
+        context.pop();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(next.message)));

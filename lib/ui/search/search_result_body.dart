@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/chat.dart';
@@ -29,9 +28,7 @@ class SearchResultBody extends StatelessWidget {
     if (chatResult.isEmpty && messageResult.isEmpty) {
       return Center(
         child: EmptyWidget(
-          message: typeResult == 'lastMessage'
-              ? "empty_contact".tr
-              : "empty_chat".tr,
+          message: typeResult == 'lastMessage' ? "Empty Contact" : "Empty Chat",
           asset: 'assets/icons/ic_empty_search.png',
         ),
       );
@@ -85,9 +82,7 @@ class _ChatSearchItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                chat.profileId == StorageServices.to.userId ? 'you'.tr : user,
-              ),
+              Text(chat.profileId == StorageServices.to.userId ? 'You' : user),
               Text(_lastMessageDate(chat.sendDatetime)),
             ],
           ),
@@ -97,7 +92,9 @@ class _ChatSearchItem extends StatelessWidget {
               text: chat.message!,
               term: term,
               textStyle: TextStyle(
-                color: Get.theme.colorScheme.surface.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -114,7 +111,7 @@ class _ChatSearchItem extends StatelessWidget {
     if (date.day == today.day) {
       return DateFormat("hh:mm a").format(date).toLowerCase();
     } else if ((today.day - date.day) == 1) {
-      return "yesterday".tr;
+      return "Yesterday";
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }

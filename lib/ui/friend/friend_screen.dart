@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/friend/friend_controller.dart';
 
 class FriendScreen extends ConsumerWidget {
@@ -16,7 +16,7 @@ class FriendScreen extends ConsumerWidget {
     final controller = ref.watch(friendControllerProvider);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('contact'.tr),
+      appBar: Toolbar.defaultToolbar('Contact'),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -24,7 +24,7 @@ class FriendScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.groupCreate),
+                  onTap: () => context.pushNamed(AppPages.groupCreate),
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     child: Row(
@@ -42,7 +42,7 @@ class FriendScreen extends ConsumerWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          "create_group".tr,
+                          "Create Group",
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -58,7 +58,7 @@ class FriendScreen extends ConsumerWidget {
                     vertical: 8,
                   ),
                   child: Text(
-                    'your_friend'.tr,
+                    'Your Friend',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -80,11 +80,12 @@ class FriendScreen extends ConsumerWidget {
                           assets: 'assets/icons/ic_profile_not_found.png',
                           size: 80,
                         ),
-                        Text('no_friend'.tr),
+                        Text('No Friend'),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => Get.toNamed(AppRoutes.qrCodeProfile),
-                          child: Text('add_friend'.tr),
+                          onPressed: () =>
+                              context.pushNamed(AppPages.qrCodeProfile),
+                          child: Text('Add Friend'),
                         ),
                       ],
                     ),
@@ -100,7 +101,7 @@ class FriendScreen extends ConsumerWidget {
               }
             },
             error: (_, _) => SliverFillRemaining(
-              child: Center(child: Text('something_went_wrong'.tr)),
+              child: Center(child: Text('Something Went Wrong')),
             ),
             loading: () => const SliverFillRemaining(
               child: Center(child: CustomIndicator()),
@@ -120,10 +121,7 @@ class _FriendItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(
-        AppRoutes.chatting,
-        arguments: {'contact': contact, 'type': 'dm'},
-      ),
+      onTap: () => context.pushNamed("${AppPages.chatting}/dm", extra: contact),
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(

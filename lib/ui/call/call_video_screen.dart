@@ -8,16 +8,20 @@ import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CallVideoScreen extends ConsumerStatefulWidget {
-  const CallVideoScreen({super.key});
+  final String token;
+  final Contact contact;
+
+  const CallVideoScreen({
+    super.key,
+    required this.contact,
+    required this.token,
+  });
 
   @override
   ConsumerState<CallVideoScreen> createState() => _CallVideoScreenState();
 }
 
 class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
-  Contact contact = Get.arguments['contact'];
-  String token = Get.arguments['token'];
-
   bool isMuted = false;
   bool isSpeaker = false;
 
@@ -89,7 +93,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
                                   child: Image.network(
-                                    contact.profile!.photo!,
+                                    widget.contact.profile!.photo!,
                                     width: 70,
                                     height: 70,
                                     fit: BoxFit.fill,
@@ -97,7 +101,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  contact.profile!.name!,
+                                  widget.contact.profile!.name!,
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
                                   style: const TextStyle(
@@ -179,7 +183,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       controller: VideoViewController.remote(
         rtcEngine: agoraEngine,
         canvas: VideoCanvas(uid: _remoteUid),
-        connection: RtcConnection(channelId: contact.chatId!),
+        connection: RtcConnection(channelId: widget.contact.chatId!),
       ),
     );
   }
@@ -204,7 +208,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
     await agoraEngine.initialize(RtcEngineContext(appId: appId));
 
     await agoraEngine.enableVideo();
-    join(token);
+    join(widget.token);
 
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
@@ -241,9 +245,9 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
 
     await agoraEngine.joinChannel(
       token: token,
-      channelId: contact.chatId!,
+      channelId: widget.contact.chatId!,
       options: options,
-      uid: contact.profile!.id!,
+      uid: widget.contact.profile!.id!,
     );
   }
 

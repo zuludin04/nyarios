@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
@@ -15,19 +15,19 @@ import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_edit_bottom_sheet.dart';
 
 class GroupEditScreen extends ConsumerStatefulWidget {
-  const GroupEditScreen({super.key});
+  final Group group;
+
+  const GroupEditScreen({super.key, required this.group});
 
   @override
   ConsumerState<GroupEditScreen> createState() => _GroupEditScreenState();
 }
 
 class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
-  Group group = Get.arguments;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('edit_group'.tr),
+      appBar: Toolbar.defaultToolbar('Edit Group'),
       body: Column(
         children: [
           Padding(
@@ -35,7 +35,7 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
             child: StreamBuilder(
               stream: ref
                   .watch(groupRepositoryProvider)
-                  .loadStreamGroup(group.groupId!),
+                  .loadStreamGroup(widget.group.groupId!),
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -44,14 +44,18 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
                       child: ImageProfile(
                         url: snapshot.data?.photo,
                         onTap: () {
-                          _pickImage(false, group.name!);
+                          _pickImage(false, widget.group.name!);
                         },
                       ),
                     ),
                     const SizedBox(height: 32),
                     InkWell(
                       onTap: () {
-                        Get.bottomSheet(GroupEditBottomSheet(group: group));
+                        showBottomSheet(
+                          context: context,
+                          builder: (context) =>
+                              GroupEditBottomSheet(group: widget.group),
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -59,7 +63,7 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
                           children: [
                             ImageAsset(
                               assets: 'assets/icons/ic_group_2.png',
-                              color: Get.theme.iconTheme.color!,
+                              color: Theme.of(context).iconTheme.color!,
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -68,12 +72,16 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'name'.tr,
-                                    style: Get.textTheme.bodySmall,
+                                    'Name',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                   ),
                                   Text(
                                     snapshot.data?.name ?? "-",
-                                    style: Get.textTheme.titleMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
                                   ),
                                   const Divider(),
                                 ],
@@ -110,7 +118,7 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
 
         var storage = FirebaseStorage.instance.ref();
         var uploadImage = storage
-            .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
+            .child('nyarios/group/$imageName.jpg')
             .putFile(File(pickedFile.path));
 
         uploadImage.snapshotEvents.listen((event) async {
@@ -129,15 +137,17 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
               break;
             case TaskState.success:
               var url = await storage
-                  .child('nyarios/group/${imageName.removeAllWhitespace}.jpg')
+                  .child('nyarios/group/$imageName.jpg')
                   .getDownloadURL();
               ref
                   .watch(groupRepositoryProvider)
-                  .updateImageGroup(group.groupId!, url)
+                  .updateImageGroup(widget.group.groupId!, url)
                   .then((value) async {
-                    await _updateGroupRecentMessage(group);
-                    await _addGroupInfoMessage(group.chatId!);
-                    Get.back();
+                    await _updateGroupRecentMessage(widget.group);
+                    await _addGroupInfoMessage(widget.group.chatId!);
+                    if (mounted) {
+                      context.pop();
+                    }
                   });
               break;
           }
@@ -215,7 +225,7 @@ class ImageProfile extends StatelessWidget {
             bottom: 0,
             child: ImageAsset(
               assets: 'assets/icons/ic_edit.png',
-              color: Get.theme.iconTheme.color!,
+              color: Theme.of(context).iconTheme.color!,
             ),
           ),
         ],

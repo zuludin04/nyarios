@@ -3,15 +3,13 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/profile/profile_edit_provider.dart';
+import 'package:nyarios/ui/profile/widgets/profile_info_widget.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-
-import '../../core/widgets/toolbar.dart';
-import '../../services/storage_services.dart';
-import 'widgets/profile_info_widget.dart';
 
 class ProfileEditScreen extends ConsumerStatefulWidget {
   const ProfileEditScreen({super.key});
@@ -29,7 +27,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     final provider = ref.watch(profileEditProviderProvider.notifier);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('profile'.tr),
+      appBar: Toolbar.defaultToolbar('Profile'),
       body: Column(
         children: [
           Visibility(
@@ -65,7 +63,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     const SizedBox(height: 32),
                     ProfileInfoWidget(
                       icon: 'assets/icons/ic_profile.png',
-                      title: 'name'.tr,
+                      title: 'Name',
                       data: snapshot.data?.name ?? "-",
                       onUpdateProfile: (userId, value, isName) {
                         provider.updateProfile(
@@ -196,7 +194,7 @@ class ImageProfile extends StatelessWidget {
             bottom: 0,
             child: ImageAsset(
               assets: 'assets/icons/ic_edit.png',
-              color: Get.theme.iconTheme.color!,
+              color: Theme.of(context).iconTheme.color!,
             ),
           ),
         ],

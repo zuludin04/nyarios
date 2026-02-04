@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:material_floating_search_bar_2/material_floating_search_bar_2.dart';
 import 'package:nyarios/ui/search/search_controller.dart';
 import 'package:nyarios/ui/search/search_result_body.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  final String type;
+  final String roomId;
+  final String user;
+
+  const SearchScreen({
+    super.key,
+    required this.type,
+    required this.roomId,
+    required this.user,
+  });
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
-  final String type = Get.arguments['type'];
-  final String roomId = Get.arguments['roomId'];
-  final String user = Get.arguments['user'];
-
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(searchControllerProvider);
@@ -28,20 +32,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           data: (data) => SearchResultBody(
             chatResult: data.chatResult,
             messageResult: data.messageResult,
-            typeResult: type,
+            typeResult: widget.type,
           ),
           error: (_, _) => SizedBox(),
           loading: () => CircularProgressIndicator(),
         ),
         backdropColor: Colors.transparent,
         transition: CircularFloatingSearchBarTransition(),
-        hint: type == 'lastMessage' ? 'search_contact'.tr : 'search_chat'.tr,
+        hint: widget.type == 'lastMessage' ? 'Search Contact' : 'Search Chat',
         onQueryChanged: (query) {
           final controller = ref.read(searchControllerProvider.notifier);
-          if (type == 'lastMessage') {
+          if (widget.type == 'lastMessage') {
             controller.searchChat(query);
           } else {
-            controller.searchMessages(roomId, query);
+            controller.searchMessages(widget.roomId, query);
           }
         },
         builder: (context, transition) => Container(),

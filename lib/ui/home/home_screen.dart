@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/bottom_navigation.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/home/call_history/call_history_screen.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_screen.dart';
 import 'package:nyarios/ui/home/settings/settings_screen.dart';
@@ -29,13 +29,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () => Get.toNamed(
-              AppRoutes.search,
-              arguments: {'type': 'lastMessage', 'roomId': '', 'user': ''},
+            onPressed: () => context.pushNamed(
+              AppPages.search,
+              queryParameters: {
+                'type': 'lastMessage',
+                'roomId': '',
+                'user': '',
+              },
             ),
             icon: ImageAsset(
               assets: 'assets/icons/ic_search.png',
-              color: Get.theme.iconTheme.color!,
+              color: Theme.of(context).iconTheme.color!,
             ),
           ),
         ],
@@ -43,7 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       floatingActionButton: Visibility(
         visible: selectedNav != 2,
         child: FloatingActionButton(
-          onPressed: () => Get.toNamed(AppRoutes.contactFriend),
+          onPressed: () => context.pushNamed(AppPages.contactFriend),
           child: const ImageAsset(assets: 'assets/icons/ic_new_message.png'),
         ),
       ),

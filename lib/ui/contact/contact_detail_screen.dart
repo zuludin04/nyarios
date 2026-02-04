@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/services/storage_services.dart';
@@ -8,7 +7,8 @@ import 'package:nyarios/ui/contact/contact_detail_provider.dart';
 import 'package:nyarios/ui/contact/contact_media_tab.dart';
 
 class ContactDetailScreen extends ConsumerStatefulWidget {
-  const ContactDetailScreen({super.key});
+  final Contact contact;
+  const ContactDetailScreen({super.key, required this.contact});
 
   @override
   ConsumerState<ContactDetailScreen> createState() =>
@@ -17,8 +17,6 @@ class ContactDetailScreen extends ConsumerStatefulWidget {
 
 class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
     with SingleTickerProviderStateMixin {
-  final Contact lastMessage = Get.arguments;
-
   late TabController tabController;
 
   @override
@@ -37,8 +35,8 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
       contactDetailProviderProvider(
-        lastMessage.chatId!,
-        lastMessage.profileId!,
+        widget.contact.chatId!,
+        widget.contact.profileId!,
       ),
     );
 
@@ -49,7 +47,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
           return [
             SliverToBoxAdapter(
               child: Container(
-                color: Get.theme.colorScheme.surface,
+                color: Theme.of(context).colorScheme.surface,
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -71,7 +69,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            lastMessage.profile!.photo!,
+                            widget.contact.profile!.photo!,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -81,7 +79,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      lastMessage.profile!.name!,
+                      widget.contact.profile!.name!,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -123,21 +121,21 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                   controller: tabController,
                   tabs: [
                     Container(
-                      color: Get.theme.colorScheme.surface,
+                      color: Theme.of(context).colorScheme.surface,
                       width: double.infinity,
                       child: Tab(
                         icon: Text(
-                          'media'.tr,
+                          'Media',
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
                     Container(
-                      color: Get.theme.colorScheme.surface,
+                      color: Theme.of(context).colorScheme.surface,
                       width: double.infinity,
                       child: Tab(
                         icon: Text(
-                          'docs'.tr,
+                          'Docs',
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),

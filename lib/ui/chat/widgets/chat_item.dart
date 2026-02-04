@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/services/storage_services.dart';
@@ -82,7 +82,7 @@ class _ChatItemState extends State<ChatItem> {
               child: Container(
                 margin: const EdgeInsets.only(top: 8),
                 decoration: BoxDecoration(
-                  color: Get.theme.colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: const [
                     BoxShadow(
@@ -315,60 +315,63 @@ class _ChatItemState extends State<ChatItem> {
     }
   }
 
-  void showImageDialog(BuildContext context) async {
+  Future<void> showImageDialog(BuildContext context) async {
     var savePath = await getExternalStorageDirectory();
     File file = File("${savePath!.path}/images/${widget.chat.message}");
     var exist = await file.exists();
 
-    Get.dialog(
-      AlertDialog(
-        contentPadding: EdgeInsets.zero,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        content: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Visibility(
-                  visible: !exist,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: IconButton(
-                      onPressed: () async {
-                        if (!exist) {
-                          _downloadFile(
-                            widget.chat.url!,
-                            "${savePath.path}/images/${widget.chat.message}",
-                            () {
-                              Get.back();
-                              Get.rawSnackbar(
-                                message: "Success downloading file",
-                              );
-                            },
-                          );
-                        } else {
-                          Get.rawSnackbar(message: "File is already exist");
-                        }
-                      },
-                      icon: const Icon(Icons.download, color: Colors.white),
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          contentPadding: EdgeInsets.zero,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          content: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Visibility(
+                    visible: !exist,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: IconButton(
+                        onPressed: () async {
+                          if (!exist) {
+                            _downloadFile(
+                              widget.chat.url!,
+                              "${savePath.path}/images/${widget.chat.message}",
+                              () {
+                                context.pop();
+                                // Get.rawSnackbar(
+                                //   message: "Success downloading file",
+                                // );
+                              },
+                            );
+                          } else {
+                            // Get.rawSnackbar(message: "File is already exist");
+                          }
+                        },
+                        icon: const Icon(Icons.download, color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
-                Material(
-                  color: Colors.transparent,
-                  child: IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white),
+                  Material(
+                    color: Colors.transparent,
+                    child: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Image.network(widget.chat.url!),
-          ],
+                ],
+              ),
+              Image.network(widget.chat.url!),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   void checkFileAlreadyExist() async {

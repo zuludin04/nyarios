@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-import '../../core/constants.dart';
-import '../../core/widgets/toolbar.dart';
-import '../../services/storage_services.dart';
-import 'widgets/language_item.dart';
+import 'package:nyarios/core/constants.dart';
+import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/services/storage_services.dart';
+import 'package:nyarios/ui/language/widgets/language_item.dart';
 
 class LanguageSettingScreen extends StatefulWidget {
   const LanguageSettingScreen({super.key});
@@ -19,17 +17,16 @@ class _LanguageSettingScreenState extends State<LanguageSettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('language'.tr),
+      appBar: Toolbar.defaultToolbar('Language'),
       body: ListView.builder(
         itemBuilder: (context, index) {
           return LanguageItem(
             title: languages[index],
             selected: selectedLanguage == index,
             onTap: () {
-              StorageServices.to.selectedLanguage =
-                  index == 0 ? 'en_US' : 'id_ID';
-              Get.updateLocale(
-                  Locale(index == 0 ? "en" : "id", index == 0 ? "US" : "ID"));
+              StorageServices.to.selectedLanguage = index == 0
+                  ? 'en_US'
+                  : 'id_ID';
               setState(() {
                 selectedLanguage = index;
               });

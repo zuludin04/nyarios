@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_controller.dart';
 
 class BlockedFriendScreen extends ConsumerWidget {
@@ -16,7 +16,7 @@ class BlockedFriendScreen extends ConsumerWidget {
     final controller = ref.watch(blockedFriendControllerProvider);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('blocked_friend'.tr),
+      appBar: Toolbar.defaultToolbar('Blocked Friend'),
       body: controller.when(
         data: (data) {
           if (data.isEmpty) {
@@ -28,7 +28,7 @@ class BlockedFriendScreen extends ConsumerWidget {
                     assets: 'assets/icons/ic_profile_not_found.png',
                     size: 80,
                   ),
-                  Text('empty_blocked_friend'.tr),
+                  Text('Empty Blocked Friend'),
                 ],
               ),
             );
@@ -41,7 +41,7 @@ class BlockedFriendScreen extends ConsumerWidget {
             );
           }
         },
-        error: (_, _) => Center(child: Text('something_went_wrong'.tr)),
+        error: (_, _) => Center(child: Text('Something Went Wrong')),
         loading: () => const Center(child: CustomIndicator()),
       ),
     );
@@ -56,10 +56,7 @@ class _BlockedFriendItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Get.toNamed(
-        AppRoutes.chatting,
-        arguments: {'contact': contact, 'type': 'dm'},
-      ),
+      onTap: () => context.pushNamed("${AppPages.chatting}/dm", extra: contact),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         child: Row(

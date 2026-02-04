@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ContactFriendInfo extends StatelessWidget {
   final bool isAlreadyFriend;
@@ -20,7 +19,7 @@ class ContactFriendInfo extends StatelessWidget {
     return Visibility(
       visible: !isAlreadyFriend,
       child: Container(
-        color: Get.theme.colorScheme.surface,
+        color: Theme.of(context).colorScheme.surface,
         padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -29,12 +28,12 @@ class ContactFriendInfo extends StatelessWidget {
               _FriendNotAddedAction(
                 onTap: onAddFriend,
                 icon: Icons.add,
-                title: 'add_friend'.tr,
+                title: 'Add Friend',
               ),
             _FriendNotAddedAction(
               onTap: onBlock,
               icon: Icons.block_rounded,
-              title: isBlocked ? 'unblock'.tr : 'block'.tr,
+              title: isBlocked ? 'Unblock' : 'Block',
             ),
           ],
         ),

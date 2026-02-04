@@ -12,7 +12,14 @@ import 'package:nyarios/ui/group/controllers/group_member_pick_controller.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 
 class GroupMemberPickScreen extends ConsumerStatefulWidget {
-  const GroupMemberPickScreen({super.key});
+  final String source;
+  final Group group;
+
+  const GroupMemberPickScreen({
+    super.key,
+    required this.group,
+    required this.source,
+  });
 
   @override
   ConsumerState<GroupMemberPickScreen> createState() =>
@@ -22,20 +29,17 @@ class GroupMemberPickScreen extends ConsumerStatefulWidget {
 class _GroupMemberPickScreenState extends ConsumerState<GroupMemberPickScreen> {
   var controller = Get.find<GroupMemberPickController>();
 
-  String source = Get.arguments['source'] ?? "create";
-  Group group = Get.arguments['group'] ?? Group();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('pick_member'.tr, elevation: 0),
+      appBar: Toolbar.defaultToolbar('Pick Member', elevation: 0),
       floatingActionButton: GetBuilder<GroupMemberPickController>(
         builder: (controller) {
           return Visibility(
             visible: controller.selectedMembers.isNotEmpty,
             child: FloatingActionButton(
               onPressed: () {
-                controller.addGroupMembers(group);
+                controller.addGroupMembers(widget.group);
               },
               child: const Icon(Icons.check),
             ),
@@ -70,7 +74,7 @@ class _GroupMemberPickScreenState extends ConsumerState<GroupMemberPickScreen> {
 
           return Column(
             children: [
-              if (source == 'add')
+              if (widget.source == 'add')
                 GetBuilder<GroupMemberPickController>(
                   builder: (controller) {
                     return Visibility(
@@ -116,7 +120,7 @@ class _GroupMemberPickScreenState extends ConsumerState<GroupMemberPickScreen> {
   Widget _profileFriendItem(Profile? profile) {
     return InkWell(
       onTap: () {
-        if (source == 'create') {
+        if (widget.source == 'create') {
           Get.back(result: profile);
         } else {
           controller.addRemoveMember(false, profile!);

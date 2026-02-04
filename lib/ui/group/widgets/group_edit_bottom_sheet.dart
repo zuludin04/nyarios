@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/message.dart';
@@ -23,13 +23,13 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Get.theme.colorScheme.surface,
+      color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('group_name'.tr),
+          Text('Group Name'),
           TextFormField(
             controller: _textEditingController..text = widget.group.name!,
           ),
@@ -37,9 +37,9 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: Get.back,
+                onPressed: context.pop,
                 child: Text(
-                  'cancel'.tr,
+                  'Cancel',
                   style: TextStyle(
                     color: StorageServices.to.darkMode
                         ? Colors.white
@@ -59,14 +59,16 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
                         .then((value) async {
                           await _updateGroupRecentMessage(widget.group);
                           await _addGroupInfoMessage(widget.group.chatId!);
-                          Get.back();
+                          if (context.mounted) {
+                            context.pop();
+                          }
                         });
                   } else {
-                    Get.rawSnackbar(message: 'fill_message'.tr);
+                    // Get.rawSnackbar(message: 'fill_message'.tr);
                   }
                 },
                 child: Text(
-                  'save'.tr,
+                  'Save',
                   style: TextStyle(
                     color: StorageServices.to.darkMode
                         ? Colors.white

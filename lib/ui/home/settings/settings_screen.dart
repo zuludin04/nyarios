@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/settings/settings_provider.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -70,65 +70,64 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 error: (_, _) => SizedBox(),
                 loading: () => SizedBox(),
               ),
-              onPressed: (context) => Get.toNamed(AppRoutes.profileEdit),
+              onPressed: (context) => context.pushNamed(AppPages.profileEdit),
             ),
             SettingsTile(
-              title: Text('qr_code'.tr),
+              title: Text('QR Code'),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_qr_code.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
-              onPressed: (context) => Get.toNamed(AppRoutes.qrCodeProfile),
+              onPressed: (context) => context.pushNamed(AppPages.qrCodeProfile),
             ),
           ],
         ),
         SettingsSection(
-          title: Text("common".tr),
+          title: Text("Common"),
           tiles: [
             SettingsTile.switchTile(
               activeSwitchColor: const Color(0xfffb7f6b),
               initialValue: darkMode,
               onToggle: (value) {
-                Get.changeThemeMode(value ? ThemeMode.dark : ThemeMode.light);
                 StorageServices.to.darkMode = value;
                 setState(() {
                   darkMode = value;
                 });
               },
-              title: Text("dark_mode".tr),
+              title: Text("Dark Mode"),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_dark_mode.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
             ),
             SettingsTile(
-              title: Text('language'.tr),
+              title: Text('Language'),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_language.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
-              onPressed: (context) => Get.toNamed(AppRoutes.language),
+              onPressed: (context) => context.pushNamed(AppPages.language),
             ),
           ],
         ),
         SettingsSection(
-          title: Text("privacy".tr),
+          title: Text("Privacy"),
           tiles: [
             SettingsTile(
-              title: Text('blocked_friend'.tr),
+              title: Text('Blocked Friend'),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_empty_profile.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
-              onPressed: (context) => Get.toNamed(AppRoutes.contactBlock),
+              onPressed: (context) => context.pushNamed(AppPages.contactBlock),
             ),
           ],
         ),
         SettingsSection(
-          title: Text('other'.tr),
+          title: Text('Other'),
           tiles: [
             SettingsTile(
-              title: Text('rating'.tr),
+              title: Text('Rating'),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_star.png',
                 color: Theme.of(context).iconTheme.color!,
@@ -136,7 +135,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onPressed: (context) {},
             ),
             SettingsTile(
-              title: Text('share'.tr),
+              title: Text('Share'),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_share.png',
                 color: Theme.of(context).iconTheme.color!,
@@ -148,14 +147,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         SettingsSection(
           tiles: [
             SettingsTile(
-              title: Text('logout'.tr),
+              title: Text('Logout'),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_logout.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
               onPressed: (context) async {
                 await signOut();
-                Get.offAllNamed(AppRoutes.signIn);
+                if (context.mounted) {
+                  context.go(AppPages.signIn);
+                }
               },
             ),
           ],

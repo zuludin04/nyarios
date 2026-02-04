@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-
-import 'profile_edit_bottom_sheet.dart';
+import 'package:nyarios/ui/profile/widgets/profile_edit_bottom_sheet.dart';
 
 class ProfileInfoWidget extends StatelessWidget {
   final String icon;
@@ -23,12 +21,13 @@ class ProfileInfoWidget extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (title != 'E-Mail') {
-          Get.bottomSheet(
-            ProfileEditBottomSheet(
+          showBottomSheet(
+            context: context,
+            builder: (context) => ProfileEditBottomSheet(
               initialValue: data,
-              updateName: title == 'name'.tr,
+              updateName: title == 'Name',
               onUpdateProfile: (userId, value) {
-                onUpdateProfile(userId, value, title == 'name'.tr);
+                onUpdateProfile(userId, value, title == 'Name');
               },
             ),
           );
@@ -38,15 +37,15 @@ class ProfileInfoWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            ImageAsset(assets: icon, color: Get.theme.iconTheme.color!),
+            ImageAsset(assets: icon, color: Theme.of(context).iconTheme.color!),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(title, style: Get.textTheme.bodySmall),
-                  Text(data, style: Get.textTheme.titleMedium),
+                  Text(title, style: Theme.of(context).textTheme.bodySmall),
+                  Text(data, style: Theme.of(context).textTheme.titleMedium),
                   const Divider(),
                 ],
               ),

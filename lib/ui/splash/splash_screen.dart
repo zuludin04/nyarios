@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nyarios/routes/app_pages.dart';
-import 'package:nyarios/services/language_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/services/storage_services.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,7 +16,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Get.updateLocale(LanguageService.deviceLocale);
     splashTime();
     super.initState();
   }
@@ -52,9 +51,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(duration, () {
       var alreadyLogin = StorageServices.to.alreadyLogin;
       if (alreadyLogin) {
-        Get.offAllNamed(AppRoutes.home);
+        context.go(AppPages.home);
       } else {
-        Get.offAllNamed(AppRoutes.signIn);
+        context.go(AppPages.signIn);
       }
     });
   }

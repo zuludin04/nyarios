@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/domain/model/picked_message_file.dart';
@@ -30,11 +30,11 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
   Widget build(BuildContext context) {
     return widget.isBlocked
         ? Container(
-            color: Get.theme.colorScheme.surface,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.all(16),
             child: Center(
               child: Text(
-                'user_blocked'.tr,
+                'User Blocked',
                 style: const TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 16,
@@ -67,7 +67,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                           maxLines: null,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.all(16),
-                            hintText: 'message'.tr,
+                            hintText: 'Message',
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -86,8 +86,9 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                       ),
                       IconButton(
                         onPressed: () {
-                          Get.bottomSheet(
-                            SizedBox(
+                          showBottomSheet(
+                            context: context,
+                            builder: (context) => SizedBox(
                               height: 100,
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -106,12 +107,14 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                                 ],
                               ),
                             ),
-                            backgroundColor: Get.theme.colorScheme.surface,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
                           );
                         },
                         icon: ImageAsset(
                           assets: 'assets/icons/ic_attach_file.png',
-                          color: Get.theme.iconTheme.color!,
+                          color: Theme.of(context).iconTheme.color!,
                         ),
                       ),
                       IconButton(
@@ -123,7 +126,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                         },
                         icon: ImageAsset(
                           assets: 'assets/icons/ic_camera.png',
-                          color: Get.theme.iconTheme.color!,
+                          color: Theme.of(context).iconTheme.color!,
                         ),
                       ),
                     ],
@@ -158,7 +161,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
   Widget _pickFileMenu(String title, String icon) {
     return InkWell(
       onTap: () async {
-        Get.back();
+        context.pop();
         if (title == 'Gallery') {
           final image = await pickImage(true);
           if (image != null) {
@@ -175,9 +178,13 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ImageAsset(assets: icon, color: Get.theme.iconTheme.color!, size: 32),
+          ImageAsset(
+            assets: icon,
+            color: Theme.of(context).iconTheme.color!,
+            size: 32,
+          ),
           const SizedBox(height: 8),
-          Text(title.toLowerCase().tr),
+          Text(title.toLowerCase()),
         ],
       ),
     );

@@ -10,16 +10,20 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class CallVoiceScreen extends ConsumerStatefulWidget {
-  const CallVoiceScreen({super.key});
+  final String token;
+  final Contact contact;
+
+  const CallVoiceScreen({
+    super.key,
+    required this.contact,
+    required this.token,
+  });
 
   @override
   ConsumerState<CallVoiceScreen> createState() => _CallVoiceScreenState();
 }
 
 class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
-  Contact contact = Get.arguments['contact'];
-  String token = Get.arguments['token'];
-
   int? _remoteUid;
   bool _isJoined = false;
   RtcEngine? agoraEngine;
@@ -57,7 +61,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image.network(
-                  contact.profile!.photo!,
+                  widget.contact.profile!.photo!,
                   width: 100,
                   height: 100,
                   fit: BoxFit.fill,
@@ -65,7 +69,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                contact.profile!.name!,
+                widget.contact.profile!.name!,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -165,7 +169,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     final appId = dotenv.env["AGORA_APP_ID"];
     await agoraEngine?.initialize(RtcEngineContext(appId: appId));
 
-    join(token, contact.chatId!, contact.profile!.id!);
+    join(widget.token, widget.contact.chatId!, widget.contact.profile!.id!);
 
     agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(

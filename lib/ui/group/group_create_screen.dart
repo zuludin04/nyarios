@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
@@ -13,7 +13,7 @@ import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/routes/app_pages.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 import 'package:path_provider/path_provider.dart';
@@ -46,7 +46,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('create_group'.tr, elevation: 0),
+      appBar: Toolbar.defaultToolbar('Create Group', elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -84,14 +84,14 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
                 Expanded(
                   child: TextField(
                     controller: _groupTitleController,
-                    decoration: InputDecoration(hintText: 'group_name'.tr),
+                    decoration: InputDecoration(hintText: 'Group Name'),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             Text(
-              'member'.tr,
+              'Member',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
@@ -104,9 +104,8 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
                   if (index == 0) {
                     return GestureDetector(
                       onTap: () async {
-                        var result = await Get.toNamed(
-                          AppRoutes.groupMemberPick,
-                          arguments: {'source': 'create'},
+                        var result = await context.pushNamed(
+                          "${AppPages.groupMemberPick}/create",
                         );
                         if (result != null) {
                           if (result is Profile) {
@@ -128,7 +127,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
                             child: const Icon(Icons.add, color: Colors.black),
                           ),
                           const SizedBox(height: 4),
-                          Text('add_member'.tr, textAlign: TextAlign.center),
+                          Text('Add Member', textAlign: TextAlign.center),
                         ],
                       ),
                     );
@@ -167,7 +166,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
         },
         child: ImageAsset(
           assets: 'assets/icons/ic_done.png',
-          color: Get.theme.iconTheme.color!,
+          color: Theme.of(context).iconTheme.color!,
         ),
       ),
     );
@@ -176,18 +175,17 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
   void _createGroup(Group group, File file) {
     var storage = FirebaseStorage.instance.ref();
     var uploadImage = storage
-        .child(
-          'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg',
-        )
+        .child('nyarios/group/${_groupTitleController.text}.jpg')
         .putFile(file);
 
-    Get.dialog(
-      AlertDialog(
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
         content: Row(
           children: [
             const CircularProgressIndicator(),
             const SizedBox(width: 8),
-            Text('create_group'.tr),
+            Text('Create Group'),
           ],
         ),
       ),
@@ -209,9 +207,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
           break;
         case TaskState.success:
           var url = await storage
-              .child(
-                'nyarios/group/${_groupTitleController.text.removeAllWhitespace}.jpg',
-              )
+              .child('nyarios/group/${_groupTitleController.text}.jpg')
               .getDownloadURL();
           group.photo = url;
           ref.watch(groupRepositoryProvider).createGroupChat(group).then((
@@ -219,8 +215,10 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
           ) async {
             await _updateGroupRecentMessage(group);
             await _addGroupInfoMessage(group.chatId!);
-            Get.back();
-            Get.back();
+            if (mounted) {
+              context.pop();
+              context.pop();
+            }
           });
           break;
       }
