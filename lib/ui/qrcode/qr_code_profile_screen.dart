@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -70,7 +71,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
             children: [
               _qrActions(context, 'Copy Link', 'assets/icons/ic_copy.png', () {
                 Clipboard.setData(const ClipboardData(text: ""));
-                // Get.rawSnackbar(message: "copy_clipboard".tr);
+                Flushbar(message: "Copy clipboard").show(context);
               }),
               _qrActions(context, 'Share', 'assets/icons/ic_share.png', () {
                 SharePlus.instance.share(

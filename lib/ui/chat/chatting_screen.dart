@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -176,9 +177,11 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     .toList()
                     .join();
                 FlutterClipboard.copy(copiedMessages).then((value) {
-                  // Get.rawSnackbar(
-                  //   message: "${copiedMessages.length} ${"messages_copied".tr}",
-                  // );
+                  if (context.mounted) {
+                    Flushbar(
+                      message: "${copiedMessages.length} messages copies",
+                    ).show(context);
+                  }
                   controller.clearSelectedChat();
                 });
               },

@@ -1,8 +1,9 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
@@ -154,8 +155,12 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     await [Permission.microphone].request();
 
     if (await Permission.microphone.isDenied) {
-      Get.back();
-      Get.rawSnackbar(message: 'Need microphone permission to make a call');
+      if (mounted) {
+        context.pop();
+        Flushbar(
+          message: 'Need microphone permission to make a call',
+        ).show(context);
+      }
     } else {
       setupVoiceSDKEngine();
     }
@@ -189,7 +194,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
               int remoteUid,
               UserOfflineReasonType reason,
             ) {
-              Get.back();
+              context.pop();
             },
       ),
     );
@@ -212,6 +217,6 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   void leave() {
     agoraEngine?.leaveChannel();
     agoraEngine?.release();
-    Get.back();
+    context.pop();
   }
 }

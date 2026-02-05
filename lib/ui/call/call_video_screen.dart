@@ -1,4 +1,5 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -193,10 +194,18 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
 
     if (await Permission.microphone.isDenied) {
       Get.back();
-      Get.rawSnackbar(message: 'Need microphone permission to make a call');
+      if (mounted) {
+        Flushbar(
+          message: 'Need microphone permission to make a call',
+        ).show(context);
+      }
     } else if (await Permission.camera.isDenied) {
       Get.back();
-      Get.rawSnackbar(message: 'Need camera permission to make a video call');
+      if (mounted) {
+        Flushbar(
+          message: 'Need camera permission to make a video call',
+        ).show(context);
+      }
     } else {
       setupVideoSDKEngine();
     }

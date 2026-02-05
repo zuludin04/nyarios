@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,9 +18,7 @@ class SignInScreen extends ConsumerWidget {
         context.go(AppPages.home);
       } else if (next is Error) {
         context.pop();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(next.message)));
+        Flushbar(message: next.message).show(context);
       }
     });
 

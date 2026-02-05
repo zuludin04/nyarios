@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -69,7 +70,7 @@ class _ChatItemState extends State<ChatItem> {
         //         () {},
         //       );
         //     } else {
-        //       Get.rawSnackbar(message: "File is already exist");
+        //       Flushbar(message: "File is already exist").show(context);
         //     }
         //   }
         // }
@@ -344,13 +345,15 @@ class _ChatItemState extends State<ChatItem> {
                               "${savePath.path}/images/${widget.chat.message}",
                               () {
                                 context.pop();
-                                // Get.rawSnackbar(
-                                //   message: "Success downloading file",
-                                // );
+                                Flushbar(
+                                  message: "Success downloading file",
+                                ).show(context);
                               },
                             );
                           } else {
-                            // Get.rawSnackbar(message: "File is already exist");
+                            Flushbar(
+                              message: "File is already exist",
+                            ).show(context);
                           }
                         },
                         icon: const Icon(Icons.download, color: Colors.white),

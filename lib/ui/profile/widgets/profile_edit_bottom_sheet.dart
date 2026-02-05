@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/services/storage_services.dart';
@@ -57,7 +58,7 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
                     );
                     context.pop();
                   } else {
-                    // Get.rawSnackbar(message: 'fill_message'.tr);
+                    Flushbar(message: 'Fill message').show(context);
                   }
                 },
                 child: Text(

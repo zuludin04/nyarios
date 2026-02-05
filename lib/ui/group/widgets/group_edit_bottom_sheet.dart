@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -64,7 +65,7 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
                           }
                         });
                   } else {
-                    // Get.rawSnackbar(message: 'fill_message'.tr);
+                    Flushbar(message: 'Fill message').show(context);
                   }
                 },
                 child: Text(
