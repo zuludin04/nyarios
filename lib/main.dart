@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:nyarios/core/utils/custom_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/firebase_options.dart';
@@ -23,15 +21,13 @@ Future<void> _backgroundHandler(RemoteMessage message) async {
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
-  // ignore: avoid_print
-  print(
+  debugPrint(
     'notification(${notificationResponse.id}) action tapped: '
     '${notificationResponse.actionId} with'
     ' payload: ${notificationResponse.payload}',
   );
   if (notificationResponse.input?.isNotEmpty ?? false) {
-    // ignore: avoid_print
-    print(
+    debugPrint(
       'notification action tapped with input: ${notificationResponse.input}',
     );
   }
@@ -140,7 +136,6 @@ void main() async {
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
-  await GetStorage.init();
 
   if (!kIsWeb) {
     await setupFlutterNotifications();
@@ -157,14 +152,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final storage = GetStorage();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
     super.initState();
-    bool darkMode = storage.read('DARK_MODE') ?? false;
-    Get.changeThemeMode(darkMode ? ThemeMode.dark : ThemeMode.light);
     firebaseMessaging.requestPermission(provisional: true);
     FirebaseMessaging.onMessage.listen(showFlutterNotifications);
   }

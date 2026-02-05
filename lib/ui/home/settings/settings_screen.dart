@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/settings/settings_provider.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -17,8 +16,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  bool darkMode = StorageServices.to.darkMode;
-
   @override
   Widget build(BuildContext context) {
     final provider = ref.watch(settingsProviderProvider);
@@ -33,7 +30,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         titleTextColor: Colors.white,
         settingsListBackground: Color(0xff252526),
       ),
-      brightness: darkMode ? Brightness.dark : Brightness.light,
+      brightness: Brightness.light,
       sections: [
         SettingsSection(
           tiles: [
@@ -87,13 +84,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           tiles: [
             SettingsTile.switchTile(
               activeSwitchColor: const Color(0xfffb7f6b),
-              initialValue: darkMode,
-              onToggle: (value) {
-                StorageServices.to.darkMode = value;
-                setState(() {
-                  darkMode = value;
-                });
-              },
+              initialValue: false,
+              onToggle: (value) {},
               title: Text("Dark Mode"),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_dark_mode.png',

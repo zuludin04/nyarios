@@ -1,26 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/group.dart';
-import 'package:nyarios/services/storage_services.dart';
 
 class ChatRepository {
   final FirebaseFirestore firestore;
 
   ChatRepository({required this.firestore});
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadRecentChat() async* {
+  Stream<QuerySnapshot<Map<String, dynamic>>> loadRecentChat(
+    String? userId,
+  ) async* {
     yield* firestore
         .collection('chat')
-        .doc(StorageServices.to.userId)
+        .doc(userId)
         .collection('receiver')
         .orderBy('lastMessageSent', descending: true)
         .snapshots();
   }
 
-  Future<List<Chat>> loadDmChat() async {
+  Future<List<Chat>> loadDmChat(String? userId) async {
     var results = await firestore
         .collection('chat')
-        .doc(StorageServices.to.userId)
+        .doc(userId)
         .collection('receiver')
         .where('type', isEqualTo: 'dm')
         .get();
@@ -31,13 +32,13 @@ class ChatRepository {
     return result;
   }
 
-  void updateRecentChat(bool fromSender, Chat lastMessage) {
+  void updateRecentChat(bool fromSender, Chat lastMessage, String? userId) {
     firestore
         .collection('chat')
-        .doc(fromSender ? StorageServices.to.userId : lastMessage.profileId)
+        .doc(fromSender ? userId : lastMessage.profileId)
         .collection('receiver')
-        .doc(fromSender ? lastMessage.profileId : StorageServices.to.userId)
-        .set(lastMessage.toMap(fromSender));
+        .doc(fromSender ? lastMessage.profileId : userId)
+        .set(lastMessage.toMap(fromSender, userId));
   }
 
   Future<void> updateGroupRecentChat(Group group, Chat chat) async {
@@ -51,10 +52,10 @@ class ChatRepository {
     }
   }
 
-  Future<void> deleteGroupChat(String groupId) async {
+  Future<void> deleteGroupChat(String groupId, String userId) async {
     await firestore
         .collection('chat')
-        .doc(StorageServices.to.userId)
+        .doc(userId)
         .collection('receiver')
         .doc(groupId)
         .delete();

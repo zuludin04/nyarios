@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/services/storage_services.dart';
 
 class ProfileRepository {
   final FirebaseFirestore firestore;
@@ -22,20 +21,9 @@ class ProfileRepository {
 
       updateIncrementedId(userId);
       firestore.collection("profile").doc(profile.uid).set(profile.toMap());
-
-      StorageServices.to.userId = profile.uid ?? "";
-      StorageServices.to.userName = profile.name ?? "";
-      StorageServices.to.email = profile.email ?? "";
-      StorageServices.to.userImage = profile.photo ?? "";
-      StorageServices.to.id = userId;
     } else {
       final userProfile = await loadSingleProfile(profile.uid);
       await updateFcmToken(fcmToken, userProfile.uid);
-      StorageServices.to.userId = userProfile.uid ?? "";
-      StorageServices.to.userName = userProfile.name ?? "";
-      StorageServices.to.email = userProfile.email ?? "";
-      StorageServices.to.userImage = userProfile.photo ?? "";
-      StorageServices.to.id = userProfile.id ?? 0;
     }
   }
 
@@ -46,11 +34,10 @@ class ProfileRepository {
     );
 
     var credentialAuth = await auth.signInWithCredential(credential);
-    StorageServices.to.alreadyLogin = true;
     return credentialAuth.user;
   }
 
-  Future<bool> checkIfUserExist(String userId) async {
+  Future<bool> checkIfUserExist(String? userId) async {
     var doc = await firestore.collection("profile").doc(userId).get();
     return doc.exists;
   }
@@ -67,7 +54,7 @@ class ProfileRepository {
     });
   }
 
-  Stream<Profile> loadStreamProfile(String uid) async* {
+  Stream<Profile> loadStreamProfile(String? uid) async* {
     var profile = firestore.collection("profile").doc(uid).snapshots();
     yield* profile.map((event) => Profile.fromMap(event.data()!));
   }
@@ -77,14 +64,14 @@ class ProfileRepository {
     yield* profile;
   }
 
-  Future<void> updateImageProfile(String profileId, String url) async {
+  Future<void> updateImageProfile(String? profileId, String url) async {
     firestore.collection("profile").doc(profileId).update({'photo': url});
   }
 
-  Future<void> updateOnlineStatus(bool status) async {
-    var exist = await checkIfUserExist(StorageServices.to.userId);
+  Future<void> updateOnlineStatus(bool status, String? userId) async {
+    var exist = await checkIfUserExist(userId);
     if (exist) {
-      firestore.collection("profile").doc(StorageServices.to.userId).update({
+      firestore.collection("profile").doc(userId).update({
         'visibility': status,
       });
     }
@@ -97,7 +84,7 @@ class ProfileRepository {
   }
 
   Future<void> updateProfile(
-    String profileId,
+    String? profileId,
     String value,
     bool updateName,
   ) async {

@@ -14,8 +14,10 @@ class SearchController extends _$SearchController {
   Future<void> searchChat(String term) async {
     final chatRepo = ref.watch(chatRepositoryProvider);
     final profileRepo = ref.watch(profileRepositoryProvider);
+    final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
-    final chats = await chatRepo.loadDmChat();
+    final user = await localRepo.getUserProfile();
+    final chats = await chatRepo.loadDmChat(user.userId);
     final chatProfiles = chats.map((e) async {
       final profile = await profileRepo.loadSingleProfile(e.profileId);
       e.profile = profile;
@@ -29,15 +31,22 @@ class SearchController extends _$SearchController {
         )
         .toList();
 
-    state = AsyncData(state.value!.copyWith(chatResult: results));
+    state = AsyncData(
+      state.value!.copyWith(chatResult: results, userId: user.userId),
+    );
   }
 
   Future<void> searchMessages(String roomId, String query) async {
     final messageRepo = ref.watch(messageRepositoryProvider);
+    final localRepo = ref.watch(sharedLocalRepositoryProvider);
+
+    final user = await localRepo.getUserProfile();
     final messages = await messageRepo.searchMessages(roomId);
     final results = messages
         .where((e) => e.message!.toLowerCase().contains(query.toLowerCase()))
         .toList();
-    state = AsyncData(state.value!.copyWith(messageResult: results));
+    state = AsyncData(
+      state.value!.copyWith(messageResult: results, userId: user.userId),
+    );
   }
 }

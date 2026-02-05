@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/services/storage_services.dart';
 
 class Toolbar {
   static AppBar defaultToolbar(
+    BuildContext context,
     String title, {
     String subtitle = "",
     List<Widget> actions = const [],
@@ -19,10 +19,10 @@ class Toolbar {
       leading:
           leading ??
           IconButton(
-            onPressed: Get.back,
+            onPressed: context.pop,
             icon: ImageAsset(
               assets: 'assets/icons/ic_back.png',
-              color: Get.theme.iconTheme.color!,
+              color: Theme.of(context).iconTheme.color!,
             ),
           ),
       elevation: elevation,
@@ -32,7 +32,7 @@ class Toolbar {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             titleWidget ?? Text(title),
-            _buildSubtitleWidget(stream, subtitle, uid),
+            _buildSubtitleWidget(context, stream, subtitle, uid),
           ],
         ),
       ),
@@ -41,6 +41,7 @@ class Toolbar {
   }
 
   static Widget _buildSubtitleWidget(
+    BuildContext context,
     bool stream,
     String subtitle,
     String? uid,
@@ -69,26 +70,13 @@ class Toolbar {
         visible: false,
         child: Text(
           "Offline",
-          style: TextStyle(
-            fontSize: 14,
-            color: StorageServices.to.darkMode
-                ? Colors.white70
-                : Colors.black54,
-          ),
+          style: Theme.of(context).textTheme.displayMedium,
         ),
       );
     } else {
       return Visibility(
         visible: subtitle != "",
-        child: Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 14,
-            color: StorageServices.to.darkMode
-                ? Colors.white70
-                : Colors.black54,
-          ),
-        ),
+        child: Text(subtitle, style: Theme.of(context).textTheme.displayMedium),
       );
     }
   }

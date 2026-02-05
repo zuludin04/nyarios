@@ -33,7 +33,7 @@ final class SettingsProviderProvider
   SettingsProvider create() => SettingsProvider();
 }
 
-String _$settingsProviderHash() => r'21c0c438983fb2d62af35192372f5119c6eab712';
+String _$settingsProviderHash() => r'0786adf8b6d60754d1ca3fa6995c6939bc4c94f1';
 
 abstract class _$SettingsProvider extends $StreamNotifier<Profile> {
   Stream<Profile> build();

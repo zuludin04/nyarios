@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
-import 'package:nyarios/core/widgets/custom_indicator.dart';
-import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/ui/group/controllers/group_member_pick_controller.dart';
-import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 
 class GroupMemberPickScreen extends ConsumerStatefulWidget {
   final String source;
@@ -27,105 +20,87 @@ class GroupMemberPickScreen extends ConsumerStatefulWidget {
 }
 
 class _GroupMemberPickScreenState extends ConsumerState<GroupMemberPickScreen> {
-  var controller = Get.find<GroupMemberPickController>();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Pick Member', elevation: 0),
-      floatingActionButton: GetBuilder<GroupMemberPickController>(
-        builder: (controller) {
-          return Visibility(
-            visible: controller.selectedMembers.isNotEmpty,
-            child: FloatingActionButton(
-              onPressed: () {
-                controller.addGroupMembers(widget.group);
-              },
-              child: const Icon(Icons.check),
-            ),
-          );
-        },
+      appBar: Toolbar.defaultToolbar(context, 'Pick Member', elevation: 0),
+      floatingActionButton: Visibility(
+        visible: true,
+        child: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.check),
+        ),
       ),
-      body: FutureBuilder<List<Contact>>(
-        future: ref.watch(contactRepositoryProvider).loadContacts(false),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('something_went_wrong'.tr));
-          }
+      // body: FutureBuilder<List<Contact>>(
+      //   future: ref.watch(contactRepositoryProvider).loadContacts(false),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasError) {
+      //       return Center(child: Text('something_went_wrong'.tr));
+      //     }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CustomIndicator());
-          }
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const Center(child: CustomIndicator());
+      //     }
 
-          if (snapshot.data!.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const ImageAsset(
-                    assets: 'assets/icons/ic_profile_not_found.png',
-                    size: 80,
-                  ),
-                  Text('no_friend'.tr),
-                ],
-              ),
-            );
-          }
+      //     if (snapshot.data!.isEmpty) {
+      //       return Center(
+      //         child: Column(
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: [
+      //             const ImageAsset(
+      //               assets: 'assets/icons/ic_profile_not_found.png',
+      //               size: 80,
+      //             ),
+      //             Text('No Friend'),
+      //           ],
+      //         ),
+      //       );
+      //     }
 
-          return Column(
-            children: [
-              if (widget.source == 'add')
-                GetBuilder<GroupMemberPickController>(
-                  builder: (controller) {
-                    return Visibility(
-                      visible: controller.selectedMembers.isNotEmpty,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: SizedBox(
-                          height: 80,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: GroupMemberItem(
-                                  profile: controller.selectedMembers[index],
-                                  onRemoveMember: (profile) {
-                                    controller.addRemoveMember(true, profile);
-                                  },
-                                ),
-                              );
-                            },
-                            itemCount: controller.selectedMembers.length,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) =>
-                      _profileFriendItem(snapshot.data![index].profile),
-                  itemCount: snapshot.data!.length,
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+      //     return Column(
+      //       children: [
+      //         if (widget.source == 'add')
+      //           Visibility(
+      //             visible: controller.selectedMembers.isNotEmpty,
+      //             child: Padding(
+      //               padding: const EdgeInsets.all(16),
+      //               child: SizedBox(
+      //                 height: 80,
+      //                 child: ListView.builder(
+      //                   scrollDirection: Axis.horizontal,
+      //                   itemBuilder: (context, index) {
+      //                     return Padding(
+      //                       padding: const EdgeInsets.only(right: 12),
+      //                       child: GroupMemberItem(
+      //                         profile: controller.selectedMembers[index],
+      //                         onRemoveMember: (profile) {
+      //                           controller.addRemoveMember(true, profile);
+      //                         },
+      //                       ),
+      //                     );
+      //                   },
+      //                   itemCount: controller.selectedMembers.length,
+      //                 ),
+      //               ),
+      //             ),
+      //           ),
+      //         Expanded(
+      //           child: ListView.builder(
+      //             itemBuilder: (context, index) =>
+      //                 _profileFriendItem(snapshot.data![index].profile),
+      //             itemCount: snapshot.data!.length,
+      //           ),
+      //         ),
+      //       ],
+      //     );
+      //   },
+      // ),
     );
   }
 
-  Widget _profileFriendItem(Profile? profile) {
+  Widget profileFriendItem(Profile? profile) {
     return InkWell(
-      onTap: () {
-        if (widget.source == 'create') {
-          Get.back(result: profile);
-        } else {
-          controller.addRemoveMember(false, profile!);
-        }
-      },
+      onTap: () {},
       child: Column(
         children: [
           Container(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/services/storage_services.dart';
 
 class GroupMemberItem extends StatelessWidget {
   final Profile profile;
@@ -28,7 +27,7 @@ class GroupMemberItem extends StatelessWidget {
               ),
             ),
             Visibility(
-              visible: profile.uid != StorageServices.to.userId,
+              visible: true,
               child: Positioned(
                 right: 0,
                 child: GestureDetector(

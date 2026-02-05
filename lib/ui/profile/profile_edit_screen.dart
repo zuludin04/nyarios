@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/profile/profile_edit_provider.dart';
 import 'package:nyarios/ui/profile/widgets/profile_info_widget.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -27,7 +26,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     final provider = ref.watch(profileEditProviderProvider.notifier);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Profile'),
+      appBar: Toolbar.defaultToolbar(context, 'Profile'),
       body: Column(
         children: [
           Visibility(
@@ -42,7 +41,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
           Padding(
             padding: const EdgeInsets.all(16),
             child: StreamBuilder(
-              stream: provider.loadStreamProfile(StorageServices.to.userId),
+              stream: provider.loadStreamProfile(),
               builder: (context, snapshot) {
                 return Column(
                   children: [
@@ -52,10 +51,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                         url: snapshot.data?.photo,
                         onTap: () {
                           _pickImage(false, (url) {
-                            provider.updateImageProfile(
-                              StorageServices.to.userId,
-                              url,
-                            );
+                            provider.updateImageProfile(url);
                           });
                         },
                       ),
@@ -65,36 +61,24 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                       icon: 'assets/icons/ic_profile.png',
                       title: 'Name',
                       data: snapshot.data?.name ?? "-",
-                      onUpdateProfile: (userId, value, isName) {
-                        provider.updateProfile(
-                          StorageServices.to.userId,
-                          value,
-                          isName,
-                        );
+                      onUpdateProfile: (value, isName) {
+                        provider.updateProfile(value, isName);
                       },
                     ),
                     ProfileInfoWidget(
                       icon: 'assets/icons/ic_status.png',
                       title: 'Status',
                       data: snapshot.data?.status ?? "-",
-                      onUpdateProfile: (userId, value, isName) {
-                        provider.updateProfile(
-                          StorageServices.to.userId,
-                          value,
-                          isName,
-                        );
+                      onUpdateProfile: (value, isName) {
+                        provider.updateProfile(value, isName);
                       },
                     ),
                     ProfileInfoWidget(
                       icon: 'assets/icons/ic_email.png',
                       title: 'E-Mail',
                       data: snapshot.data?.email ?? "-",
-                      onUpdateProfile: (userId, value, isName) {
-                        provider.updateProfile(
-                          StorageServices.to.userId,
-                          value,
-                          isName,
-                        );
+                      onUpdateProfile: (value, isName) {
+                        provider.updateProfile(value, isName);
                       },
                     ),
                   ],
@@ -116,7 +100,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     if (pickedFile != null) {
       var storage = FirebaseStorage.instance.ref();
       var uploadImage = storage
-          .child('nyarios/profile/${StorageServices.to.userId}.jpg')
+          .child('nyarios/profile/.jpg')
           .putFile(File(pickedFile.path));
 
       setState(() {
@@ -142,10 +126,9 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
             break;
           case TaskState.success:
             var url = await storage
-                .child('nyarios/profile/${StorageServices.to.userId}.jpg')
+                .child('nyarios/profile/.jpg')
                 .getDownloadURL();
             updateProfileImage(url);
-            StorageServices.to.userImage = url;
             setState(() {
               upload = false;
             });

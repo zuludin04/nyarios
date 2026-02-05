@@ -6,8 +6,10 @@ import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/di/dio_module.dart';
 import 'package:nyarios/di/firebase_module.dart';
+import 'package:nyarios/di/shared_prefs_module.dart';
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   final firestore = firestoreProvider(ref);
@@ -43,4 +45,9 @@ final messageRepositoryProvider = Provider<MessageRepository>((ref) {
 final agoraRepositoryProvider = Provider<AgoraRepository>((ref) {
   final dio = dioProvider(ref);
   return AgoraRepository(dio: dio);
+});
+
+final sharedLocalRepositoryProvider = Provider<SharedLocalRepository>((ref) {
+  final prefs = ref.watch(sharedPrefsProvider);
+  return SharedLocalRepository(sharedPrefs: prefs);
 });

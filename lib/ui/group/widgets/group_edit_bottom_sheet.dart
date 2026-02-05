@@ -2,11 +2,8 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/group.dart';
-import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/services/storage_services.dart';
 
 class GroupEditBottomSheet extends ConsumerStatefulWidget {
   final Group group;
@@ -41,11 +38,7 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
                 onPressed: context.pop,
                 child: Text(
                   'Cancel',
-                  style: TextStyle(
-                    color: StorageServices.to.darkMode
-                        ? Colors.white
-                        : const Color(0xffb3404a),
-                  ),
+                  style: TextStyle(color: const Color(0xffb3404a)),
                 ),
               ),
               TextButton(
@@ -70,11 +63,7 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
                 },
                 child: Text(
                   'Save',
-                  style: TextStyle(
-                    color: StorageServices.to.darkMode
-                        ? Colors.white
-                        : const Color(0xffb3404a),
-                  ),
+                  style: TextStyle(color: const Color(0xffb3404a)),
                 ),
               ),
             ],
@@ -85,32 +74,32 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
   }
 
   Future<void> _addGroupInfoMessage(String chatId) async {
-    var repo = ref.read(messageRepositoryProvider);
+    // var repo = ref.read(messageRepositoryProvider);
 
-    Message newMessage = Message(
-      message: '${StorageServices.to.userName} update group name',
-      type: 'info',
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      url: '',
-      fileSize: '',
-      profileId: StorageServices.to.userId,
-      chatId: chatId,
-    );
+    // Message newMessage = Message(
+    //   message: '${StorageServices.to.userName} update group name',
+    //   type: 'info',
+    //   sendDatetime: DateTime.now().millisecondsSinceEpoch,
+    //   url: '',
+    //   fileSize: '',
+    //   profileId: StorageServices.to.userId,
+    //   chatId: chatId,
+    // );
 
-    repo.sendNewMessage(newMessage);
+    // repo.sendNewMessage(newMessage);
   }
 
   Future<void> _updateGroupRecentMessage(Group group) async {
-    var repo = ref.read(chatRepositoryProvider);
+    // var repo = ref.read(chatRepositoryProvider);
 
-    var chat = Chat(
-      profileId: group.groupId,
-      lastMessage: '${StorageServices.to.userName} update group image',
-      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
-      chatId: group.chatId,
-      type: 'group',
-    );
+    // var chat = Chat(
+    //   profileId: group.groupId,
+    //   lastMessage: '${StorageServices.to.userName} update group image',
+    //   lastMessageSent: DateTime.now().millisecondsSinceEpoch,
+    //   chatId: group.chatId,
+    //   type: 'group',
+    // );
 
-    await repo.updateGroupRecentChat(group, chat);
+    // await repo.updateGroupRecentChat(group, chat);
   }
 }

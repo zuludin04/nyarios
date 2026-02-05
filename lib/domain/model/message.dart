@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:nyarios/services/storage_services.dart';
-
 class Message {
   String? messageId;
   String? message;
@@ -76,13 +74,14 @@ class Message {
     required String uploadId,
     required File localFile,
     required int sendDatetime,
+    required String userId,
   }) {
     return Message(
       messageId: uploadId,
       isUploading: true,
       sendDatetime: sendDatetime,
       type: 'image',
-      profileId: StorageServices.to.userId,
+      profileId: userId,
     );
   }
 }

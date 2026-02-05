@@ -6,7 +6,7 @@ class ProfileInfoWidget extends StatelessWidget {
   final String icon;
   final String title;
   final String data;
-  final Function(String, String, bool) onUpdateProfile;
+  final Function(String, bool) onUpdateProfile;
 
   const ProfileInfoWidget({
     super.key,
@@ -26,8 +26,8 @@ class ProfileInfoWidget extends StatelessWidget {
             builder: (context) => ProfileEditBottomSheet(
               initialValue: data,
               updateName: title == 'Name',
-              onUpdateProfile: (userId, value) {
-                onUpdateProfile(userId, value, title == 'Name');
+              onUpdateProfile: (value) {
+                onUpdateProfile(value, title == 'Name');
               },
             ),
           );

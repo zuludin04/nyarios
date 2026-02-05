@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
@@ -13,6 +12,7 @@ class SearchResultBody extends StatelessWidget {
   final String typeResult;
   final String searchTerm;
   final String user;
+  final String userId;
 
   const SearchResultBody({
     super.key,
@@ -21,6 +21,7 @@ class SearchResultBody extends StatelessWidget {
     required this.typeResult,
     this.searchTerm = "",
     this.user = "",
+    required this.userId,
   });
 
   @override
@@ -47,6 +48,7 @@ class SearchResultBody extends StatelessWidget {
                     chat: messageResult[index],
                     term: searchTerm,
                     user: user,
+                    userId: userId,
                   );
                 }
               },
@@ -65,11 +67,13 @@ class _ChatSearchItem extends StatelessWidget {
   final Message chat;
   final String term;
   final String user;
+  final String userId;
 
   const _ChatSearchItem({
     required this.chat,
     required this.term,
     required this.user,
+    required this.userId,
   });
 
   @override
@@ -82,7 +86,7 @@ class _ChatSearchItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(chat.profileId == StorageServices.to.userId ? 'You' : user),
+              Text(chat.profileId == userId ? 'You' : user),
               Text(_lastMessageDate(chat.sendDatetime)),
             ],
           ),

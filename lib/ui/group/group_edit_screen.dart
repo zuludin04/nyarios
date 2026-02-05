@@ -11,7 +11,6 @@ import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_edit_bottom_sheet.dart';
 
 class GroupEditScreen extends ConsumerStatefulWidget {
@@ -27,7 +26,7 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Edit Group'),
+      appBar: Toolbar.defaultToolbar(context, 'Edit Group'),
       body: Column(
         children: [
           Padding(
@@ -160,12 +159,12 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
     var repo = ref.watch(messageRepositoryProvider);
 
     Message newMessage = Message(
-      message: '${StorageServices.to.userName} update group image',
+      message: 'update group image',
       type: 'info',
       sendDatetime: DateTime.now().millisecondsSinceEpoch,
       url: '',
       fileSize: '',
-      profileId: StorageServices.to.userId,
+      profileId: '',
       chatId: chatId,
     );
 
@@ -177,7 +176,7 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
 
     var chat = Chat(
       profileId: group.groupId,
-      lastMessage: '${StorageServices.to.userName} update group image',
+      lastMessage: ' update group image',
       lastMessageSent: DateTime.now().millisecondsSinceEpoch,
       chatId: group.chatId,
       type: 'group',

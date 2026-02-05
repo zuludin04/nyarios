@@ -1,5 +1,3 @@
-import 'package:nyarios/services/storage_services.dart';
-
 import 'group.dart';
 import 'profile.dart';
 
@@ -23,9 +21,9 @@ class Chat {
     this.group,
   });
 
-  Map<String, dynamic> toMap(bool fromSender) {
+  Map<String, dynamic> toMap(bool fromSender, String? userId) {
     return <String, dynamic>{
-      'profileId': fromSender ? profileId : StorageServices.to.userId,
+      'profileId': fromSender ? profileId : userId,
       'lastMessage': lastMessage,
       'lastMessageSent': lastMessageSent,
       'chatId': chatId,
@@ -46,10 +44,12 @@ class Chat {
   factory Chat.fromMapProfile(Map<String, dynamic> map, Profile profile) {
     return Chat(
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      lastMessage:
-          map['lastMessage'] != null ? map['lastMessage'] as String : null,
-      lastMessageSent:
-          map['lastMessageSent'] != null ? map['lastMessageSent'] as int : null,
+      lastMessage: map['lastMessage'] != null
+          ? map['lastMessage'] as String
+          : null,
+      lastMessageSent: map['lastMessageSent'] != null
+          ? map['lastMessageSent'] as int
+          : null,
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
       profile: profile,
@@ -59,10 +59,12 @@ class Chat {
   factory Chat.fromMapGroup(Map<String, dynamic> map, Group group) {
     return Chat(
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      lastMessage:
-          map['lastMessage'] != null ? map['lastMessage'] as String : null,
-      lastMessageSent:
-          map['lastMessageSent'] != null ? map['lastMessageSent'] as int : null,
+      lastMessage: map['lastMessage'] != null
+          ? map['lastMessage'] as String
+          : null,
+      lastMessageSent: map['lastMessageSent'] != null
+          ? map['lastMessageSent'] as int
+          : null,
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
       group: group,
@@ -72,10 +74,12 @@ class Chat {
   factory Chat.fromMap(Map<String, dynamic> map) {
     return Chat(
       profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      lastMessage:
-          map['lastMessage'] != null ? map['lastMessage'] as String : null,
-      lastMessageSent:
-          map['lastMessageSent'] != null ? map['lastMessageSent'] as int : null,
+      lastMessage: map['lastMessage'] != null
+          ? map['lastMessage'] as String
+          : null,
+      lastMessageSent: map['lastMessageSent'] != null
+          ? map['lastMessageSent'] as int
+          : null,
       chatId: map['chatId'] != null ? map['chatId'] as String : null,
       type: map['type'] != null ? map['type'] as String : null,
     );

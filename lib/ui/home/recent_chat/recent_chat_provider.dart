@@ -9,14 +9,17 @@ part 'recent_chat_provider.g.dart';
 @riverpod
 class RecentChatProvider extends _$RecentChatProvider {
   @override
-  Stream<List<Chat>> build() {
+  Stream<List<Chat>> build() async* {
     final chatRepo = ref.watch(chatRepositoryProvider);
     final profileRepo = ref.watch(profileRepositoryProvider);
+    final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
-    final chats$ = chatRepo.loadRecentChat();
+    final user = await localRepo.getUserProfile();
+
+    final chats$ = chatRepo.loadRecentChat(user.userId);
     final users$ = profileRepo.streamProfiles();
 
-    return Rx.combineLatest2(chats$, users$, (chatSnap, usersSnap) {
+    yield* Rx.combineLatest2(chats$, users$, (chatSnap, usersSnap) {
       final users = {
         for (final u in usersSnap.docs) u.id: Profile.fromMap(u.data()),
       };

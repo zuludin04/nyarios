@@ -14,7 +14,6 @@ import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -29,13 +28,7 @@ class GroupCreateScreen extends ConsumerStatefulWidget {
 class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
   final _groupTitleController = TextEditingController();
   File? _imageFile;
-  List<Profile> members = [
-    Profile(
-      name: StorageServices.to.userName,
-      photo: StorageServices.to.userImage,
-      uid: StorageServices.to.userId,
-    ),
-  ];
+  List<Profile> members = [];
 
   @override
   void dispose() {
@@ -46,7 +39,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Create Group', elevation: 0),
+      appBar: Toolbar.defaultToolbar(context, 'Create Group', elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -154,7 +147,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
             name: _groupTitleController.text,
             members: members.map((e) => e.uid!).toList(),
             chatId: chatId,
-            adminId: StorageServices.to.userId,
+            adminId: '',
           );
 
           if (_imageFile != null) {
@@ -230,8 +223,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
 
     var chat = Chat(
       profileId: group.groupId,
-      lastMessage:
-          '${StorageServices.to.userName} created group "${group.name}"',
+      lastMessage: 'created group "${group.name}"',
       lastMessageSent: DateTime.now().millisecondsSinceEpoch,
       chatId: group.chatId,
       type: 'group',
@@ -244,12 +236,12 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
     var repo = ref.read(messageRepositoryProvider);
 
     Message newMessage = Message(
-      message: '${StorageServices.to.userName} create new group',
+      message: 'create new group',
       type: 'info',
       sendDatetime: DateTime.now().millisecondsSinceEpoch,
       url: '',
       fileSize: '',
-      profileId: StorageServices.to.userId,
+      profileId: '',
       chatId: chatId,
     );
 

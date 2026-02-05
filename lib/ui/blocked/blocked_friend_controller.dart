@@ -10,8 +10,10 @@ class BlockedFriendController extends _$BlockedFriendController {
   Future<List<Contact>> build() async {
     final profileRepo = ref.watch(profileRepositoryProvider);
     final contactRepo = ref.watch(contactRepositoryProvider);
+    final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
-    final contacts = await contactRepo.loadContacts(true);
+    final user = await localRepo.getUserProfile();
+    final contacts = await contactRepo.loadContacts(true, user.userId);
     final blocked = contacts.map((e) async {
       final profile = await profileRepo.loadSingleProfile(e.profileId);
       e.profile = profile;

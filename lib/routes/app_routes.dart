@@ -21,12 +21,10 @@ import 'package:nyarios/ui/splash/splash_screen.dart';
 part 'app_pages.dart';
 
 class AppRoutes {
-  static var profileEdit;
-
   AppRoutes();
 
   GoRouter get appRoutes => GoRouter(
-    initialLocation: AppPages.splash,
+    initialLocation: AppPages.signIn,
     routes: [
       GoRoute(
         path: AppPages.splash,

@@ -34,7 +34,7 @@ final class BlockedFriendControllerProvider
 }
 
 String _$blockedFriendControllerHash() =>
-    r'fae54f094e269ffbe1d78e8b47f8fd0e21d9646a';
+    r'a4c75173464fdea510f9e49a323f299a14c05ed0';
 
 abstract class _$BlockedFriendController extends $AsyncNotifier<List<Contact>> {
   FutureOr<List<Contact>> build();

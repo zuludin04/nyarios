@@ -33,6 +33,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             chatResult: data.chatResult,
             messageResult: data.messageResult,
             typeResult: widget.type,
+            userId: data.userId,
           ),
           error: (_, _) => SizedBox(),
           loading: () => CircularProgressIndicator(),

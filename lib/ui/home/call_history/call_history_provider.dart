@@ -9,13 +9,15 @@ part 'call_history_provider.g.dart';
 @riverpod
 class CallHistoryProvider extends _$CallHistoryProvider {
   @override
-  Stream<List<Call>> build() {
+  Stream<List<Call>> build() async* {
     final callRepo = ref.watch(callRepositoryProvider);
     final profileRepo = ref.watch(profileRepositoryProvider);
+    final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
-    final calls$ = callRepo.loadCallHistory();
+    final user = await localRepo.getUserProfile();
+    final calls$ = callRepo.loadCallHistory(user.userId);
     final users$ = profileRepo.streamProfiles();
-    return Rx.combineLatest2(calls$, users$, (callSnap, usersSnap) {
+    yield* Rx.combineLatest2(calls$, users$, (callSnap, usersSnap) {
       final users = {
         for (final u in usersSnap.docs) u.id: Profile.fromMap(u.data()),
       };

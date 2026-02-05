@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/contact/contact_detail_provider.dart';
 import 'package:nyarios/ui/contact/contact_media_tab.dart';
 
@@ -41,7 +40,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
     );
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('', elevation: 0),
+      appBar: Toolbar.defaultToolbar(context, '', elevation: 0),
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
@@ -61,9 +60,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                           height: 80,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: StorageServices.to.darkMode
-                                  ? Colors.white24
-                                  : Colors.black26,
+                              color: Colors.black26,
                               width: 1.5,
                             ),
                             shape: BoxShape.circle,

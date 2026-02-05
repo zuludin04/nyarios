@@ -8,9 +8,7 @@ import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/services/storage_services.dart';
-import 'package:nyarios/ui/qrcode/provider/qr_code_profile_provider.dart';
-import 'package:nyarios/ui/qrcode/provider/state/qr_code_profile_state.dart';
+import 'package:nyarios/ui/qrcode/qr_code_profile_controller.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
@@ -20,23 +18,21 @@ class QrCodeProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(qrCodeProfileNotifierProvider.select((value) => value), (
-      prev,
-      next,
-    ) {
-      if (next is SuccessLoadProfile) {
-        _showProfileDialog(context, next.profile, (roomId) {
-          ref
-              .read(qrCodeProfileNotifierProvider.notifier)
-              .saveContact(next.profile.uid!, roomId);
+    final asyncData = ref.watch(qrCodeProfileControllerProvider);
+    final controller = ref.watch(qrCodeProfileControllerProvider.notifier);
+
+    asyncData.whenData((data) {
+      if (data.showProfileDialog) {
+        _showProfileDialog(context, data.profile!, (roomId) {
+          controller.saveContact(data.profile!.uid!, roomId);
         });
-      } else if (next is SuccessSaveContact) {
-        context.pushNamed('${AppPages.chatting}/dm', extra: next.contact);
+      } else if (data.successLoadContact) {
+        context.pushNamed('${AppPages.chatting}/dm', extra: data.contact);
       }
     });
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar("QR Code"),
+      appBar: Toolbar.defaultToolbar(context, "QR Code"),
       body: Column(
         children: [
           const SizedBox(height: 32),
@@ -47,19 +43,23 @@ class QrCodeProfileScreen extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
-              child: QrImageView(
-                data: StorageServices.to.userId,
-                version: QrVersions.auto,
-                size: 200,
-                padding: const EdgeInsets.all(16),
-                dataModuleStyle: QrDataModuleStyle(
-                  dataModuleShape: QrDataModuleShape.circle,
-                  color: Theme.of(context).colorScheme.onPrimary,
+              child: asyncData.when(
+                data: (data) => QrImageView(
+                  data: data.userId,
+                  version: QrVersions.auto,
+                  size: 200,
+                  padding: const EdgeInsets.all(16),
+                  dataModuleStyle: QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.circle,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  eyeStyle: QrEyeStyle(
+                    eyeShape: QrEyeShape.circle,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
-                eyeStyle: QrEyeStyle(
-                  eyeShape: QrEyeShape.circle,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                error: (_, _) => SizedBox(),
+                loading: () => SizedBox(),
               ),
             ),
           ),
@@ -82,11 +82,8 @@ class QrCodeProfileScreen extends ConsumerWidget {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: () => _scan(
-              (profileId) => ref
-                  .read(qrCodeProfileNotifierProvider.notifier)
-                  .loadProfile(profileId),
-            ),
+            onTap: () =>
+                _scan((profileId) => controller.loadProfile(profileId)),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),

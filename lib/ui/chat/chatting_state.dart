@@ -1,3 +1,4 @@
+import 'package:nyarios/domain/model/local_user.dart';
 import 'package:nyarios/domain/model/message.dart';
 
 class ChattingState {
@@ -6,6 +7,7 @@ class ChattingState {
   final bool isAlreadyFriend;
   final bool isBlocked;
   final bool isSelectMode;
+  final LocalUser? user;
 
   const ChattingState({
     this.messages = const [],
@@ -13,6 +15,7 @@ class ChattingState {
     this.isAlreadyFriend = true,
     this.isBlocked = false,
     this.isSelectMode = false,
+    this.user,
   });
 
   ChattingState copyWith({
@@ -21,6 +24,7 @@ class ChattingState {
     bool? isAlreadyFriend,
     bool? isBlocked,
     bool? isSelectMode,
+    LocalUser? user,
   }) {
     return ChattingState(
       messages: messages ?? this.messages,
@@ -28,6 +32,7 @@ class ChattingState {
       isAlreadyFriend: isAlreadyFriend ?? this.isAlreadyFriend,
       isBlocked: isBlocked ?? this.isBlocked,
       isSelectMode: isSelectMode ?? this.isSelectMode,
+      user: user ?? this.user,
     );
   }
 }

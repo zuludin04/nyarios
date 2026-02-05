@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nyarios/domain/model/call.dart';
-import 'package:nyarios/services/storage_services.dart';
 
 class CallRepository {
   final FirebaseFirestore firestore;
@@ -29,10 +28,12 @@ class CallRepository {
         .update({'isAccepted': isAccepted});
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadCallHistory() async* {
+  Stream<QuerySnapshot<Map<String, dynamic>>> loadCallHistory(
+    String? userId,
+  ) async* {
     yield* firestore
         .collection('call')
-        .doc(StorageServices.to.userId)
+        .doc(userId)
         .collection('history')
         .orderBy('callDate', descending: true)
         .snapshots();

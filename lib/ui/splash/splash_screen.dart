@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/services/storage_services.dart';
+import 'package:nyarios/ui/splash/splash_controller.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     splashTime();
@@ -22,6 +22,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = ref.watch(splashControllerProvider);
+    controller.whenData((value) {
+      if (value.isAlreadyLogin) {
+        context.go(AppPages.home);
+      } else {
+        context.go(AppPages.signIn);
+      }
+    });
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 Image.asset('assets/my_icon.png', width: 32),
                 Text(
                   '\t by Zulfikar Mauludin',
-                  style: Get.textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
             ),
@@ -49,12 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void splashTime() {
     var duration = const Duration(seconds: 1);
     Timer(duration, () {
-      var alreadyLogin = StorageServices.to.alreadyLogin;
-      if (alreadyLogin) {
-        context.go(AppPages.home);
-      } else {
-        context.go(AppPages.signIn);
-      }
+      ref.read(splashControllerProvider.notifier).loadScreen();
     });
   }
 }

@@ -3,7 +3,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -193,15 +193,15 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
     await [Permission.microphone, Permission.camera].request();
 
     if (await Permission.microphone.isDenied) {
-      Get.back();
       if (mounted) {
+        context.pop();
         Flushbar(
           message: 'Need microphone permission to make a call',
         ).show(context);
       }
     } else if (await Permission.camera.isDenied) {
-      Get.back();
       if (mounted) {
+        context.pop();
         Flushbar(
           message: 'Need camera permission to make a video call',
         ).show(context);
@@ -238,7 +238,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
               int remoteUid,
               UserOfflineReasonType reason,
             ) {
-              Get.back();
+              context.pop();
             },
       ),
     );
@@ -266,7 +266,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       _remoteUid = null;
     });
     agoraEngine.leaveChannel();
-    Get.back();
+    context.pop();
   }
 
   void saveCallHistory() async {

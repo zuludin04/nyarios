@@ -16,7 +16,7 @@ class FriendScreen extends ConsumerWidget {
     final controller = ref.watch(friendControllerProvider);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Contact'),
+      appBar: Toolbar.defaultToolbar(context, 'Contact'),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

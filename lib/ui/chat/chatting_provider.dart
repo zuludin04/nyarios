@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:nyarios/data/repositories/agora_repository.dart';
+import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/message.dart';
@@ -9,7 +10,6 @@ import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
@@ -22,6 +22,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
   late final ChatRepository chatRepo;
   late final ContactRepository contactRepo;
   late final AgoraRepository agoraRepo;
+  late final SharedLocalRepository localRepo;
 
   StreamSubscription<List<Message>>? messageSub;
 
@@ -31,9 +32,12 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     chatRepo = ref.read(chatRepositoryProvider);
     contactRepo = ref.read(contactRepositoryProvider);
     agoraRepo = ref.read(agoraRepositoryProvider);
+    localRepo = ref.read(sharedLocalRepositoryProvider);
 
     state = const AsyncData(ChattingState());
-    var contact = await contactRepo.loadSingleContact(profileId);
+
+    final user = await localRepo.getUserProfile();
+    var contact = await contactRepo.loadSingleContact(profileId, user.userId);
 
     messageSub = messageRepo.loadChatMessages(roomId).listen((message) {
       final current = state.value!;
@@ -42,6 +46,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
           messages: _mergeWithUploading(current, message),
           isAlreadyFriend: contact?.alreadyFriend,
           isBlocked: contact?.blocked,
+          user: user,
         ),
       );
     });
@@ -69,13 +74,14 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     String url = "",
     String fileSize = "",
   }) async {
+    final user = state.value!.user;
     Message newMessage = Message(
       message: message,
       type: type,
       sendDatetime: DateTime.now().millisecondsSinceEpoch,
       url: url,
       fileSize: fileSize,
-      profileId: StorageServices.to.userId,
+      profileId: user?.userId,
       chatId: chatId,
     );
 
@@ -87,8 +93,8 @@ class ChattingAsyncController extends _$ChattingAsyncController {
       type: "dm",
     );
 
-    chatRepo.updateRecentChat(true, chat);
-    chatRepo.updateRecentChat(false, chat);
+    chatRepo.updateRecentChat(true, chat, user?.userId);
+    chatRepo.updateRecentChat(false, chat, user?.userId);
 
     messageRepo.sendNewMessage(newMessage);
   }
@@ -102,11 +108,13 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     String fileSize,
   ) async {
     final uploadId = const Uuid().v4();
+    final user = state.value!.user;
 
     final uploadingMessage = Message.uploading(
       uploadId: uploadId,
       localFile: file,
       sendDatetime: DateTime.now().millisecondsSinceEpoch,
+      userId: user?.userId ?? "",
     );
 
     state = AsyncData(
@@ -160,11 +168,13 @@ class ChattingAsyncController extends _$ChattingAsyncController {
       blocked: false,
       alreadyFriend: true,
     );
-    await contactRepo.saveContact(contact, profileId);
+    final user = state.value!.user;
+    await contactRepo.saveContact(contact, profileId, user?.userId);
   }
 
   Future<void> blockFriend(String? profileId) async {
-    await contactRepo.changeBlockStatus(profileId, true);
+    final user = state.value!.user;
+    await contactRepo.changeBlockStatus(profileId, true, user?.userId);
   }
 
   Future<void> selectMessage(String messageId) async {

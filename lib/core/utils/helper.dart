@@ -97,7 +97,7 @@ String messageDate(int? datetime) {
   }
 }
 
-String copiedMessage(Message chat, String name) {
+String copiedMessage(Message chat, String? name) {
   var date = DateFormat(
     "MM/dd, hh:mm a",
   ).format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));

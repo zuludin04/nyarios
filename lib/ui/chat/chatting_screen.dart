@@ -11,7 +11,6 @@ import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/services/storage_services.dart';
 import 'package:nyarios/ui/chat/chatting_provider.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
@@ -46,6 +45,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
 
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
+        context,
         "",
         titleWidget: Text(widget.contact.profile?.name ?? ""),
         leading: chatAsync.value!.isSelectMode
@@ -167,8 +167,8 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     .toList();
                 final copiedMessages = messages
                     .map((e) {
-                      final name = e.chatId == StorageServices.to.userId
-                          ? StorageServices.to.userName
+                      final name = e.chatId == chatAsync.value!.user!.userId
+                          ? chatAsync.value!.user!.userName
                           : widget.type == 'dm'
                           ? widget.contact.profile?.name ?? ""
                           : widget.contact.group?.name ?? "";
@@ -271,6 +271,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     onSelectMessage: (messageId) =>
                         controller.selectMessage(messageId),
                     isSelectMode: data.isSelectMode,
+                    userId: chatAsync.value!.user?.userId ?? "",
                   ),
                 );
               },

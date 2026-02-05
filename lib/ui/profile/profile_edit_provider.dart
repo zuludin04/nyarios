@@ -9,22 +9,27 @@ class ProfileEditProvider extends _$ProfileEditProvider {
   @override
   void build() {}
 
-  Stream<Profile> loadStreamProfile(String userId) async* {
+  Stream<Profile> loadStreamProfile() async* {
     final repo = ref.watch(profileRepositoryProvider);
-    yield* repo.loadStreamProfile(userId);
+    final local = ref.watch(sharedLocalRepositoryProvider);
+
+    final user = await local.getUserProfile();
+    yield* repo.loadStreamProfile(user.userId);
   }
 
-  Future<void> updateImageProfile(String profileId, String url) async {
+  Future<void> updateImageProfile(String url) async {
     final repo = ref.watch(profileRepositoryProvider);
-    await repo.updateImageProfile(profileId, url);
+    final local = ref.watch(sharedLocalRepositoryProvider);
+
+    final user = await local.getUserProfile();
+    await repo.updateImageProfile(user.userId, url);
   }
 
-  Future<void> updateProfile(
-    String profileId,
-    String value,
-    bool isName,
-  ) async {
+  Future<void> updateProfile(String value, bool isName) async {
     final repo = ref.watch(profileRepositoryProvider);
-    await repo.updateProfile(profileId, value, isName);
+    final local = ref.watch(sharedLocalRepositoryProvider);
+
+    final user = await local.getUserProfile();
+    await repo.updateProfile(user.userId, value, isName);
   }
 }

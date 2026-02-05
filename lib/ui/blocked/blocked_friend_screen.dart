@@ -16,7 +16,7 @@ class BlockedFriendScreen extends ConsumerWidget {
     final controller = ref.watch(blockedFriendControllerProvider);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar('Blocked Friend'),
+      appBar: Toolbar.defaultToolbar(context, 'Blocked Friend'),
       body: controller.when(
         data: (data) {
           if (data.isEmpty) {
