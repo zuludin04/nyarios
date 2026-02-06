@@ -50,6 +50,8 @@ dependencies:
   flutter_local_notifications: ^20.0.0
   go_router: ^17.0.0
   shared_preferences: ^2.5.3
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +64,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  generate: true
 
   assets:
     - assets/
