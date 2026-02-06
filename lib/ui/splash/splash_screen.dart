@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/ui/splash/splash_controller.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -22,15 +22,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = ref.watch(splashControllerProvider);
-    controller.whenData((value) {
-      if (value.isAlreadyLogin) {
-        context.go(AppPages.home);
-      } else {
-        context.go(AppPages.signIn);
-      }
-    });
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -55,10 +46,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     );
   }
 
-  void splashTime() {
-    var duration = const Duration(seconds: 1);
-    Timer(duration, () {
-      ref.read(splashControllerProvider.notifier).loadScreen();
+  Future<void> splashTime() async {
+    final repository = ref.read(sharedLocalRepositoryProvider);
+    final alreadyLogin = await repository.isAlreadyLogin();
+
+    Timer(const Duration(seconds: 2), () {
+      if (alreadyLogin) {
+        context.go(AppPages.home);
+      } else {
+        context.go(AppPages.signIn);
+      }
     });
   }
 }

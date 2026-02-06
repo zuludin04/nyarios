@@ -24,7 +24,7 @@ class AppRoutes {
   AppRoutes();
 
   GoRouter get appRoutes => GoRouter(
-    initialLocation: AppPages.signIn,
+    initialLocation: AppPages.splash,
     routes: [
       GoRoute(
         path: AppPages.splash,
@@ -115,5 +115,8 @@ class AppRoutes {
         },
       ),
     ],
+    redirect: (context, state) {
+      return null;
+    },
   );
 }
