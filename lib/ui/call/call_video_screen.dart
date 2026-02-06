@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -173,8 +174,11 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
         ),
       );
     } else {
-      return const Center(
-        child: Text('Connecting video call', textAlign: TextAlign.center),
+      return Center(
+        child: Text(
+          AppLocalizations.of(context)!.connect_video,
+          textAlign: TextAlign.center,
+        ),
       );
     }
   }
@@ -196,14 +200,14 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       if (mounted) {
         context.pop();
         Flushbar(
-          message: 'Need microphone permission to make a call',
+          message: AppLocalizations.of(context)!.microphone_permission,
         ).show(context);
       }
     } else if (await Permission.camera.isDenied) {
       if (mounted) {
         context.pop();
         Flushbar(
-          message: 'Need camera permission to make a video call',
+          message: AppLocalizations.of(context)!.camera_permission,
         ).show(context);
       }
     } else {

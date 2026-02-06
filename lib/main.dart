@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nyarios/core/controllers/language/language_controller.dart';
 import 'package:nyarios/core/utils/custom_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/firebase_options.dart';
@@ -145,14 +146,14 @@ void main() async {
   runApp(const ProviderScope(child: LifecycleListnerWrapper(child: MyApp())));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   @override
@@ -164,15 +165,22 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Nyarios',
-      theme: CustomTheme.defaultTheme,
-      darkTheme: CustomTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      debugShowCheckedModeBanner: false,
-      routerConfig: AppRoutes().appRoutes,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+    final controller = ref.watch(languageControllerProvider);
+
+    return controller.when(
+      data: (data) => MaterialApp.router(
+        title: 'Nyarios',
+        theme: CustomTheme.defaultTheme,
+        darkTheme: CustomTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false,
+        routerConfig: AppRoutes().appRoutes,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale(data),
+      ),
+      error: (_, _) => SizedBox(),
+      loading: () => SizedBox(),
     );
   }
 }

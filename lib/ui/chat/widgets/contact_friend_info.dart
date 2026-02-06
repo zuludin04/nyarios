@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 
 class ContactFriendInfo extends StatelessWidget {
   final bool isAlreadyFriend;
@@ -28,12 +29,14 @@ class ContactFriendInfo extends StatelessWidget {
               _FriendNotAddedAction(
                 onTap: onAddFriend,
                 icon: Icons.add,
-                title: 'Add Friend',
+                title: AppLocalizations.of(context)!.add_friend,
               ),
             _FriendNotAddedAction(
               onTap: onBlock,
               icon: Icons.block_rounded,
-              title: isBlocked ? 'Unblock' : 'Block',
+              title: isBlocked
+                  ? AppLocalizations.of(context)!.unblock
+                  : AppLocalizations.of(context)!.block,
             ),
           ],
         ),

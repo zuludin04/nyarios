@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/domain/model/picked_message_file.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 
 class ChatInputMessage extends StatefulWidget {
   final bool isBlocked;
@@ -34,7 +35,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
             padding: const EdgeInsets.all(16),
             child: Center(
               child: Text(
-                'User Blocked',
+                AppLocalizations.of(context)!.user_blocked,
                 style: const TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 16,
@@ -67,7 +68,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                           maxLines: null,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.all(16),
-                            hintText: 'Message',
+                            hintText: AppLocalizations.of(context)!.message,
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -97,11 +98,11 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   _pickFileMenu(
-                                    'File',
+                                    AppLocalizations.of(context)!.file,
                                     'assets/icons/ic_attach_file.png',
                                   ),
                                   _pickFileMenu(
-                                    'Gallery',
+                                    AppLocalizations.of(context)!.gallery,
                                     'assets/icons/ic_gallery.png',
                                   ),
                                 ],
@@ -162,7 +163,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
     return InkWell(
       onTap: () async {
         context.pop();
-        if (title == 'Gallery') {
+        if (title == AppLocalizations.of(context)!.gallery) {
           final image = await pickImage(true);
           if (image != null) {
             widget.onSendMessage(type: 'image', file: image);

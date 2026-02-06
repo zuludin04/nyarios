@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/home/settings/settings_provider.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -70,7 +71,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onPressed: (context) => context.pushNamed(AppPages.profileEdit),
             ),
             SettingsTile(
-              title: Text('QR Code'),
+              title: Text(AppLocalizations.of(context)!.qr_code),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_qr_code.png',
                 color: Theme.of(context).iconTheme.color!,
@@ -80,33 +81,33 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
         ),
         SettingsSection(
-          title: Text("Common"),
+          title: Text(AppLocalizations.of(context)!.common),
           tiles: [
             SettingsTile.switchTile(
               activeSwitchColor: const Color(0xfffb7f6b),
               initialValue: false,
               onToggle: (value) {},
-              title: Text("Dark Mode"),
+              title: Text(AppLocalizations.of(context)!.dark_mode),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_dark_mode.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
             ),
             SettingsTile(
-              title: Text('Language'),
+              title: Text(AppLocalizations.of(context)!.language),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_language.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
-              onPressed: (context) => context.pushNamed(AppPages.language),
+              onPressed: (context) => context.push(AppPages.language),
             ),
           ],
         ),
         SettingsSection(
-          title: Text("Privacy"),
+          title: Text(AppLocalizations.of(context)!.privacy),
           tiles: [
             SettingsTile(
-              title: Text('Blocked Friend'),
+              title: Text(AppLocalizations.of(context)!.blocked_friend),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_empty_profile.png',
                 color: Theme.of(context).iconTheme.color!,
@@ -116,10 +117,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ],
         ),
         SettingsSection(
-          title: Text('Other'),
+          title: Text(AppLocalizations.of(context)!.other),
           tiles: [
             SettingsTile(
-              title: Text('Rating'),
+              title: Text(AppLocalizations.of(context)!.rating),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_star.png',
                 color: Theme.of(context).iconTheme.color!,
@@ -127,7 +128,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onPressed: (context) {},
             ),
             SettingsTile(
-              title: Text('Share'),
+              title: Text(AppLocalizations.of(context)!.share),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_share.png',
                 color: Theme.of(context).iconTheme.color!,
@@ -139,7 +140,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         SettingsSection(
           tiles: [
             SettingsTile(
-              title: Text('Logout'),
+              title: Text(AppLocalizations.of(context)!.logout),
               leading: ImageAsset(
                 assets: 'assets/icons/ic_logout.png',
                 color: Theme.of(context).iconTheme.color!,

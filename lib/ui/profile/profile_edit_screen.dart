@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/profile/profile_edit_provider.dart';
 import 'package:nyarios/ui/profile/widgets/profile_info_widget.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -26,7 +27,10 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     final provider = ref.watch(profileEditProviderProvider.notifier);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, 'Profile'),
+      appBar: Toolbar.defaultToolbar(
+        context,
+        AppLocalizations.of(context)!.profile,
+      ),
       body: Column(
         children: [
           Visibility(
@@ -59,7 +63,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     const SizedBox(height: 32),
                     ProfileInfoWidget(
                       icon: 'assets/icons/ic_profile.png',
-                      title: 'Name',
+                      title: AppLocalizations.of(context)!.name,
                       data: snapshot.data?.name ?? "-",
                       onUpdateProfile: (value, isName) {
                         provider.updateProfile(value, isName);

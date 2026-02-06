@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 
 class ContactMediaTab extends StatefulWidget {
   final List<Message> messages;
@@ -21,7 +22,7 @@ class _ContactMediaTabState extends State<ContactMediaTab>
   Widget build(BuildContext context) {
     super.build(context);
     if (widget.messages.isEmpty) {
-      return EmptyWidget(message: "Empty Media");
+      return EmptyWidget(message: AppLocalizations.of(context)!.empty_media);
     } else {
       return ListView.builder(
         itemBuilder: (context, index) {

@@ -198,4 +198,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get your_friend => 'Your Friend';
+
+  @override
+  String get welcome_message => 'Make your conversation\nmore enjoyable';
+
+  @override
+  String get get_started => 'Get Started';
+
+  @override
+  String get connect_video => 'Connecting video call';
+
+  @override
+  String get microphone_permission =>
+      'Need microphone permission to make a call';
+
+  @override
+  String get camera_permission => 'Need camera permission to make a video call';
+
+  @override
+  String get connect_voice => 'Connecting voice call';
+
+  @override
+  String get success_download => 'Success downloading file';
+
+  @override
+  String get file_exist => 'File is already exist';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
+  String get call => 'Call';
 }

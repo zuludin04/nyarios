@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
@@ -86,8 +87,12 @@ class _ChatSearchItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(chat.profileId == userId ? 'You' : user),
-              Text(_lastMessageDate(chat.sendDatetime)),
+              Text(
+                chat.profileId == userId
+                    ? AppLocalizations.of(context)!.you
+                    : user,
+              ),
+              Text(_lastMessageDate(context, chat.sendDatetime)),
             ],
           ),
           Padding(
@@ -108,14 +113,14 @@ class _ChatSearchItem extends StatelessWidget {
     );
   }
 
-  String _lastMessageDate(int? datetime) {
+  String _lastMessageDate(BuildContext context, int? datetime) {
     var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
     var today = DateTime.now();
 
     if (date.day == today.day) {
       return DateFormat("hh:mm a").format(date).toLowerCase();
     } else if ((today.day - date.day) == 1) {
-      return "Yesterday";
+      return AppLocalizations.of(context)!.yesterday;
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }

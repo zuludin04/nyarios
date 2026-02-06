@@ -5,6 +5,7 @@ import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/friend/friend_controller.dart';
 
@@ -16,7 +17,10 @@ class FriendScreen extends ConsumerWidget {
     final controller = ref.watch(friendControllerProvider);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, 'Contact'),
+      appBar: Toolbar.defaultToolbar(
+        context,
+        AppLocalizations.of(context)!.contact,
+      ),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -42,7 +46,7 @@ class FriendScreen extends ConsumerWidget {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          "Create Group",
+                          AppLocalizations.of(context)!.create_group,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -58,7 +62,7 @@ class FriendScreen extends ConsumerWidget {
                     vertical: 8,
                   ),
                   child: Text(
-                    'Your Friend',
+                    AppLocalizations.of(context)!.your_friend,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -80,12 +84,12 @@ class FriendScreen extends ConsumerWidget {
                           assets: 'assets/icons/ic_profile_not_found.png',
                           size: 80,
                         ),
-                        Text('No Friend'),
+                        Text(AppLocalizations.of(context)!.no_friend),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () =>
                               context.pushNamed(AppPages.qrCodeProfile),
-                          child: Text('Add Friend'),
+                          child: Text(AppLocalizations.of(context)!.add_friend),
                         ),
                       ],
                     ),
@@ -101,7 +105,9 @@ class FriendScreen extends ConsumerWidget {
               }
             },
             error: (_, _) => SliverFillRemaining(
-              child: Center(child: Text('Something Went Wrong')),
+              child: Center(
+                child: Text(AppLocalizations.of(context)!.something_wrong),
+              ),
             ),
             loading: () => const SliverFillRemaining(
               child: Center(child: CustomIndicator()),

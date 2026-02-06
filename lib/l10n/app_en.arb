@@ -62,5 +62,15 @@
   "members": "Members",
   "edit_group": "Edit Group",
   "enter_group_name": "Enter group name",
-  "your_friend": "Your Friend"
+  "your_friend": "Your Friend",
+  "welcome_message": "Make your conversation\nmore enjoyable",
+  "get_started": "Get Started",
+  "connect_video": "Connecting video call",
+  "microphone_permission": "Need microphone permission to make a call",
+  "camera_permission": "Need camera permission to make a video call",
+  "connect_voice": "Connecting voice call",
+  "success_download": "Success downloading file",
+  "file_exist": "File is already exist",
+  "chat": "Chat",
+  "call": "Call"
 }

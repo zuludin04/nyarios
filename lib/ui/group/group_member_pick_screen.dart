@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/profile.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 
 class GroupMemberPickScreen extends ConsumerStatefulWidget {
   final String source;
@@ -23,7 +24,11 @@ class _GroupMemberPickScreenState extends ConsumerState<GroupMemberPickScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, 'Pick Member', elevation: 0),
+      appBar: Toolbar.defaultToolbar(
+        context,
+        AppLocalizations.of(context)!.pick_member,
+        elevation: 0,
+      ),
       floatingActionButton: Visibility(
         visible: true,
         child: FloatingActionButton(

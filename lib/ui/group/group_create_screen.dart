@@ -13,6 +13,7 @@ import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 import 'package:path_provider/path_provider.dart';
@@ -39,7 +40,11 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, 'Create Group', elevation: 0),
+      appBar: Toolbar.defaultToolbar(
+        context,
+        AppLocalizations.of(context)!.create_group,
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -77,14 +82,16 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
                 Expanded(
                   child: TextField(
                     controller: _groupTitleController,
-                    decoration: InputDecoration(hintText: 'Group Name'),
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.group_name,
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             Text(
-              'Member',
+              AppLocalizations.of(context)!.member,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
@@ -120,7 +127,10 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
                             child: const Icon(Icons.add, color: Colors.black),
                           ),
                           const SizedBox(height: 4),
-                          Text('Add Member', textAlign: TextAlign.center),
+                          Text(
+                            AppLocalizations.of(context)!.add_member,
+                            textAlign: TextAlign.center,
+                          ),
                         ],
                       ),
                     );
@@ -178,7 +188,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
           children: [
             const CircularProgressIndicator(),
             const SizedBox(width: 8),
-            Text('Create Group'),
+            Text(AppLocalizations.of(context)!.create_group),
           ],
         ),
       ),

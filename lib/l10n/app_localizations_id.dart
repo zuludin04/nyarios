@@ -198,4 +198,36 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get your_friend => 'Teman Kamu';
+
+  @override
+  String get welcome_message => 'Buat percakapan anda\nlebih menyenangkan';
+
+  @override
+  String get get_started => 'Segera Mulai';
+
+  @override
+  String get connect_video => 'Menghubungkan panggilan video';
+
+  @override
+  String get microphone_permission =>
+      'Perlu izin penggunaan mikrofon untuk melakukan panggilan';
+
+  @override
+  String get camera_permission =>
+      'Perlu izin akses kamera untuk melakukan panggilan video';
+
+  @override
+  String get connect_voice => 'Menghubungkan panggilan suara';
+
+  @override
+  String get success_download => 'Berhasil mengunduh berkas';
+
+  @override
+  String get file_exist => 'Berkas sudah ada';
+
+  @override
+  String get chat => 'Obrolan';
+
+  @override
+  String get call => 'Panggilan';
 }

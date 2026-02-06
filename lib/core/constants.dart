@@ -1,4 +1,7 @@
-var languages = ["English", "Indonesia"];
+var languages = [
+  {"language": "English", "code": "en"},
+  {"language": "Indonesia", "code": "id"},
+];
 
 const darkModeKey = 'DARK_MODE';
 const alreadyLoginKey = 'ALREADY_LOGIN';

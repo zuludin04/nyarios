@@ -30,9 +30,9 @@ class SharedLocalRepository {
     await sharedPrefs.setString(selectedLanguageKey, value);
   }
 
-  Future<String> selectedLanguage() async {
+  Future<String> gelectedLanguage() async {
     final result = await sharedPrefs.getString(selectedLanguageKey);
-    return result ?? 'en_US';
+    return result ?? 'en';
   }
 
   Future<void> setUserLocal(Profile profile) async {

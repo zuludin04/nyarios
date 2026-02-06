@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/bottom_navigation.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/home/call_history/call_history_screen.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_screen.dart';
@@ -54,9 +55,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       bottomNavigationBar: BottomNavigation(
         currentIndex: selectedNav,
         navMenus: [
-          NavMenu(label: 'Chat', icon: 'ic_chat'),
-          NavMenu(label: 'Call', icon: 'ic_call_history'),
-          NavMenu(label: 'Settings', icon: 'ic_settings'),
+          NavMenu(label: AppLocalizations.of(context)!.chat, icon: 'ic_chat'),
+          NavMenu(
+            label: AppLocalizations.of(context)!.call,
+            icon: 'ic_call_history',
+          ),
+          NavMenu(
+            label: AppLocalizations.of(context)!.settings,
+            icon: 'ic_settings',
+          ),
         ],
         onSelectedMenu: (int index) {
           setState(() {

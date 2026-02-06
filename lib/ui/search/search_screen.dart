@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_floating_search_bar_2/material_floating_search_bar_2.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/search/search_controller.dart';
 import 'package:nyarios/ui/search/search_result_body.dart';
 
@@ -40,7 +41,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         ),
         backdropColor: Colors.transparent,
         transition: CircularFloatingSearchBarTransition(),
-        hint: widget.type == 'lastMessage' ? 'Search Contact' : 'Search Chat',
+        hint: widget.type == 'lastMessage'
+            ? AppLocalizations.of(context)!.search_contact
+            : AppLocalizations.of(context)!.search_chat,
         onQueryChanged: (query) {
           final controller = ref.read(searchControllerProvider.notifier);
           if (widget.type == 'lastMessage') {

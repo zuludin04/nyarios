@@ -475,6 +475,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your Friend'**
   String get your_friend;
+
+  /// No description provided for @welcome_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Make your conversation\nmore enjoyable'**
+  String get welcome_message;
+
+  /// No description provided for @get_started.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get get_started;
+
+  /// No description provided for @connect_video.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting video call'**
+  String get connect_video;
+
+  /// No description provided for @microphone_permission.
+  ///
+  /// In en, this message translates to:
+  /// **'Need microphone permission to make a call'**
+  String get microphone_permission;
+
+  /// No description provided for @camera_permission.
+  ///
+  /// In en, this message translates to:
+  /// **'Need camera permission to make a video call'**
+  String get camera_permission;
+
+  /// No description provided for @connect_voice.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting voice call'**
+  String get connect_voice;
+
+  /// No description provided for @success_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Success downloading file'**
+  String get success_download;
+
+  /// No description provided for @file_exist.
+  ///
+  /// In en, this message translates to:
+  /// **'File is already exist'**
+  String get file_exist;
+
+  /// No description provided for @chat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chat;
+
+  /// No description provided for @call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get call;
 }
 
 class _AppLocalizationsDelegate

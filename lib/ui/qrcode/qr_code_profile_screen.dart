@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/profile.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_controller.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -32,7 +33,10 @@ class QrCodeProfileScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, "QR Code"),
+      appBar: Toolbar.defaultToolbar(
+        context,
+        AppLocalizations.of(context)!.qr_code,
+      ),
       body: Column(
         children: [
           const SizedBox(height: 32),
@@ -64,20 +68,37 @@ class QrCodeProfileScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text('Scan QR Message', textAlign: TextAlign.center),
+          Text(
+            AppLocalizations.of(context)!.scan_qr_message,
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _qrActions(context, 'Copy Link', 'assets/icons/ic_copy.png', () {
-                Clipboard.setData(const ClipboardData(text: ""));
-                Flushbar(message: "Copy clipboard").show(context);
-              }),
-              _qrActions(context, 'Share', 'assets/icons/ic_share.png', () {
-                SharePlus.instance.share(
-                  ShareParams(text: 'check out my website https://example.com'),
-                );
-              }),
+              _qrActions(
+                context,
+                AppLocalizations.of(context)!.copy_link,
+                'assets/icons/ic_copy.png',
+                () {
+                  Clipboard.setData(const ClipboardData(text: ""));
+                  Flushbar(
+                    message: AppLocalizations.of(context)!.copy_clipboard,
+                  ).show(context);
+                },
+              ),
+              _qrActions(
+                context,
+                AppLocalizations.of(context)!.share,
+                'assets/icons/ic_share.png',
+                () {
+                  SharePlus.instance.share(
+                    ShareParams(
+                      text: 'check out my website https://example.com',
+                    ),
+                  );
+                },
+              ),
             ],
           ),
           const Spacer(),
@@ -105,7 +126,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
                     color: Theme.of(context).iconTheme.color!,
                   ),
                   const SizedBox(width: 8),
-                  Text('Scan QR Code'),
+                  Text(AppLocalizations.of(context)!.scan_qr_code),
                 ],
               ),
             ),
@@ -193,7 +214,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
                   var roomId = const Uuid().v4();
                   onSaveContact(roomId);
                 },
-                child: Text('Add Friend'),
+                child: Text(AppLocalizations.of(context)!.add_friend),
               ),
             ),
           ],

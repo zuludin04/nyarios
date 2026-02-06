@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 
 class ProfileEditBottomSheet extends StatefulWidget {
   final bool updateName;
@@ -30,7 +31,11 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.updateName ? 'Enter Name' : 'Enter Status'),
+          Text(
+            widget.updateName
+                ? AppLocalizations.of(context)!.enter_name
+                : AppLocalizations.of(context)!.enter_status,
+          ),
           TextFormField(
             controller: _textEditingController..text = widget.initialValue,
           ),
@@ -40,7 +45,7 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
               TextButton(
                 onPressed: context.pop,
                 child: Text(
-                  'Cancel',
+                  AppLocalizations.of(context)!.cancel,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
@@ -50,11 +55,13 @@ class _ProfileEditBottomSheetState extends State<ProfileEditBottomSheet> {
                     widget.onUpdateProfile(_textEditingController.text);
                     context.pop();
                   } else {
-                    Flushbar(message: 'Fill message').show(context);
+                    Flushbar(
+                      message: AppLocalizations.of(context)!.fill_message,
+                    ).show(context);
                   }
                 },
                 child: Text(
-                  'Save',
+                  AppLocalizations.of(context)!.save,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),

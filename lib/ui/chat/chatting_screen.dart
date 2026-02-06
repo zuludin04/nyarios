@@ -10,6 +10,7 @@ import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/chat/chatting_provider.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
@@ -179,7 +180,8 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                 FlutterClipboard.copy(copiedMessages).then((value) {
                   if (context.mounted) {
                     Flushbar(
-                      message: "${copiedMessages.length} messages copies",
+                      message:
+                          "${copiedMessages.length} ${AppLocalizations.of(context)!.messages_copied}",
                     ).show(context);
                   }
                   controller.clearSelectedChat();
@@ -275,8 +277,9 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                   ),
                 );
               },
-              error: (Object error, StackTrace stackTrace) =>
-                  Center(child: Text('Something Went Wrong')),
+              error: (Object error, StackTrace stackTrace) => Center(
+                child: Text(AppLocalizations.of(context)!.something_wrong),
+              ),
               loading: () => const Center(child: CustomIndicator()),
             ),
           ),

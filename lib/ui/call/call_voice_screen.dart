@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -125,8 +126,8 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
 
   Widget _status() {
     if (!_isJoined) {
-      return const Text(
-        'Connecting voice call',
+      return Text(
+        AppLocalizations.of(context)!.connect_voice,
         style: TextStyle(color: Colors.white),
       );
     } else if (_remoteUid == null) {
@@ -158,7 +159,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
       if (mounted) {
         context.pop();
         Flushbar(
-          message: 'Need microphone permission to make a call',
+          message: AppLocalizations.of(context)!.microphone_permission,
         ).show(context);
       }
     } else {

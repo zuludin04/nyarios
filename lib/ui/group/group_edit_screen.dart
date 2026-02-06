@@ -11,6 +11,7 @@ import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/group/widgets/group_edit_bottom_sheet.dart';
 
 class GroupEditScreen extends ConsumerStatefulWidget {
@@ -26,7 +27,10 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, 'Edit Group'),
+      appBar: Toolbar.defaultToolbar(
+        context,
+        AppLocalizations.of(context)!.edit_group,
+      ),
       body: Column(
         children: [
           Padding(
@@ -71,7 +75,7 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Name',
+                                    AppLocalizations.of(context)!.name,
                                     style: Theme.of(
                                       context,
                                     ).textTheme.bodySmall,

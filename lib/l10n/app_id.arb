@@ -62,5 +62,15 @@
   "members": "Anggota",
   "edit_group": "Sunting Group",
   "enter_group_name": "Masukkan group anda",
-  "your_friend": "Teman Kamu"
+  "your_friend": "Teman Kamu",
+  "welcome_message": "Buat percakapan anda\nlebih menyenangkan",
+  "get_started": "Segera Mulai",
+  "connect_video": "Menghubungkan panggilan video",
+  "microphone_permission": "Perlu izin penggunaan mikrofon untuk melakukan panggilan",
+  "camera_permission": "Perlu izin akses kamera untuk melakukan panggilan video",
+  "connect_voice": "Menghubungkan panggilan suara",
+  "success_download": "Berhasil mengunduh berkas",
+  "file_exist": "Berkas sudah ada",
+  "chat": "Obrolan",
+  "call": "Panggilan"
 }

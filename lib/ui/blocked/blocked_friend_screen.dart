@@ -5,6 +5,7 @@ import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_controller.dart';
 
@@ -16,7 +17,10 @@ class BlockedFriendScreen extends ConsumerWidget {
     final controller = ref.watch(blockedFriendControllerProvider);
 
     return Scaffold(
-      appBar: Toolbar.defaultToolbar(context, 'Blocked Friend'),
+      appBar: Toolbar.defaultToolbar(
+        context,
+        AppLocalizations.of(context)!.blocked_friend,
+      ),
       body: controller.when(
         data: (data) {
           if (data.isEmpty) {
@@ -28,7 +32,7 @@ class BlockedFriendScreen extends ConsumerWidget {
                     assets: 'assets/icons/ic_profile_not_found.png',
                     size: 80,
                   ),
-                  Text('Empty Blocked Friend'),
+                  Text(AppLocalizations.of(context)!.empty_blocked_friend),
                 ],
               ),
             );
@@ -41,7 +45,8 @@ class BlockedFriendScreen extends ConsumerWidget {
             );
           }
         },
-        error: (_, _) => Center(child: Text('Something Went Wrong')),
+        error: (_, _) =>
+            Center(child: Text(AppLocalizations.of(context)!.something_wrong)),
         loading: () => const Center(child: CustomIndicator()),
       ),
     );

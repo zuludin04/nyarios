@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 
 class LastMessageItem extends ConsumerWidget {
@@ -62,7 +63,7 @@ class LastMessageItem extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(_lastMessageDate(lastMessage.lastMessageSent)),
+                Text(_lastMessageDate(context, lastMessage.lastMessageSent)),
                 const SizedBox(height: 4),
               ],
             ),
@@ -72,14 +73,14 @@ class LastMessageItem extends ConsumerWidget {
     );
   }
 
-  String _lastMessageDate(int? datetime) {
+  String _lastMessageDate(BuildContext context, int? datetime) {
     var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
     var today = DateTime.now();
 
     if (date.day == today.day) {
       return DateFormat("hh:mm a").format(date).toLowerCase();
     } else if ((today.day - date.day) == 1) {
-      return "Yesterday";
+      return AppLocalizations.of(context)!.yesterday;
     } else {
       return DateFormat("dd MMM yyyy").format(date);
     }

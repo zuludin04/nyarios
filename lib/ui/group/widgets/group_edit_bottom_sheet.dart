@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 
 class GroupEditBottomSheet extends ConsumerStatefulWidget {
   final Group group;
@@ -27,7 +28,7 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Group Name'),
+          Text(AppLocalizations.of(context)!.group_name),
           TextFormField(
             controller: _textEditingController..text = widget.group.name!,
           ),
@@ -37,7 +38,7 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
               TextButton(
                 onPressed: context.pop,
                 child: Text(
-                  'Cancel',
+                  AppLocalizations.of(context)!.cancel,
                   style: TextStyle(color: const Color(0xffb3404a)),
                 ),
               ),
@@ -58,11 +59,13 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
                           }
                         });
                   } else {
-                    Flushbar(message: 'Fill message').show(context);
+                    Flushbar(
+                      message: AppLocalizations.of(context)!.fill_message,
+                    ).show(context);
                   }
                 },
                 child: Text(
-                  'Save',
+                  AppLocalizations.of(context)!.save,
                   style: TextStyle(color: const Color(0xffb3404a)),
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/contact/contact_detail_provider.dart';
 import 'package:nyarios/ui/contact/contact_media_tab.dart';
 
@@ -122,7 +123,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                       width: double.infinity,
                       child: Tab(
                         icon: Text(
-                          'Media',
+                          AppLocalizations.of(context)!.media,
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
@@ -132,7 +133,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                       width: double.infinity,
                       child: Tab(
                         icon: Text(
-                          'Docs',
+                          AppLocalizations.of(context)!.docs,
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
@@ -150,12 +151,14 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
               data: (data) {
                 return ContactMediaTab(messages: data.mediaMessages);
               },
-              error: (_, _) => Text("There is Something Wrong"),
+              error: (_, _) =>
+                  Text(AppLocalizations.of(context)!.something_wrong),
               loading: () => CircularProgressIndicator(),
             ),
             chatAsync.when(
               data: (data) => ContactMediaTab(messages: data.docMessages),
-              error: (_, _) => Text("There is Something Wrong"),
+              error: (_, _) =>
+                  Text(AppLocalizations.of(context)!.something_wrong),
               loading: () => CircularProgressIndicator(),
             ),
           ],
