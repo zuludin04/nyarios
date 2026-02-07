@@ -17,13 +17,12 @@ import 'package:nyarios/ui/profile/profile_edit_screen.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_screen.dart';
 import 'package:nyarios/ui/search/search_screen.dart';
 import 'package:nyarios/ui/splash/splash_screen.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'app_pages.dart';
 
-class AppRoutes {
-  AppRoutes();
-
-  GoRouter get appRoutes => GoRouter(
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
     initialLocation: AppPages.splash,
     routes: [
       GoRoute(
@@ -119,4 +118,4 @@ class AppRoutes {
       return null;
     },
   );
-}
+});

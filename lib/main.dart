@@ -1,135 +1,33 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/controllers/language/language_controller.dart';
+import 'package:nyarios/core/controllers/notification/notification_action_controller.dart';
 import 'package:nyarios/core/utils/custom_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/firebase_options.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
+import 'package:nyarios/services/notification_service.dart';
+
+final FlutterLocalNotificationsPlugin notificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 @pragma('vm:entry-point')
-Future<void> _backgroundHandler(RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await setupFlutterNotifications();
-  showFlutterNotifications(message);
+  await NotificationService.showFromFCM(message.data);
 }
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
-  debugPrint(
-    'notification(${notificationResponse.id}) action tapped: '
-    '${notificationResponse.actionId} with'
-    ' payload: ${notificationResponse.payload}',
-  );
-  if (notificationResponse.input?.isNotEmpty ?? false) {
-    debugPrint(
-      'notification action tapped with input: ${notificationResponse.input}',
-    );
-  }
-}
-
-late AndroidNotificationChannel channel;
-bool isFlutterLocalNotificationsInitialized = false;
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
-Future<void> setupFlutterNotifications() async {
-  if (isFlutterLocalNotificationsInitialized) {
-    return;
-  }
-
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('app_icon');
-
-  final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-  );
-
-  await flutterLocalNotificationsPlugin.initialize(
-    settings: initializationSettings,
-    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-    onDidReceiveNotificationResponse: onNotificationTap,
-  );
-
-  channel = const AndroidNotificationChannel(
-    'hig_importance_channel',
-    'High Important Channel',
-    description: 'This channer is for important notification',
-    importance: Importance.high,
-  );
-
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
-      ?.createNotificationChannel(channel);
-
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  isFlutterLocalNotificationsInitialized = true;
-}
-
-void onNotificationTap(NotificationResponse response) {
-  if (response.actionId == 'id_1') {
-    debugPrint("accept call");
-  } else if (response.actionId == 'id_2') {
-    debugPrint("reject call");
-  }
-}
-
-void showFlutterNotifications(RemoteMessage message) {
-  RemoteNotification? notification = message.notification;
-  AndroidNotification? android = message.notification?.android;
-
-  if (notification != null && android != null && !kIsWeb) {
-    var androidNotifDetails = AndroidNotificationDetails(
-      channel.id,
-      channel.name,
-      channelDescription: channel.description,
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-      groupAlertBehavior: GroupAlertBehavior.all,
-      setAsGroupSummary: false,
-      actions: [
-        AndroidNotificationAction(
-          'id_1',
-          'Accept',
-          titleColor: Colors.green,
-          icon: DrawableResourceAndroidBitmap('call_accept'),
-          contextual: true,
-          showsUserInterface: true,
-        ),
-        AndroidNotificationAction(
-          'id_2',
-          'Reject',
-          titleColor: Color.fromARGB(255, 255, 0, 0),
-          icon: DrawableResourceAndroidBitmap('call_reject'),
-          contextual: true,
-          showsUserInterface: true,
-        ),
-      ],
-    );
-
-    flutterLocalNotificationsPlugin.show(
-      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      title: notification.title,
-      body: notification.body,
-      notificationDetails: NotificationDetails(android: androidNotifDetails),
-    );
-  }
+  NotificationActionController.handle(notificationResponse);
 }
 
 void main() async {
@@ -137,10 +35,18 @@ void main() async {
 
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  if (!kIsWeb) {
-    await setupFlutterNotifications();
+  await NotificationService.init();
+
+  final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    NotificationActionController.handle(
+      NotificationResponse(
+        payload: jsonEncode(initialMessage.data),
+        notificationResponseType: NotificationResponseType.selectedNotification,
+      ),
+    );
   }
 
   runApp(const ProviderScope(child: LifecycleListnerWrapper(child: MyApp())));
@@ -154,18 +60,18 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-
   @override
   void initState() {
     super.initState();
-    firebaseMessaging.requestPermission(provisional: true);
-    FirebaseMessaging.onMessage.listen(showFlutterNotifications);
+    FirebaseMessaging.onMessage.listen((message) async {
+      await NotificationService.showFromFCM(message.data);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final controller = ref.watch(languageControllerProvider);
+    final router = ref.watch(routerProvider);
 
     return controller.when(
       data: (data) => MaterialApp.router(
@@ -174,13 +80,29 @@ class _MyAppState extends ConsumerState<MyApp> {
         darkTheme: CustomTheme.darkTheme,
         themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
-        routerConfig: AppRoutes().appRoutes,
+        routerConfig: router,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: Locale(data),
+        builder: (context, child) {
+          return Stack(children: [child!, const NotificationListenerWidget()]);
+        },
       ),
       error: (_, _) => SizedBox(),
       loading: () => SizedBox(),
     );
+  }
+}
+
+class NotificationListenerWidget extends ConsumerWidget {
+  const NotificationListenerWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(notificationActionControllerProvider, (_, next) {
+      final router = ref.read(routerProvider);
+      router.go("${AppPages.callVoice}/12213412");
+    });
+    return const SizedBox.shrink();
   }
 }
