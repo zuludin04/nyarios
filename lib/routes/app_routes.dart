@@ -35,6 +35,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.contactFriend,
+        name: AppPages.contactFriend,
         builder: (context, state) => FriendScreen(),
       ),
       GoRoute(path: AppPages.home, builder: (context, state) => HomeScreen()),
@@ -48,10 +49,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.language,
+        name: AppPages.language,
         builder: (context, state) => LanguageSettingScreen(),
       ),
       GoRoute(
         path: AppPages.profileEdit,
+        name: AppPages.profileEdit,
         builder: (context, state) => ProfileEditScreen(),
       ),
       GoRoute(
@@ -72,10 +75,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.qrCodeProfile,
+        name: AppPages.qrCodeProfile,
         builder: (context, state) => QrCodeProfileScreen(),
       ),
       GoRoute(
         path: AppPages.contactBlock,
+        name: AppPages.contactBlock,
         builder: (context, state) => BlockedFriendScreen(),
       ),
       GoRoute(

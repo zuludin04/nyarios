@@ -13,26 +13,23 @@ class SearchController extends _$SearchController {
 
   Future<void> searchChat(String term) async {
     final chatRepo = ref.watch(chatRepositoryProvider);
-    final profileRepo = ref.watch(profileRepositoryProvider);
     final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
     final user = await localRepo.getUserProfile();
     final chats = await chatRepo.loadDmChat(user.userId);
     final chatProfiles = chats.map((e) async {
-      final profile = await profileRepo.loadSingleProfile(e.profileId);
-      e.profile = profile;
       return e;
     });
 
     final filtered = await Future.wait(chatProfiles);
-    final results = filtered
-        .where(
-          (e) => e.profile!.name!.toLowerCase().contains(term.toLowerCase()),
-        )
-        .toList();
+    // final results = filtered
+    //     .where(
+    //       (e) => e.profile!.name!.toLowerCase().contains(term.toLowerCase()),
+    //     )
+    //     .toList();
 
     state = AsyncData(
-      state.value!.copyWith(chatResult: results, userId: user.userId),
+      state.value!.copyWith(chatResult: filtered, userId: user.userId),
     );
   }
 

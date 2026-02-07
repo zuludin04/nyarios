@@ -231,12 +231,17 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
   Future<void> _updateGroupRecentMessage(Group group) async {
     var repo = ref.read(chatRepositoryProvider);
 
-    var chat = Chat(
-      profileId: group.groupId,
-      lastMessage: 'created group "${group.name}"',
-      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
-      chatId: group.chatId,
-      type: 'group',
+    Chat chat = Chat(
+      isGroup: false,
+      title: '',
+      participants: [],
+      createdBy: '',
+      createdAt: '',
+      lastMessage: LastMessage(
+        text: 'text',
+        senderId: 'senderId',
+        createdAt: 'createdAt',
+      ),
     );
 
     await repo.updateGroupRecentChat(group, chat);

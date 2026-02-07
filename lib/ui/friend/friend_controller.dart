@@ -1,4 +1,4 @@
-import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -7,18 +7,20 @@ part 'friend_controller.g.dart';
 @riverpod
 class FriendController extends _$FriendController {
   @override
-  Future<List<Contact>> build() async {
-    final contactRepo = ref.watch(contactRepositoryProvider);
+  Future<List<Profile>> build() async {
     final profileRepo = ref.watch(profileRepositoryProvider);
     final localRepo = ref.watch(sharedLocalRepositoryProvider);
+    final chatRepo = ref.watch(chatRepositoryProvider);
 
     final user = await localRepo.getUserProfile();
-    final contacts = await contactRepo.loadContacts(false, user.userId);
-    final friends = contacts.map((e) async {
-      final profile = await profileRepo.loadSingleProfile(e.profileId);
-      e.profile = profile;
-      return e;
-    });
-    return Future.wait(friends);
+    final chats = await chatRepo.loadChatFriend(user.userId);
+
+    final profiles = chats.map((e) async {
+      final profileId = e.participants.where((e) => e != user.userId).first;
+      final profile = await profileRepo.loadSingleProfile(profileId);
+      return profile;
+    }).toList();
+
+    return Future.wait(profiles);
   }
 }

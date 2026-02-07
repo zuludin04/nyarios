@@ -12,7 +12,6 @@ import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_controller.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:uuid/uuid.dart';
 
 class QrCodeProfileScreen extends ConsumerWidget {
   const QrCodeProfileScreen({super.key});
@@ -22,13 +21,16 @@ class QrCodeProfileScreen extends ConsumerWidget {
     final asyncData = ref.watch(qrCodeProfileControllerProvider);
     final controller = ref.watch(qrCodeProfileControllerProvider.notifier);
 
-    asyncData.whenData((data) {
-      if (data.showProfileDialog) {
-        _showProfileDialog(context, data.profile!, (roomId) {
-          controller.saveContact(data.profile!.uid!, roomId);
+    ref.listen(qrCodeProfileControllerProvider, (prev, next) {
+      if (next.value!.showProfileDialog) {
+        _showProfileDialog(context, next.value!.profile!, () {
+          controller.saveChatRoom(next.value!.profile!.uid!);
         });
-      } else if (data.successLoadContact) {
-        context.pushNamed('${AppPages.chatting}/dm', extra: data.contact);
+      } else if (next.value!.successLoadContact) {
+        context.pushNamed(
+          '${AppPages.chatting}/dm',
+          extra: next.value!.contact,
+        );
       }
     });
 
@@ -183,7 +185,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
   void _showProfileDialog(
     BuildContext context,
     Profile profile,
-    Function(String) onSaveContact,
+    Function() onSaveContact,
   ) {
     showDialog(
       context: context,
@@ -201,18 +203,14 @@ class QrCodeProfileScreen extends ConsumerWidget {
               ),
             ),
             Text(profile.name ?? ""),
-            Text(
-              profile.status ?? "",
-              style: const TextStyle(fontSize: 13, color: Colors.black54),
-            ),
+            Text(profile.status ?? "", style: const TextStyle(fontSize: 13)),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   context.pop();
-                  var roomId = const Uuid().v4();
-                  onSaveContact(roomId);
+                  onSaveContact();
                 },
                 child: Text(AppLocalizations.of(context)!.add_friend),
               ),

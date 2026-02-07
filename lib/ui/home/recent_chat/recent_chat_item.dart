@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/chat.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
-import 'package:nyarios/routes/app_routes.dart';
 
 class LastMessageItem extends ConsumerWidget {
   final Chat lastMessage;
@@ -15,25 +12,20 @@ class LastMessageItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: () {
-        context.pushNamed(
-          "${AppPages.chatting}/${lastMessage.type}",
-          extra: Contact.fromLastMessage(lastMessage),
-        );
-      },
+      onTap: () {},
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(40),
-              child: Image.network(
-                lastMessage.profile?.photo ?? "",
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
-              ),
-            ),
+            // ClipRRect(
+            //   borderRadius: BorderRadius.circular(40),
+            //   child: Image.network(
+            //     lastMessage.profile?.photo ?? "",
+            //     width: 40,
+            //     height: 40,
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -41,7 +33,7 @@ class LastMessageItem extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lastMessage.profile?.name ?? "",
+                    "",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -50,11 +42,7 @@ class LastMessageItem extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    lastMessage.lastMessage ?? "",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  Text("", maxLines: 1, overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
@@ -63,7 +51,7 @@ class LastMessageItem extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(_lastMessageDate(context, lastMessage.lastMessageSent)),
+                Text(_lastMessageDate(context, 0)),
                 const SizedBox(height: 4),
               ],
             ),

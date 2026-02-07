@@ -13,7 +13,7 @@ part of 'friend_controller.dart';
 const friendControllerProvider = FriendControllerProvider._();
 
 final class FriendControllerProvider
-    extends $AsyncNotifierProvider<FriendController, List<Contact>> {
+    extends $AsyncNotifierProvider<FriendController, List<Profile>> {
   const FriendControllerProvider._()
     : super(
         from: null,
@@ -33,20 +33,20 @@ final class FriendControllerProvider
   FriendController create() => FriendController();
 }
 
-String _$friendControllerHash() => r'2118dcce2bbf31031893eb8bbc7a4ea6fa379868';
+String _$friendControllerHash() => r'51b3265e2d76b7299c5abc0c54dc98f21482c8b2';
 
-abstract class _$FriendController extends $AsyncNotifier<List<Contact>> {
-  FutureOr<List<Contact>> build();
+abstract class _$FriendController extends $AsyncNotifier<List<Profile>> {
+  FutureOr<List<Profile>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<List<Contact>>, List<Contact>>;
+    final ref = this.ref as $Ref<AsyncValue<List<Profile>>, List<Profile>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Contact>>, List<Contact>>,
-              AsyncValue<List<Contact>>,
+              AnyNotifier<AsyncValue<List<Profile>>, List<Profile>>,
+              AsyncValue<List<Profile>>,
               Object?,
               Object?
             >;

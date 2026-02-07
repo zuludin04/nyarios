@@ -1,87 +1,67 @@
-import 'group.dart';
-import 'profile.dart';
-
 class Chat {
-  String? profileId;
-  String? lastMessage;
-  int? lastMessageSent;
-  String? chatId;
-  String? type;
-
-  Profile? profile;
-  Group? group;
+  final bool isGroup;
+  final String title;
+  final List<String> participants;
+  final String createdBy;
+  final String createdAt;
+  final LastMessage lastMessage;
 
   Chat({
-    this.profileId,
-    this.lastMessage,
-    this.lastMessageSent,
-    this.chatId,
-    this.type,
-    this.profile,
-    this.group,
+    required this.isGroup,
+    required this.title,
+    required this.participants,
+    required this.createdBy,
+    required this.createdAt,
+    required this.lastMessage,
   });
 
-  Map<String, dynamic> toMap(bool fromSender, String? userId) {
-    return <String, dynamic>{
-      'profileId': fromSender ? profileId : userId,
-      'lastMessage': lastMessage,
-      'lastMessageSent': lastMessageSent,
-      'chatId': chatId,
-      'type': type,
-    };
-  }
-
-  Map<String, dynamic> toMapGroup() {
-    return <String, dynamic>{
-      'profileId': profileId,
-      'lastMessage': lastMessage,
-      'lastMessageSent': lastMessageSent,
-      'chatId': chatId,
-      'type': type,
-    };
-  }
-
-  factory Chat.fromMapProfile(Map<String, dynamic> map, Profile profile) {
+  factory Chat.fromMap(Map<String, dynamic> json) {
     return Chat(
-      profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      lastMessage: map['lastMessage'] != null
-          ? map['lastMessage'] as String
-          : null,
-      lastMessageSent: map['lastMessageSent'] != null
-          ? map['lastMessageSent'] as int
-          : null,
-      chatId: map['chatId'] != null ? map['chatId'] as String : null,
-      type: map['type'] != null ? map['type'] as String : null,
-      profile: profile,
+      isGroup: json['isGroup'],
+      title: json['title'],
+      participants: json['participants'].cast<String>(),
+      createdBy: json['createdBy'],
+      createdAt: json['createdAt'],
+      lastMessage: LastMessage.fromJson(json['lastMessage']),
     );
   }
 
-  factory Chat.fromMapGroup(Map<String, dynamic> map, Group group) {
-    return Chat(
-      profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      lastMessage: map['lastMessage'] != null
-          ? map['lastMessage'] as String
-          : null,
-      lastMessageSent: map['lastMessageSent'] != null
-          ? map['lastMessageSent'] as int
-          : null,
-      chatId: map['chatId'] != null ? map['chatId'] as String : null,
-      type: map['type'] != null ? map['type'] as String : null,
-      group: group,
+  Map<String, dynamic> toMap() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['isGroup'] = isGroup;
+    data['title'] = title;
+    data['participants'] = participants;
+    data['createdBy'] = createdBy;
+    data['createdAt'] = createdAt;
+    data['lastMessage'] = lastMessage.toJson();
+    return data;
+  }
+}
+
+class LastMessage {
+  final String text;
+  final String senderId;
+  final String createdAt;
+
+  LastMessage({
+    required this.text,
+    required this.senderId,
+    required this.createdAt,
+  });
+
+  factory LastMessage.fromJson(Map<String, dynamic> json) {
+    return LastMessage(
+      text: json['text'],
+      senderId: json['senderId'],
+      createdAt: json['createdAt'],
     );
   }
 
-  factory Chat.fromMap(Map<String, dynamic> map) {
-    return Chat(
-      profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      lastMessage: map['lastMessage'] != null
-          ? map['lastMessage'] as String
-          : null,
-      lastMessageSent: map['lastMessageSent'] != null
-          ? map['lastMessageSent'] as int
-          : null,
-      chatId: map['chatId'] != null ? map['chatId'] as String : null,
-      type: map['type'] != null ? map['type'] as String : null,
-    );
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['text'] = text;
+    data['senderId'] = senderId;
+    data['createdAt'] = createdAt;
+    return data;
   }
 }

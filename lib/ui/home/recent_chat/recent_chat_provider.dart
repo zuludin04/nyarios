@@ -26,7 +26,7 @@ class RecentChatProvider extends _$RecentChatProvider {
 
       return chatSnap.docs.map((p) {
         final chats = Chat.fromMap(p.data());
-        chats.profile = users[chats.profileId];
+        // chats.profile = users[chats.profileId];
         return chats;
       }).toList();
     });

@@ -7,6 +7,20 @@ class ChatRepository {
 
   ChatRepository({required this.firestore});
 
+  Future<void> saveNewChat(Chat chat) async {
+    await firestore.collection('chats').doc().set(chat.toMap());
+  }
+
+  Future<List<Chat>> loadChatFriend(String? userId) async {
+    final results = await firestore
+        .collection('chats')
+        .where('participants', arrayContains: userId)
+        .get();
+
+    final chats = results.docs.map((e) => Chat.fromMap(e.data())).toList();
+    return chats;
+  }
+
   Stream<QuerySnapshot<Map<String, dynamic>>> loadRecentChat(
     String? userId,
   ) async* {
@@ -33,31 +47,31 @@ class ChatRepository {
   }
 
   void updateRecentChat(bool fromSender, Chat lastMessage, String? userId) {
-    firestore
-        .collection('chat')
-        .doc(fromSender ? userId : lastMessage.profileId)
-        .collection('receiver')
-        .doc(fromSender ? lastMessage.profileId : userId)
-        .set(lastMessage.toMap(fromSender, userId));
+    // firestore
+    //     .collection('chat')
+    //     .doc(fromSender ? userId : lastMessage.profileId)
+    //     .collection('receiver')
+    //     .doc(fromSender ? lastMessage.profileId : userId)
+    //     .set(lastMessage.toMap(fromSender, userId));
   }
 
   Future<void> updateGroupRecentChat(Group group, Chat chat) async {
-    for (var element in group.members!) {
-      await firestore
-          .collection('chat')
-          .doc(element)
-          .collection('receiver')
-          .doc(group.groupId)
-          .set(chat.toMapGroup());
-    }
+    // for (var element in group.members!) {
+    //   await firestore
+    //       .collection('chat')
+    //       .doc(element)
+    //       .collection('receiver')
+    //       .doc(group.groupId)
+    //       .set(chat.toMapGroup());
+    // }
   }
 
   Future<void> deleteGroupChat(String groupId, String userId) async {
-    await firestore
-        .collection('chat')
-        .doc(userId)
-        .collection('receiver')
-        .doc(groupId)
-        .delete();
+    // await firestore
+    //     .collection('chat')
+    //     .doc(userId)
+    //     .collection('receiver')
+    //     .doc(groupId)
+    //     .delete();
   }
 }

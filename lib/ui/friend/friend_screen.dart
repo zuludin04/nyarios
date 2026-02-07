@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/friend/friend_controller.dart';
@@ -73,7 +73,7 @@ class FriendScreen extends ConsumerWidget {
             ),
           ),
           controller.when(
-            data: (List<Contact> data) {
+            data: (data) {
               if (data.isEmpty) {
                 return SliverFillRemaining(
                   child: Center(
@@ -98,7 +98,7 @@ class FriendScreen extends ConsumerWidget {
               } else {
                 return SliverList.separated(
                   itemBuilder: (context, index) =>
-                      _FriendItem(contact: data[index]),
+                      _FriendItem(profile: data[index]),
                   itemCount: data.length,
                   separatorBuilder: (context, index) => Divider(),
                 );
@@ -120,25 +120,21 @@ class FriendScreen extends ConsumerWidget {
 }
 
 class _FriendItem extends StatelessWidget {
-  final Contact contact;
+  final Profile profile;
 
-  const _FriendItem({required this.contact});
+  const _FriendItem({required this.profile});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushNamed("${AppPages.chatting}/dm", extra: contact),
+      onTap: () => context.pushNamed("${AppPages.chatting}/dm"),
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(40),
-              child: Image.network(
-                contact.profile?.photo ?? "",
-                width: 40,
-                height: 40,
-              ),
+              child: Image.network(profile.photo ?? "", width: 40, height: 40),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -147,13 +143,13 @@ class _FriendItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    contact.profile?.name ?? "",
+                    profile.name ?? "",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(contact.profile?.status ?? ""),
+                  Text(profile.status ?? ""),
                 ],
               ),
             ),

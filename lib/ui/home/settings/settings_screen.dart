@@ -99,7 +99,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 assets: 'assets/icons/ic_language.png',
                 color: Theme.of(context).iconTheme.color!,
               ),
-              onPressed: (context) => context.push(AppPages.language),
+              onPressed: (context) => context.pushNamed(AppPages.language),
             ),
           ],
         ),

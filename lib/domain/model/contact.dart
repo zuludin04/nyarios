@@ -1,5 +1,3 @@
-import 'package:nyarios/domain/model/chat.dart';
-
 import 'group.dart';
 import 'profile.dart';
 
@@ -51,21 +49,5 @@ class Contact {
           : null,
       blocked: map['blocked'] != null ? map['blocked'] as bool : null,
     );
-  }
-
-  factory Contact.fromLastMessage(Chat message) {
-    if (message.type == 'dm') {
-      return Contact(
-        profileId: message.profileId,
-        chatId: message.chatId,
-        profile: message.profile,
-      );
-    } else {
-      return Contact(
-        profileId: message.profileId,
-        chatId: message.chatId,
-        group: message.group,
-      );
-    }
   }
 }

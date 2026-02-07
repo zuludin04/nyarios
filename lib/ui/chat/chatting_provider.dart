@@ -86,11 +86,16 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     );
 
     Chat chat = Chat(
-      profileId: profileId,
-      lastMessage: message,
-      lastMessageSent: DateTime.now().millisecondsSinceEpoch,
-      chatId: chatId,
-      type: "dm",
+      isGroup: false,
+      title: '',
+      participants: [],
+      createdBy: '',
+      createdAt: '',
+      lastMessage: LastMessage(
+        text: 'text',
+        senderId: 'senderId',
+        createdAt: 'createdAt',
+      ),
     );
 
     chatRepo.updateRecentChat(true, chat, user?.userId);
