@@ -212,7 +212,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
 
   Future<String> generateAgoraToken({
     required String channelName,
-    required String uid,
+    required int uid,
   }) async {
     final token = await agoraRepo.loadAgoraToken(
       channel: channelName,

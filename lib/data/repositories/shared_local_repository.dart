@@ -36,14 +36,10 @@ class SharedLocalRepository {
   }
 
   Future<void> setUserLocal(Profile profile) async {
-    await sharedPrefs.setString(
-      userIdKey,
-      profile.uid ?? '106829103416030296046',
-    );
-    await sharedPrefs.setString(userNameKey, profile.name ?? 'Dorky 004');
+    await sharedPrefs.setString(userIdKey, profile.uid ?? '');
+    await sharedPrefs.setString(userNameKey, profile.name ?? '');
     await sharedPrefs.setString(userImageKey, profile.photo ?? '');
     await sharedPrefs.setString(userEmailKey, profile.email ?? '');
-    await sharedPrefs.setInt(userIdIntKey, profile.id ?? 0);
   }
 
   Future<LocalUser> getUserProfile() async {

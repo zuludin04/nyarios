@@ -13,13 +13,7 @@ class ProfileRepository {
     final exist = await checkIfUserExist(profile.uid!);
     final fcmToken = await loadFcmToken();
     if (!exist) {
-      final id = await getIncrementedId();
-      final userId = id + 1;
-
-      profile.id = userId;
       profile.fcmToken = fcmToken;
-
-      updateIncrementedId(userId);
       firestore.collection("profile").doc(profile.uid).set(profile.toMap());
     } else {
       final userProfile = await loadSingleProfile(profile.uid);
@@ -95,18 +89,6 @@ class ProfileRepository {
   Future<void> updateFcmToken(String? token, String? profileId) async {
     var updateData = {'fcmToken': token};
     firestore.collection("profile").doc(profileId).update(updateData);
-  }
-
-  Future<int> getIncrementedId() async {
-    var collection = firestore.collection('incrementedId');
-    var doc = await collection.doc('FvmJzscRcjO4J9AFFPEe').get();
-    return doc.data()!['id'];
-  }
-
-  Future<void> updateIncrementedId(int id) async {
-    firestore.collection('incrementedId').doc('FvmJzscRcjO4J9AFFPEe').set({
-      'id': id,
-    });
   }
 
   Future<String?> loadFcmToken() async {

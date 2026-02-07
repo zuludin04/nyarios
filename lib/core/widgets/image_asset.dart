@@ -14,6 +14,10 @@ class ImageAsset extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(assets, width: size, color: color);
+    return Image.asset(
+      assets,
+      width: size,
+      color: Theme.of(context).iconTheme.color,
+    );
   }
 }

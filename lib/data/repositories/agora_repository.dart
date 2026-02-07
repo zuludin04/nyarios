@@ -7,7 +7,7 @@ class AgoraRepository {
 
   Future<String> loadAgoraToken({
     required String channel,
-    required String uid,
+    required int uid,
   }) async {
     try {
       final options = BaseOptions(

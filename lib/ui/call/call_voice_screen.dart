@@ -175,7 +175,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     final appId = dotenv.env["AGORA_APP_ID"];
     await agoraEngine?.initialize(RtcEngineContext(appId: appId));
 
-    join(widget.token, widget.contact.chatId!, widget.contact.profile!.id!);
+    join(widget.token, widget.contact.chatId!, 0);
 
     agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(

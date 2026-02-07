@@ -260,7 +260,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       token: token,
       channelId: widget.contact.chatId!,
       options: options,
-      uid: widget.contact.profile!.id!,
+      uid: 0,
     );
   }
 

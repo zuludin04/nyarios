@@ -73,7 +73,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
               onPressed: () async {
                 final token = await controller.generateAgoraToken(
                   channelName: widget.contact.chatId!,
-                  uid: widget.contact.profile!.id!.toString(),
+                  uid: 0,
                 );
 
                 if (context.mounted) {
@@ -95,7 +95,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
               onPressed: () async {
                 final token = await controller.generateAgoraToken(
                   channelName: widget.contact.chatId!,
-                  uid: widget.contact.profile!.id!.toString(),
+                  uid: 0,
                 );
 
                 if (context.mounted) {

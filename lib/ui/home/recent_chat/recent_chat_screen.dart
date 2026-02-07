@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
+import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_provider.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
 
@@ -17,14 +20,38 @@ class RecentChatScreen extends ConsumerWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           provider.when(
-            data: (items) => SliverList.separated(
-              itemBuilder: (context, index) {
-                var chat = items[index];
-                return LastMessageItem(lastMessage: chat);
-              },
-              itemCount: items.length,
-              separatorBuilder: (BuildContext context, int index) => Divider(),
-            ),
+            data: (items) {
+              if (items.isNotEmpty) {
+                return SliverList.separated(
+                  itemBuilder: (context, index) {
+                    var chat = items[index];
+                    return LastMessageItem(lastMessage: chat);
+                  },
+                  itemCount: items.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      Divider(),
+                );
+              } else {
+                return SliverFillRemaining(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const ImageAsset(
+                        assets: 'assets/icons/ic_empty_chat.png',
+                        size: 80,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => context.push(AppPages.contactFriend),
+                        child: Text(
+                          AppLocalizations.of(context)!.start_conversation,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
             error: (_, _) => SliverFillRemaining(
               child: Center(
                 child: Text(AppLocalizations.of(context)!.something_wrong),
