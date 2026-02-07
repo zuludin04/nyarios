@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/contact.dart';
+import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_controller.dart';
@@ -39,7 +39,7 @@ class BlockedFriendScreen extends ConsumerWidget {
           } else {
             return ListView.separated(
               itemBuilder: (context, index) =>
-                  _BlockedFriendItem(contact: data[index]),
+                  _BlockedFriendItem(profile: data[index]),
               itemCount: data.length,
               separatorBuilder: (context, index) => Divider(),
             );
@@ -54,25 +54,21 @@ class BlockedFriendScreen extends ConsumerWidget {
 }
 
 class _BlockedFriendItem extends StatelessWidget {
-  final Contact contact;
+  final Profile profile;
 
-  const _BlockedFriendItem({required this.contact});
+  const _BlockedFriendItem({required this.profile});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushNamed("${AppPages.chatting}/dm", extra: contact),
+      onTap: () => context.pushNamed("${AppPages.chatting}/dm", extra: profile),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         child: Row(
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(40),
-              child: Image.network(
-                contact.profile?.photo ?? "",
-                width: 40,
-                height: 40,
-              ),
+              child: Image.network(profile.photo ?? "", width: 40, height: 40),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -81,13 +77,13 @@ class _BlockedFriendItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    contact.profile?.name ?? "",
+                    profile.name ?? "",
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(contact.profile?.status ?? ""),
+                  Text(profile.status ?? ""),
                 ],
               ),
             ),

@@ -7,8 +7,10 @@ class ChatRepository {
 
   ChatRepository({required this.firestore});
 
-  Future<void> saveNewChat(Chat chat) async {
-    await firestore.collection('chats').doc().set(chat.toMap());
+  Future<String> saveNewChat(Chat chat) async {
+    final doc = firestore.collection('chats').doc();
+    doc.set(chat.toMap());
+    return doc.id;
   }
 
   Future<List<Chat>> loadChatFriend(String? userId) async {

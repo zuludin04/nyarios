@@ -33,7 +33,7 @@ final class FriendControllerProvider
   FriendController create() => FriendController();
 }
 
-String _$friendControllerHash() => r'51b3265e2d76b7299c5abc0c54dc98f21482c8b2';
+String _$friendControllerHash() => r'3b9d8f6ecd39a9f968651b3990ff5e0a8e128989';
 
 abstract class _$FriendController extends $AsyncNotifier<List<Profile>> {
   FutureOr<List<Profile>> build();

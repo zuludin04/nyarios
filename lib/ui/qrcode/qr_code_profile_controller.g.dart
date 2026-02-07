@@ -35,7 +35,7 @@ final class QrCodeProfileControllerProvider
 }
 
 String _$qrCodeProfileControllerHash() =>
-    r'c86e9f08b11bb52803ea32df0360e13b2aecba79';
+    r'c1dfbb1ae0175afc608a9c11307e3237e6696852';
 
 abstract class _$QrCodeProfileController
     extends $AsyncNotifier<QrCodeProfileState> {

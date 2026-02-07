@@ -8,6 +8,7 @@ import 'package:nyarios/ui/contact/contact_media_tab.dart';
 
 class ContactDetailScreen extends ConsumerStatefulWidget {
   final Contact contact;
+
   const ContactDetailScreen({super.key, required this.contact});
 
   @override
@@ -35,8 +36,8 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
       contactDetailProviderProvider(
-        widget.contact.chatId!,
-        widget.contact.profileId!,
+        widget.contact.chatId,
+        widget.contact.userId,
       ),
     );
 
@@ -67,7 +68,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Image.network(
-                            widget.contact.profile!.photo!,
+                            " widget.contact.profile!.photo!",
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
@@ -77,7 +78,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.contact.profile!.name!,
+                      "widget.contact.profile!.name!",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

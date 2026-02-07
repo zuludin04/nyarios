@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:nyarios/data/repositories/agora_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/domain/model/chat.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
@@ -44,8 +43,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
       state = AsyncData(
         current.copyWith(
           messages: _mergeWithUploading(current, message),
-          isAlreadyFriend: contact?.alreadyFriend,
-          isBlocked: contact?.blocked,
+          status: contact?.status,
           user: user,
         ),
       );
@@ -166,20 +164,9 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     }
   }
 
-  Future<void> addToContact(String? profileId, String? chatId) async {
-    var contact = Contact(
-      profileId: profileId,
-      chatId: chatId,
-      blocked: false,
-      alreadyFriend: true,
-    );
+  Future<void> changeContactStatus(String? profileId, String status) async {
     final user = state.value!.user;
-    await contactRepo.saveContact(contact, profileId, user?.userId);
-  }
-
-  Future<void> blockFriend(String? profileId) async {
-    final user = state.value!.user;
-    await contactRepo.changeBlockStatus(profileId, true, user?.userId);
+    await contactRepo.changeContactStatus(user?.userId, profileId, status);
   }
 
   Future<void> selectMessage(String messageId) async {

@@ -33,14 +33,14 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
       chattingAsyncControllerProvider(
-        widget.contact.chatId!,
-        widget.contact.profileId!,
+        widget.contact.chatId,
+        widget.contact.userId,
       ),
     );
     final controller = ref.read(
       chattingAsyncControllerProvider(
-        widget.contact.chatId!,
-        widget.contact.profileId!,
+        widget.contact.chatId,
+        widget.contact.userId,
       ).notifier,
     );
 
@@ -48,7 +48,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
       appBar: Toolbar.defaultToolbar(
         context,
         "",
-        titleWidget: Text(widget.contact.profile?.name ?? ""),
+        titleWidget: Text(""),
         leading: chatAsync.value!.isSelectMode
             ? IconButton(
                 onPressed: controller.clearSelectedChat,
@@ -62,7 +62,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                 ),
               ),
         stream: true,
-        uid: widget.contact.profileId,
+        uid: widget.contact.userId,
         onTapTitle: () =>
             context.pushNamed(AppPages.contactDetail, extra: widget.contact),
         elevation: 0,
@@ -72,7 +72,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             child: IconButton(
               onPressed: () async {
                 final token = await controller.generateAgoraToken(
-                  channelName: widget.contact.chatId!,
+                  channelName: widget.contact.chatId,
                   uid: 0,
                 );
 
@@ -94,7 +94,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             child: IconButton(
               onPressed: () async {
                 final token = await controller.generateAgoraToken(
-                  channelName: widget.contact.chatId!,
+                  channelName: widget.contact.chatId,
                   uid: 0,
                 );
 
@@ -128,7 +128,9 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     PopupMenuItem(
                       value: 2,
                       child: Text(
-                        chatAsync.value!.isBlocked ? 'Unblock' : 'Block',
+                        chatAsync.value!.status == 'blocked'
+                            ? 'Unblock'
+                            : 'Block',
                       ),
                     ),
                 ];
@@ -142,18 +144,15 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     );
                     break;
                   case 1:
-                    context.pushNamed(
-                      "${AppPages.search}?type=chats&roomId=${widget.contact.chatId}&user=${widget.type == 'dm' ? widget.contact.profile?.name ?? "" : widget.contact.group?.name ?? ""}",
-                    );
                     break;
                   case 2:
-                    controller.blockFriend(widget.contact.profileId);
+                    controller.changeContactStatus(
+                      widget.contact.userId,
+                      'blocked',
+                    );
                     break;
                   case 3:
-                    context.pushNamed(
-                      "${AppPages.groupMemberPick}/add",
-                      extra: widget.contact.group,
-                    );
+                    context.pushNamed("${AppPages.groupMemberPick}/add");
                     break;
                 }
               },
@@ -168,12 +167,8 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     .toList();
                 final copiedMessages = messages
                     .map((e) {
-                      final name = e.chatId == chatAsync.value!.user!.userId
-                          ? chatAsync.value!.user!.userName
-                          : widget.type == 'dm'
-                          ? widget.contact.profile?.name ?? ""
-                          : widget.contact.group?.name ?? "";
-                      return copiedMessage(e, name);
+                      final name = "";
+                      return copiedMessage(e, '');
                     })
                     .toList()
                     .join();
@@ -197,7 +192,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             visible: chatAsync.value!.isSelectMode,
             child: IconButton(
               onPressed: () {
-                controller.clearMessages(widget.contact.chatId!);
+                controller.clearMessages(widget.contact.chatId);
               },
               icon: ImageAsset(
                 assets: 'assets/icons/ic_delete.png',
@@ -211,16 +206,16 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
         children: [
           chatAsync.when(
             data: (ChattingState data) => ContactFriendInfo(
-              isAlreadyFriend: data.isAlreadyFriend,
-              isBlocked: data.isBlocked,
+              isAlreadyFriend: data.status == 'friend',
+              isBlocked: data.status == 'blocked',
               onAddFriend: () {
-                controller.addToContact(
-                  widget.contact.profileId,
-                  widget.contact.chatId,
-                );
+                controller.changeContactStatus(widget.contact.userId, 'friend');
               },
               onBlock: () {
-                controller.blockFriend(widget.contact.profileId);
+                controller.changeContactStatus(
+                  widget.contact.userId,
+                  'blocked',
+                );
               },
             ),
             error: (_, _) => SizedBox(),
@@ -285,23 +280,23 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
           ),
           chatAsync.when(
             data: (ChattingState data) => ChatInputMessage(
-              isBlocked: data.isBlocked,
+              isBlocked: data.status == 'blocked',
               onSendMessage: ({required type, message, file}) {
                 if (type != 'text') {
                   controller.uploadFile(
                     file!.file,
                     'nyarios/files',
                     file.path.split("/").last,
-                    widget.contact.chatId!,
-                    widget.contact.profileId!,
+                    widget.contact.chatId,
+                    widget.contact.userId,
                     file.size,
                   );
                 } else {
                   controller.sendMessage(
                     message ?? "",
                     type,
-                    widget.contact.chatId!,
-                    widget.contact.profileId!,
+                    widget.contact.chatId,
+                    widget.contact.userId,
                   );
                 }
               },

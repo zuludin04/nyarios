@@ -9,18 +9,15 @@ class FriendController extends _$FriendController {
   @override
   Future<List<Profile>> build() async {
     final profileRepo = ref.watch(profileRepositoryProvider);
+    final contactRepo = ref.watch(contactRepositoryProvider);
     final localRepo = ref.watch(sharedLocalRepositoryProvider);
-    final chatRepo = ref.watch(chatRepositoryProvider);
 
     final user = await localRepo.getUserProfile();
-    final chats = await chatRepo.loadChatFriend(user.userId);
-
-    final profiles = chats.map((e) async {
-      final profileId = e.participants.where((e) => e != user.userId).first;
-      final profile = await profileRepo.loadSingleProfile(profileId);
+    final contacts = await contactRepo.loadContacts(user.userId, 'friend');
+    final friends = contacts.map((e) async {
+      final profile = await profileRepo.loadSingleProfile(e.userId);
       return profile;
-    }).toList();
-
-    return Future.wait(profiles);
+    });
+    return Future.wait(friends);
   }
 }

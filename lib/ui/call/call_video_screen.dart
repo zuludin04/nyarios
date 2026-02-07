@@ -92,25 +92,25 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(100),
-                                  child: Image.network(
-                                    widget.contact.profile!.photo!,
-                                    width: 70,
-                                    height: 70,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  widget.contact.profile!.name!,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
+                                // ClipRRect(
+                                //   borderRadius: BorderRadius.circular(100),
+                                //   child: Image.network(
+                                //     widget.contact.profile!.photo!,
+                                //     width: 70,
+                                //     height: 70,
+                                //     fit: BoxFit.fill,
+                                //   ),
+                                // ),
+                                // const SizedBox(height: 16),
+                                // Text(
+                                //   widget.contact.profile!.name!,
+                                //   textAlign: TextAlign.center,
+                                //   maxLines: 2,
+                                //   style: const TextStyle(
+                                //     color: Colors.white,
+                                //     fontWeight: FontWeight.w700,
+                                //   ),
+                                // ),
                               ],
                             ),
                           ),
@@ -188,7 +188,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       controller: VideoViewController.remote(
         rtcEngine: agoraEngine,
         canvas: VideoCanvas(uid: _remoteUid),
-        connection: RtcConnection(channelId: widget.contact.chatId!),
+        connection: RtcConnection(channelId: widget.contact.chatId),
       ),
     );
   }
@@ -258,7 +258,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
 
     await agoraEngine.joinChannel(
       token: token,
-      channelId: widget.contact.chatId!,
+      channelId: widget.contact.chatId,
       options: options,
       uid: 0,
     );

@@ -1,53 +1,31 @@
-import 'group.dart';
-import 'profile.dart';
-
 class Contact {
-  String? profileId;
-  String? chatId;
-  bool? blocked;
-  bool? alreadyFriend;
-
-  Profile? profile;
-  Group? group;
+  final String userId;
+  final String chatId;
+  final String status;
+  final String createdAt;
 
   Contact({
-    this.profileId,
-    this.chatId,
-    this.blocked,
-    this.alreadyFriend,
-    this.profile,
-    this.group,
+    required this.userId,
+    required this.chatId,
+    required this.status,
+    required this.createdAt,
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'profileId': profileId,
+      'profileId': userId,
       'chatId': chatId,
-      'blocked': blocked,
-      'alreadyFriend': alreadyFriend,
+      'status': status,
+      'createdAt': createdAt,
     };
   }
 
-  factory Contact.fromMap(Map<String, dynamic> map, Profile profile) {
+  factory Contact.fromMap(Map<String, dynamic> map) {
     return Contact(
-      profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      chatId: map['chatId'] != null ? map['chatId'] as String : null,
-      alreadyFriend: map['alreadyFriend'] != null
-          ? map['alreadyFriend'] as bool
-          : null,
-      blocked: map['blocked'] != null ? map['blocked'] as bool : null,
-      profile: profile,
-    );
-  }
-
-  factory Contact.fromJson(Map<String, dynamic> map) {
-    return Contact(
-      profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      chatId: map['chatId'] != null ? map['chatId'] as String : null,
-      alreadyFriend: map['alreadyFriend'] != null
-          ? map['alreadyFriend'] as bool
-          : null,
-      blocked: map['blocked'] != null ? map['blocked'] as bool : null,
+      userId: map['profileId'],
+      chatId: map['chatId'],
+      status: map['status'],
+      createdAt: map['createdAt'],
     );
   }
 }

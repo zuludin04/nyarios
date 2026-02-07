@@ -13,7 +13,7 @@ part of 'blocked_friend_controller.dart';
 const blockedFriendControllerProvider = BlockedFriendControllerProvider._();
 
 final class BlockedFriendControllerProvider
-    extends $AsyncNotifierProvider<BlockedFriendController, List<Contact>> {
+    extends $AsyncNotifierProvider<BlockedFriendController, List<Profile>> {
   const BlockedFriendControllerProvider._()
     : super(
         from: null,
@@ -34,20 +34,20 @@ final class BlockedFriendControllerProvider
 }
 
 String _$blockedFriendControllerHash() =>
-    r'a4c75173464fdea510f9e49a323f299a14c05ed0';
+    r'db1f7a70d06c1cc1f7ff4d5a2a7a3fa72e00b2d5';
 
-abstract class _$BlockedFriendController extends $AsyncNotifier<List<Contact>> {
-  FutureOr<List<Contact>> build();
+abstract class _$BlockedFriendController extends $AsyncNotifier<List<Profile>> {
+  FutureOr<List<Profile>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<List<Contact>>, List<Contact>>;
+    final ref = this.ref as $Ref<AsyncValue<List<Profile>>, List<Profile>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Contact>>, List<Contact>>,
-              AsyncValue<List<Contact>>,
+              AnyNotifier<AsyncValue<List<Profile>>, List<Profile>>,
+              AsyncValue<List<Profile>>,
               Object?,
               Object?
             >;

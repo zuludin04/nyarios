@@ -60,24 +60,24 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
           child: Column(
             children: [
               const Spacer(flex: 1),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Image.network(
-                  widget.contact.profile!.photo!,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.fill,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                widget.contact.profile!.name!,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(100),
+              //   child: Image.network(
+              //     widget.contact.profile!.photo!,
+              //     width: 100,
+              //     height: 100,
+              //     fit: BoxFit.fill,
+              //   ),
+              // ),
+              // const SizedBox(height: 24),
+              // Text(
+              //   widget.contact.profile!.name!,
+              //   style: const TextStyle(
+              //     color: Colors.white,
+              //     fontSize: 18,
+              //     fontWeight: FontWeight.w700,
+              //   ),
+              // ),
               const SizedBox(height: 16),
               _status(),
               const Spacer(flex: 7),
@@ -175,7 +175,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     final appId = dotenv.env["AGORA_APP_ID"];
     await agoraEngine?.initialize(RtcEngineContext(appId: appId));
 
-    join(widget.token, widget.contact.chatId!, 0);
+    join(widget.token, widget.contact.chatId, 0);
 
     agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(

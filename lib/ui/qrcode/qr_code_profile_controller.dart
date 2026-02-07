@@ -2,6 +2,7 @@ import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/domain/model/chat.dart';
+import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,23 +33,49 @@ class QrCodeProfileController extends _$QrCodeProfileController {
     );
   }
 
-  Future<void> saveChatRoom(String profileId) async {
-    final user = await localRepo.getUserProfile();
+  Future<void> saveChatRoom(String friendUserId) async {
+    final myUser = await localRepo.getUserProfile();
     final chatRepo = ref.watch(chatRepositoryProvider);
-    final date = DateTime.now();
     final chat = Chat(
       isGroup: false,
       title: '',
-      participants: [user.userId!, profileId],
-      createdBy: user.userId!,
-      createdAt: date.toIso8601String(),
+      participants: [myUser.userId!, friendUserId],
+      createdBy: myUser.userId!,
+      createdAt: DateTime.now().toIso8601String(),
       lastMessage: LastMessage(text: '', senderId: '', createdAt: ''),
     );
 
-    await chatRepo.saveNewChat(chat);
+    final chatId = await chatRepo.saveNewChat(chat);
+    await _saveContact(
+      chatId: chatId,
+      status: 'pending',
+      userId: myUser.userId!,
+      docId: friendUserId,
+    );
+    await _saveContact(
+      chatId: chatId,
+      status: 'friend',
+      userId: friendUserId,
+      docId: myUser.userId!,
+    );
 
     state = AsyncData(
       state.value!.copyWith(showProfileDialog: false, successLoadContact: true),
     );
+  }
+
+  Future<void> _saveContact({
+    required String chatId,
+    required String status,
+    required String userId,
+    required String docId,
+  }) async {
+    final contact = Contact(
+      userId: userId,
+      chatId: chatId,
+      status: status,
+      createdAt: DateTime.now().toIso8601String(),
+    );
+    await contactRepo.saveContact(docId, contact);
   }
 }

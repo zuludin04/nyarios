@@ -6,17 +6,41 @@ class ContactRepository {
 
   ContactRepository({required this.firestore});
 
-  Future<void> saveContact(
-    Contact contact,
-    String? profileId,
-    String? userId,
-  ) async {
-    firestore
+  Future<void> saveContact(String? userId, Contact contact) async {
+    await firestore
         .collection('contact')
         .doc(userId)
-        .collection('friends')
-        .doc(profileId)
+        .collection('items')
+        .doc(contact.userId)
         .set(contact.toMap());
+  }
+
+  Future<List<Contact>> loadContacts(String? userId, String status) async {
+    var results = await firestore
+        .collection('contact')
+        .doc(userId)
+        .collection('items')
+        .where('status', isEqualTo: status)
+        .get();
+
+    var contacts = results.docs.map((e) async {
+      return Contact.fromMap(e.data());
+    }).toList();
+
+    return Future.wait(contacts);
+  }
+
+  Future<void> changeContactStatus(
+    String? userId,
+    String? otherUserId,
+    String status,
+  ) async {
+    await firestore
+        .collection('contact')
+        .doc(userId)
+        .collection('items')
+        .doc(otherUserId)
+        .update({'status': status});
   }
 
   Future<bool> checkIfContactExist({
@@ -40,35 +64,6 @@ class ContactRepository {
         .doc(profileId)
         .get();
 
-    return ref.data() == null ? null : Contact.fromJson(ref.data()!);
-  }
-
-  Future<void> changeBlockStatus(
-    String? profileId,
-    bool blocked,
-    String? userId,
-  ) async {
-    firestore
-        .collection('contact')
-        .doc(userId)
-        .collection('friends')
-        .doc(profileId)
-        .update({'blocked': blocked});
-  }
-
-  Future<List<Contact>> loadContacts(bool blocked, String? userId) async {
-    var results = await firestore
-        .collection('contact')
-        .doc(userId)
-        .collection('friends')
-        .where('alreadyFriend', isEqualTo: true)
-        .where('blocked', isEqualTo: blocked)
-        .get();
-
-    var contacts = results.docs.map((e) async {
-      return Contact.fromJson(e.data());
-    }).toList();
-
-    return Future.wait(contacts);
+    return ref.data() == null ? null : Contact.fromMap(ref.data()!);
   }
 }
