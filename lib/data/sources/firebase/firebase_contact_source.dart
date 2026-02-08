@@ -54,7 +54,7 @@ class FirebaseContactSource {
     var ref = await firestore
         .collection('contact')
         .doc(userId)
-        .collection('friends')
+        .collection('items')
         .doc(profileId)
         .get();
 

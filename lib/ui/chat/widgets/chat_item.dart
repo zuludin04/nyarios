@@ -1,18 +1,9 @@
-import 'dart:io';
-
-import 'package:another_flushbar/flushbar.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
-class ChatItem extends StatefulWidget {
+class ChatItem extends StatelessWidget {
   final Message chat;
-  final double? progress;
   final Function(String) onSelectMessage;
   final bool isSelectMode;
   final String userId;
@@ -20,67 +11,23 @@ class ChatItem extends StatefulWidget {
   const ChatItem({
     super.key,
     required this.chat,
-    required this.progress,
     required this.onSelectMessage,
     required this.isSelectMode,
     required this.userId,
   });
 
   @override
-  State<ChatItem> createState() => _ChatItemState();
-}
-
-class _ChatItemState extends State<ChatItem> {
-  var downloadIndicator = "0";
-
-  @override
-  void initState() {
-    checkFileAlreadyExist();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (widget.progress != null) {
-      final percent = (widget.progress! * 100).clamp(0, 100).toInt();
-      return Text("Percent $percent%");
-    }
     return GestureDetector(
       onTap: () async {
-        if (widget.isSelectMode) {
-          widget.onSelectMessage(widget.chat.messageId!);
-        } // else {
-        //   if (widget.chat.type == "image") {
-        //     showImageDialog(context);
-        //   }
-
-        //   if (widget.chat.type == "text") {
-        //     if (_isLink(widget.chat.message!)) {
-        //       launchUrl(Uri(path: widget.chat.message!));
-        //     }
-        //   }
-
-        //   if (widget.chat.type == "file") {
-        //     var savePath = await getExternalStorageDirectory();
-        //     File file = File("${savePath!.path}/files/${widget.chat.message}");
-        //     bool exist = await file.exists();
-
-        //     if (!exist) {
-        //       _downloadFile(
-        //         widget.chat.url!,
-        //         "${savePath.path}/files/${widget.chat.message}",
-        //         () {},
-        //       );
-        //     } else {
-        //       Flushbar(message: "File is already exist").show(context);
-        //     }
-        //   }
-        // }
+        if (isSelectMode) {
+          onSelectMessage(chat.messageId);
+        }
       },
       onLongPress: () {
-        widget.onSelectMessage(widget.chat.messageId!);
+        onSelectMessage(chat.messageId);
       },
-      child: widget.chat.type == 'info'
+      child: chat.type == 'info'
           ? Align(
               child: Container(
                 margin: const EdgeInsets.only(top: 8),
@@ -99,7 +46,7 @@ class _ChatItemState extends State<ChatItem> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    widget.chat.message ?? "",
+                    chat.text,
                     maxLines: 1,
                     textAlign: TextAlign.center,
                   ),
@@ -109,7 +56,7 @@ class _ChatItemState extends State<ChatItem> {
           : Stack(
               children: [
                 Align(
-                  alignment: widget.chat.profileId != widget.userId
+                  alignment: chat.senderProfileId != userId
                       ? Alignment.centerLeft
                       : Alignment.centerRight,
                   child: Container(
@@ -117,21 +64,21 @@ class _ChatItemState extends State<ChatItem> {
                     margin: EdgeInsets.only(
                       top: 8,
                       bottom: 8,
-                      left: widget.chat.profileId != widget.userId ? 16 : 75,
-                      right: widget.chat.profileId != widget.userId ? 75 : 16,
+                      left: chat.senderProfileId != userId ? 16 : 75,
+                      right: chat.senderProfileId != userId ? 75 : 16,
                     ),
                     decoration: BoxDecoration(
-                      color: widget.chat.profileId != widget.userId
+                      color: chat.senderProfileId != userId
                           ? Colors.grey
                           : const Color(0xffb3404a),
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(10),
                         topRight: const Radius.circular(10),
                         bottomLeft: Radius.circular(
-                          widget.chat.profileId != widget.userId ? 0 : 10,
+                          chat.senderProfileId != userId ? 0 : 10,
                         ),
                         bottomRight: Radius.circular(
-                          widget.chat.profileId != widget.userId ? 10 : 0,
+                          chat.senderProfileId != userId ? 10 : 0,
                         ),
                       ),
                       boxShadow: const [
@@ -146,18 +93,14 @@ class _ChatItemState extends State<ChatItem> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        _showChatType(widget.chat.type!),
+                        _showChatType(chat.type),
                         const SizedBox(height: 4),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               DateFormat("hh:mm a")
-                                  .format(
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                      widget.chat.sendDatetime ?? 0,
-                                    ),
-                                  )
+                                  .format(DateTime.parse(chat.createdAt))
                                   .toLowerCase(),
                               style: const TextStyle(
                                 color: Colors.white54,
@@ -171,7 +114,7 @@ class _ChatItemState extends State<ChatItem> {
                   ),
                 ),
                 Visibility(
-                  visible: widget.chat.isSelected,
+                  visible: chat.isSelected,
                   child: Positioned.fill(
                     child: Container(
                       margin: const EdgeInsets.symmetric(vertical: 2),
@@ -185,89 +128,16 @@ class _ChatItemState extends State<ChatItem> {
   }
 
   Widget _showChatType(String type) {
-    switch (type) {
-      case 'image':
-        if (widget.chat.url != null) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Stack(
-              children: [
-                Image.network(widget.chat.url!),
-                Positioned(
-                  bottom: 5,
-                  right: 10,
-                  child: Text(
-                    widget.chat.fileSize ?? "",
-                    style: const TextStyle(fontSize: 13, color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
-        } else {
-          return const SizedBox();
-        }
-      case 'file':
-        return Container(
-          decoration: BoxDecoration(
-            color: widget.chat.profileId != widget.userId
-                ? Colors.black.withValues(alpha: 0.1)
-                : Colors.red.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              CircularPercentIndicator(
-                radius: 24,
-                center: const Icon(Icons.attach_file),
-                percent: double.parse(downloadIndicator) / 100,
-                lineWidth: 2,
-                progressColor: widget.chat.profileId != widget.userId
-                    ? Colors.black
-                    : Colors.red,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.chat.message!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      widget.chat.fileSize!,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      default:
-        return Text(
-          widget.chat.message!,
-          style: TextStyle(
-            color: _isLink(widget.chat.message!)
-                ? Colors.blueGrey
-                : Colors.white,
-            fontSize: 16,
-            decoration: _isLink(widget.chat.message!)
-                ? TextDecoration.underline
-                : TextDecoration.none,
-          ),
-        );
-    }
+    return Text(
+      chat.text,
+      style: TextStyle(
+        color: _isLink(chat.text) ? Colors.blueGrey : Colors.white,
+        fontSize: 16,
+        decoration: _isLink(chat.text)
+            ? TextDecoration.underline
+            : TextDecoration.none,
+      ),
+    );
   }
 
   bool _isLink(String input) {
@@ -275,114 +145,5 @@ class _ChatItemState extends State<ChatItem> {
       r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)",
     );
     return matcher.hasMatch(input);
-  }
-
-  void _downloadFile(
-    String downloadUrl,
-    String savePath,
-    Function() downloadCallback,
-  ) async {
-    Dio dio = Dio();
-
-    try {
-      await dio.download(
-        downloadUrl,
-        savePath,
-        onReceiveProgress: (count, total) {
-          if (total != -1) {
-            var downloadRatio = (count / total);
-            setState(() {
-              downloadIndicator = (downloadRatio * 100).toStringAsFixed(0);
-            });
-            if (downloadIndicator == "100") {
-              downloadCallback();
-            }
-          }
-        },
-      );
-    } on DioException catch (e) {
-      if (CancelToken.isCancel(e)) {
-        debugPrint("Request canceled ${e.message}");
-      }
-    } on Exception catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  Future<void> showImageDialog(BuildContext context) async {
-    var savePath = await getExternalStorageDirectory();
-    File file = File("${savePath!.path}/images/${widget.chat.message}");
-    var exist = await file.exists();
-
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          content: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Visibility(
-                    visible: !exist,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: IconButton(
-                        onPressed: () async {
-                          if (!exist) {
-                            _downloadFile(
-                              widget.chat.url!,
-                              "${savePath.path}/images/${widget.chat.message}",
-                              () {
-                                context.pop();
-                                Flushbar(
-                                  message: AppLocalizations.of(
-                                    context,
-                                  )!.success_download,
-                                ).show(context);
-                              },
-                            );
-                          } else {
-                            Flushbar(
-                              message: AppLocalizations.of(context)!.file_exist,
-                            ).show(context);
-                          }
-                        },
-                        icon: const Icon(Icons.download, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Material(
-                    color: Colors.transparent,
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close, color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-              Image.network(widget.chat.url!),
-            ],
-          ),
-        ),
-      );
-    }
-  }
-
-  void checkFileAlreadyExist() async {
-    Directory? savePath = Platform.isAndroid
-        ? await getExternalStorageDirectory()
-        : await getApplicationSupportDirectory();
-    File file = File("${savePath!.path}/files/${widget.chat.message}");
-    bool exist = await file.exists();
-
-    if (exist) {
-      setState(() {
-        downloadIndicator = "100";
-      });
-    }
   }
 }

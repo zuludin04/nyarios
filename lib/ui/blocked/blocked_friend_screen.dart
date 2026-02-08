@@ -61,7 +61,14 @@ class _BlockedFriendItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushNamed("${AppPages.chatting}/dm", extra: profile),
+      onTap: () => context.pushNamed(
+        AppPages.chatting,
+        queryParameters: {
+          "chatId": profile.chatId,
+          "profileId": profile.uid,
+          "username": profile.name,
+        },
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         child: Row(

@@ -14,6 +14,7 @@ class FriendController extends _$FriendController {
     final contacts = await contactRepo.loadContacts('friend');
     final friends = contacts.map((e) async {
       final profile = await profileRepo.loadSingleProfile(e.userId);
+      profile.chatId = e.chatId;
       return profile;
     });
     return Future.wait(friends);

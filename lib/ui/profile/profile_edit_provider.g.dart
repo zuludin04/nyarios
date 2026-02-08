@@ -42,7 +42,7 @@ final class ProfileEditProviderProvider
 }
 
 String _$profileEditProviderHash() =>
-    r'17d1665e155b375501237f3111680323991ebb17';
+    r'e7e29b384f4a12db09ea2481ce96433819cda548';
 
 abstract class _$ProfileEditProvider extends $Notifier<void> {
   void build();

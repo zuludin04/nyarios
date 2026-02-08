@@ -8,7 +8,6 @@ import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
@@ -19,10 +18,16 @@ import 'package:nyarios/ui/chat/widgets/chat_item.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
 
 class ChattingScreen extends ConsumerStatefulWidget {
-  final Contact contact;
-  final String type;
+  final String chatId;
+  final String profileId;
+  final String userName;
 
-  const ChattingScreen({super.key, required this.contact, required this.type});
+  const ChattingScreen({
+    super.key,
+    required this.chatId,
+    required this.profileId,
+    required this.userName,
+  });
 
   @override
   ConsumerState<ChattingScreen> createState() => _ChattingScreenState();
@@ -32,23 +37,17 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
   @override
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
-      chattingAsyncControllerProvider(
-        widget.contact.chatId,
-        widget.contact.userId,
-      ),
+      chattingAsyncControllerProvider(widget.chatId, widget.profileId),
     );
     final controller = ref.read(
-      chattingAsyncControllerProvider(
-        widget.contact.chatId,
-        widget.contact.userId,
-      ).notifier,
+      chattingAsyncControllerProvider(widget.chatId, widget.profileId).notifier,
     );
 
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
         context,
         "",
-        titleWidget: Text(""),
+        titleWidget: Text(widget.userName),
         leading: chatAsync.value!.isSelectMode
             ? IconButton(
                 onPressed: controller.clearSelectedChat,
@@ -62,53 +61,39 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                 ),
               ),
         stream: true,
-        uid: widget.contact.userId,
-        onTapTitle: () =>
-            context.pushNamed(AppPages.contactDetail, extra: widget.contact),
+        onTapTitle: () => context.pushNamed(AppPages.contactDetail),
         elevation: 0,
         actions: [
-          Visibility(
-            visible: widget.type == 'dm',
-            child: IconButton(
-              onPressed: () async {
-                final token = await controller.generateAgoraToken(
-                  channelName: widget.contact.chatId,
-                  uid: 0,
-                );
+          IconButton(
+            onPressed: () async {
+              final token = await controller.generateAgoraToken(
+                channelName: widget.chatId,
+                uid: 0,
+              );
 
-                if (context.mounted) {
-                  context.pushNamed(
-                    "${AppPages.callVideo}/$token",
-                    extra: widget.contact,
-                  );
-                }
-              },
-              icon: ImageAsset(
-                assets: 'assets/icons/ic_video.png',
-                color: Theme.of(context).iconTheme.color!,
-              ),
+              if (context.mounted) {
+                context.pushNamed("${AppPages.callVideo}/$token");
+              }
+            },
+            icon: ImageAsset(
+              assets: 'assets/icons/ic_video.png',
+              color: Theme.of(context).iconTheme.color!,
             ),
           ),
-          Visibility(
-            visible: widget.type == 'dm',
-            child: IconButton(
-              onPressed: () async {
-                final token = await controller.generateAgoraToken(
-                  channelName: widget.contact.chatId,
-                  uid: 0,
-                );
+          IconButton(
+            onPressed: () async {
+              final token = await controller.generateAgoraToken(
+                channelName: widget.chatId,
+                uid: 0,
+              );
 
-                if (context.mounted) {
-                  context.pushNamed(
-                    "${AppPages.callVoice}/$token",
-                    extra: widget.contact,
-                  );
-                }
-              },
-              icon: ImageAsset(
-                assets: 'assets/icons/ic_call.png',
-                color: Theme.of(context).iconTheme.color!,
-              ),
+              if (context.mounted) {
+                context.pushNamed("${AppPages.callVoice}/$token");
+              }
+            },
+            icon: ImageAsset(
+              assets: 'assets/icons/ic_call.png',
+              color: Theme.of(context).iconTheme.color!,
             ),
           ),
           Visibility(
@@ -121,35 +106,26 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
               itemBuilder: (context) {
                 return [
                   PopupMenuItem(value: 0, child: Text('View Contact')),
-                  if (widget.type != 'dm')
-                    PopupMenuItem(value: 3, child: Text('Add Member')),
                   PopupMenuItem(value: 1, child: Text('Search')),
-                  if (widget.type == 'dm')
-                    PopupMenuItem(
-                      value: 2,
-                      child: Text(
-                        chatAsync.value!.status == 'blocked'
-                            ? 'Unblock'
-                            : 'Block',
-                      ),
+                  PopupMenuItem(
+                    value: 2,
+                    child: Text(
+                      chatAsync.value!.status == 'blocked'
+                          ? 'Unblock'
+                          : 'Block',
                     ),
+                  ),
                 ];
               },
               onSelected: (value) {
                 switch (value) {
                   case 0:
-                    context.pushNamed(
-                      AppPages.contactDetail,
-                      extra: widget.contact,
-                    );
+                    context.pushNamed(AppPages.contactDetail);
                     break;
                   case 1:
                     break;
                   case 2:
-                    controller.changeContactStatus(
-                      widget.contact.userId,
-                      'blocked',
-                    );
+                    controller.changeContactStatus(widget.profileId, 'blocked');
                     break;
                   case 3:
                     context.pushNamed("${AppPages.groupMemberPick}/add");
@@ -167,8 +143,11 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     .toList();
                 final copiedMessages = messages
                     .map((e) {
-                      final name = "";
-                      return copiedMessage(e, '');
+                      final name = controller.getNameCopy(
+                        e.senderProfileId,
+                        widget.userName,
+                      );
+                      return copiedMessage(e, name);
                     })
                     .toList()
                     .join();
@@ -192,7 +171,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             visible: chatAsync.value!.isSelectMode,
             child: IconButton(
               onPressed: () {
-                controller.clearMessages(widget.contact.chatId);
+                controller.clearMessages(widget.chatId);
               },
               icon: ImageAsset(
                 assets: 'assets/icons/ic_delete.png',
@@ -205,19 +184,18 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
       body: Column(
         children: [
           chatAsync.when(
-            data: (ChattingState data) => ContactFriendInfo(
-              isAlreadyFriend: data.status == 'friend',
-              isBlocked: data.status == 'blocked',
-              onAddFriend: () {
-                controller.changeContactStatus(widget.contact.userId, 'friend');
-              },
-              onBlock: () {
-                controller.changeContactStatus(
-                  widget.contact.userId,
-                  'blocked',
-                );
-              },
-            ),
+            data: (ChattingState data) {
+              return ContactFriendInfo(
+                isAlreadyFriend: data.status == 'friend',
+                isBlocked: data.status == 'blocked',
+                onAddFriend: () {
+                  controller.changeContactStatus(widget.profileId, 'friend');
+                },
+                onBlock: () {
+                  controller.changeContactStatus(widget.profileId, 'blocked');
+                },
+              );
+            },
             error: (_, _) => SizedBox(),
             loading: () => SizedBox(),
           ),
@@ -232,9 +210,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                   floatingHeader: true,
                   useStickyGroupSeparators: true,
                   groupBy: (Message chat) {
-                    var date = DateTime.fromMillisecondsSinceEpoch(
-                      chat.sendDatetime!,
-                    );
+                    var date = DateTime.parse(chat.createdAt);
                     return DateTime(date.year, date.month, date.day);
                   },
                   groupHeaderBuilder: (Message chat) {
@@ -252,7 +228,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              messageDate(chat.sendDatetime),
+                              messageDate(chat.createdAt),
                               textAlign: TextAlign.center,
                               style: const TextStyle(color: Colors.white),
                             ),
@@ -263,8 +239,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                   },
                   itemBuilder: (_, Message chat) => ChatItem(
                     chat: chat,
-                    key: Key(chat.sendDatetime.toString()),
-                    progress: data.uploadProgress[chat.messageId],
+                    key: Key(chat.createdAt),
                     onSelectMessage: (messageId) =>
                         controller.selectMessage(messageId),
                     isSelectMode: data.isSelectMode,
@@ -282,23 +257,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             data: (ChattingState data) => ChatInputMessage(
               isBlocked: data.status == 'blocked',
               onSendMessage: ({required type, message, file}) {
-                if (type != 'text') {
-                  controller.uploadFile(
-                    file!.file,
-                    'nyarios/files',
-                    file.path.split("/").last,
-                    widget.contact.chatId,
-                    widget.contact.userId,
-                    file.size,
-                  );
-                } else {
-                  controller.sendMessage(
-                    message ?? "",
-                    type,
-                    widget.contact.chatId,
-                    widget.contact.userId,
-                  );
-                }
+                controller.sendMessage(message ?? "", type, widget.chatId);
               },
             ),
             error: (_, _) => SizedBox(),

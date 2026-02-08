@@ -1,72 +1,49 @@
 import 'dart:io';
 
 class Message {
-  String? messageId;
-  String? message;
-  String? type;
-  int? sendDatetime;
-  String? url;
-  String? fileSize;
-  String? chatId;
-  String? profileId;
+  final String messageId;
+  final String chatId;
+  final String senderProfileId;
+  final String type;
+  final String text;
+  final String replyToMessageId;
+  final String createdAt;
   bool isUploading;
   bool isSelected;
 
   Message({
-    this.messageId,
-    this.message,
-    this.type,
-    this.sendDatetime,
-    this.url,
-    this.fileSize,
-    this.profileId,
-    this.chatId,
+    required this.messageId,
+    required this.chatId,
+    required this.senderProfileId,
+    required this.type,
+    required this.text,
+    required this.replyToMessageId,
+    required this.createdAt,
     this.isUploading = false,
     this.isSelected = false,
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'message': message,
-      'type': type,
-      'sendDatetime': sendDatetime,
-      'url': url,
-      'fileSize': fileSize,
-      'profileId': profileId,
-      'chatId': chatId,
-    };
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['messageId'] = messageId;
+    data['chatId'] = chatId;
+    data['senderProfileId'] = senderProfileId;
+    data['type'] = type;
+    data['text'] = text;
+    data['replyToMessageId'] = replyToMessageId;
+    data['createdAt'] = createdAt;
+    return data;
   }
 
   factory Message.fromMap(Map<String, dynamic> map) {
     return Message(
-      messageId: map['messageId'] != null ? map['messageId'] as String : null,
-      message: map['message'] != null ? map['message'] as String : null,
-      type: map['type'] != null ? map['type'] as String : null,
-      sendDatetime: map['sendDatetime'] != null
-          ? map['sendDatetime'] as int
-          : null,
-      url: map['url'] != null ? map['url'] as String : null,
-      fileSize: map['fileSize'] != null ? map['fileSize'] as String : null,
-      profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      chatId: map['chatId'] != null ? map['chatId'] as String : null,
-    );
-  }
-
-  factory Message.fromMapWithMessageId(
-    Map<String, dynamic> map,
-    String messageId,
-  ) {
-    return Message(
-      messageId: messageId,
-      message: map['message'] != null ? map['message'] as String : null,
-      type: map['type'] != null ? map['type'] as String : null,
-      sendDatetime: map['sendDatetime'] != null
-          ? map['sendDatetime'] as int
-          : null,
-      url: map['url'] != null ? map['url'] as String : null,
-      fileSize: map['fileSize'] != null ? map['fileSize'] as String : null,
-      profileId: map['profileId'] != null ? map['profileId'] as String : null,
-      chatId: map['chatId'] != null ? map['chatId'] as String : null,
+      messageId: map['messageId'],
+      chatId: map['chatId'],
+      senderProfileId: map['senderProfileId'],
+      type: map['type'],
+      text: map['text'],
+      replyToMessageId: map['replyToMessageId'],
+      createdAt: map['createdAt'],
     );
   }
 
@@ -79,9 +56,12 @@ class Message {
     return Message(
       messageId: uploadId,
       isUploading: true,
-      sendDatetime: sendDatetime,
       type: 'image',
-      profileId: userId,
+      chatId: '',
+      senderProfileId: '',
+      text: '',
+      replyToMessageId: '',
+      createdAt: '',
     );
   }
 }

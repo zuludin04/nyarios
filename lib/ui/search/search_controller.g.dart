@@ -33,7 +33,7 @@ final class SearchControllerProvider
   SearchController create() => SearchController();
 }
 
-String _$searchControllerHash() => r'e2383eced99b87f10ae1c423be02dc0539f300ae';
+String _$searchControllerHash() => r'8218815f407aae93eebb06bd8132188acecfb7b4';
 
 abstract class _$SearchController extends $AsyncNotifier<SearchState> {
   FutureOr<SearchState> build();

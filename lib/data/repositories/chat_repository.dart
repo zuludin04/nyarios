@@ -1,79 +1,44 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nyarios/data/sources/firebase/firebase_chat_source.dart';
+import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/domain/model/chat.dart';
-import 'package:nyarios/domain/model/group.dart';
+import 'package:nyarios/domain/model/message.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatRepository {
-  final FirebaseFirestore firestore;
+  final FirebaseChatSource chatSource;
+  final SharedLocalSource localSource;
 
-  ChatRepository({required this.firestore});
+  const ChatRepository({required this.chatSource, required this.localSource});
 
   Future<String> saveNewChat(Chat chat) async {
-    final doc = firestore.collection('chats').doc();
-    doc.set(chat.toMap());
-    return doc.id;
+    return chatSource.saveNewChat(chat);
   }
 
-  Future<List<Chat>> loadChatFriend(String? userId) async {
-    final results = await firestore
-        .collection('chats')
-        .where('participants', arrayContains: userId)
-        .get();
-
-    final chats = results.docs.map((e) => Chat.fromMap(e.data())).toList();
-    return chats;
+  Future<void> sendMessage(
+    String chatId,
+    String type,
+    String text,
+    String replyTo,
+  ) async {
+    final user = await localSource.getUserProfile();
+    final messageId = const Uuid().v4();
+    final message = Message(
+      messageId: messageId,
+      chatId: chatId,
+      senderProfileId: user.userId ?? "",
+      type: type,
+      text: text,
+      replyToMessageId: replyTo,
+      createdAt: DateTime.now().toIso8601String(),
+    );
+    await chatSource.sendChatMessage(message);
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadRecentChat(
-    String? userId,
-  ) async* {
-    yield* firestore
-        .collection('chat')
-        .doc(userId)
-        .collection('receiver')
-        .orderBy('lastMessageSent', descending: true)
-        .snapshots();
+  Stream<List<Message>> streamChatMessages(String? chatId) {
+    return chatSource.streamMessages(chatId);
   }
 
-  Future<List<Chat>> loadDmChat(String? userId) async {
-    var results = await firestore
-        .collection('chat')
-        .doc(userId)
-        .collection('receiver')
-        .where('type', isEqualTo: 'dm')
-        .get();
-    var result = results.docs.map((e) {
-      var chat = Chat.fromMap(e.data());
-      return chat;
-    }).toList();
-    return result;
-  }
-
-  void updateRecentChat(bool fromSender, Chat lastMessage, String? userId) {
-    // firestore
-    //     .collection('chat')
-    //     .doc(fromSender ? userId : lastMessage.profileId)
-    //     .collection('receiver')
-    //     .doc(fromSender ? lastMessage.profileId : userId)
-    //     .set(lastMessage.toMap(fromSender, userId));
-  }
-
-  Future<void> updateGroupRecentChat(Group group, Chat chat) async {
-    // for (var element in group.members!) {
-    //   await firestore
-    //       .collection('chat')
-    //       .doc(element)
-    //       .collection('receiver')
-    //       .doc(group.groupId)
-    //       .set(chat.toMapGroup());
-    // }
-  }
-
-  Future<void> deleteGroupChat(String groupId, String userId) async {
-    // await firestore
-    //     .collection('chat')
-    //     .doc(userId)
-    //     .collection('receiver')
-    //     .doc(groupId)
-    //     .delete();
+  Future<void> deleteMessages(String chatId, List<Message> messages) async {
+    await chatSource.messagesBatchDelete(chatId, messages);
   }
 }

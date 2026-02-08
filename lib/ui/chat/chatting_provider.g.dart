@@ -16,7 +16,7 @@ final class ChattingAsyncControllerProvider
     extends $AsyncNotifierProvider<ChattingAsyncController, ChattingState> {
   const ChattingAsyncControllerProvider._({
     required ChattingAsyncControllerFamily super.from,
-    required (String, String) super.argument,
+    required (String?, String?) super.argument,
   }) : super(
          retry: null,
          name: r'chattingAsyncControllerProvider',
@@ -52,7 +52,7 @@ final class ChattingAsyncControllerProvider
 }
 
 String _$chattingAsyncControllerHash() =>
-    r'efef89e73c93d1689a2059353f7f858d241847f0';
+    r'c2c11c3afa6e17bdab7fa126874a9366dc10e151';
 
 final class ChattingAsyncControllerFamily extends $Family
     with
@@ -61,7 +61,7 @@ final class ChattingAsyncControllerFamily extends $Family
           AsyncValue<ChattingState>,
           ChattingState,
           FutureOr<ChattingState>,
-          (String, String)
+          (String?, String?)
         > {
   const ChattingAsyncControllerFamily._()
     : super(
@@ -72,9 +72,9 @@ final class ChattingAsyncControllerFamily extends $Family
         isAutoDispose: true,
       );
 
-  ChattingAsyncControllerProvider call(String roomId, String profileId) =>
+  ChattingAsyncControllerProvider call(String? chatId, String? profileId) =>
       ChattingAsyncControllerProvider._(
-        argument: (roomId, profileId),
+        argument: (chatId, profileId),
         from: this,
       );
 
@@ -83,11 +83,11 @@ final class ChattingAsyncControllerFamily extends $Family
 }
 
 abstract class _$ChattingAsyncController extends $AsyncNotifier<ChattingState> {
-  late final _$args = ref.$arg as (String, String);
-  String get roomId => _$args.$1;
-  String get profileId => _$args.$2;
+  late final _$args = ref.$arg as (String?, String?);
+  String? get chatId => _$args.$1;
+  String? get profileId => _$args.$2;
 
-  FutureOr<ChattingState> build(String roomId, String profileId);
+  FutureOr<ChattingState> build(String? chatId, String? profileId);
   @$mustCallSuper
   @override
   void runBuild() {

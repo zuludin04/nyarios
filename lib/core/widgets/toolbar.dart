@@ -11,7 +11,6 @@ class Toolbar {
     Function()? onTapTitle,
     double elevation = 0.8,
     bool stream = false,
-    String? uid = "",
     Widget? leading,
     Widget? titleWidget,
   }) {
@@ -32,7 +31,7 @@ class Toolbar {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             titleWidget ?? Text(title),
-            _buildSubtitleWidget(context, stream, subtitle, uid),
+            _buildSubtitleWidget(context, stream, subtitle),
           ],
         ),
       ),
@@ -44,7 +43,6 @@ class Toolbar {
     BuildContext context,
     bool stream,
     String subtitle,
-    String? uid,
   ) {
     if (stream) {
       // return StreamBuilder(

@@ -7,6 +7,8 @@ class Profile {
   bool? visibility;
   String? fcmToken;
 
+  String? chatId;
+
   Profile({
     this.uid,
     this.name,
@@ -15,6 +17,7 @@ class Profile {
     this.email,
     this.visibility,
     this.fcmToken,
+    this.chatId,
   });
 
   Map<String, dynamic> toMap() {

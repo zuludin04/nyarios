@@ -88,17 +88,17 @@ class _ChatSearchItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                chat.profileId == userId
+                chat.senderProfileId == userId
                     ? AppLocalizations.of(context)!.you
                     : user,
               ),
-              Text(_lastMessageDate(context, chat.sendDatetime)),
+              Text(_lastMessageDate(context, chat.createdAt)),
             ],
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: SubstringHighlight(
-              text: chat.message!,
+              text: chat.text,
               term: term,
               textStyle: TextStyle(
                 color: Theme.of(
@@ -113,8 +113,8 @@ class _ChatSearchItem extends StatelessWidget {
     );
   }
 
-  String _lastMessageDate(BuildContext context, int? datetime) {
-    var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
+  String _lastMessageDate(BuildContext context, String datetime) {
+    var date = DateTime.parse(datetime);
     var today = DateTime.now();
 
     if (date.day == today.day) {

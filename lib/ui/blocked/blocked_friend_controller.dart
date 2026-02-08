@@ -14,6 +14,7 @@ class BlockedFriendController extends _$BlockedFriendController {
     final contacts = await contactRepo.loadContacts('blocked');
     final blocked = contacts.map((e) async {
       final profile = await profileRepo.loadSingleProfile(e.userId);
+      profile.chatId = e.chatId;
       return profile;
     });
     return Future.wait(blocked);

@@ -50,16 +50,11 @@ class _ContactMediaTabState extends State<ContactMediaTab>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(message.text, style: const TextStyle(fontSize: 16)),
                   Text(
-                    message.message ?? "",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    DateFormat("dd/MM/yyyy").format(
-                      DateTime.fromMillisecondsSinceEpoch(
-                        message.sendDatetime ?? 0,
-                      ),
-                    ),
+                    DateFormat(
+                      "dd/MM/yyyy",
+                    ).format(DateTime.parse(message.createdAt)),
                   ),
                 ],
               ),
@@ -80,18 +75,16 @@ class _ContactMediaTabState extends State<ContactMediaTab>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Image.network(
-                message.url ?? "",
+                "",
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,
               ),
               const SizedBox(height: 8),
               Text(
-                DateFormat("dd/MM/yyyy").format(
-                  DateTime.fromMillisecondsSinceEpoch(
-                    message.sendDatetime ?? 0,
-                  ),
-                ),
+                DateFormat(
+                  "dd/MM/yyyy",
+                ).format(DateTime.parse(message.createdAt)),
               ),
             ],
           ),

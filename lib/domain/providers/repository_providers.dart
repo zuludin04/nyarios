@@ -4,9 +4,9 @@ import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
-import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
+import 'package:nyarios/data/sources/firebase/firebase_chat_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_contact_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
 import 'package:nyarios/data/sources/local/shared_local_source.dart';
@@ -29,8 +29,9 @@ final callRepositoryProvider = Provider<CallRepository>((ref) {
 });
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
-  final firestore = firestoreProvider(ref);
-  return ChatRepository(firestore: firestore);
+  final chatSource = ref.watch(firebaseChatSourceProvider);
+  final localSource = ref.watch(sharedLocalSourceProvider);
+  return ChatRepository(chatSource: chatSource, localSource: localSource);
 });
 
 final contactRepositoryProvider = Provider<ContactRepository>((ref) {
@@ -45,11 +46,6 @@ final contactRepositoryProvider = Provider<ContactRepository>((ref) {
 final groupRepositoryProvider = Provider<GroupRepository>((ref) {
   final firestore = firestoreProvider(ref);
   return GroupRepository(firestore: firestore);
-});
-
-final messageRepositoryProvider = Provider<MessageRepository>((ref) {
-  final firestore = firestoreProvider(ref);
-  return MessageRepository(firestore: firestore);
 });
 
 final agoraRepositoryProvider = Provider<AgoraRepository>((ref) {

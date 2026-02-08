@@ -127,7 +127,14 @@ class _FriendItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushNamed("${AppPages.chatting}/dm"),
+      onTap: () => context.pushNamed(
+        AppPages.chatting,
+        queryParameters: {
+          "chatId": profile.chatId,
+          "profileId": profile.uid,
+          "username": profile.name,
+        },
+      ),
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(

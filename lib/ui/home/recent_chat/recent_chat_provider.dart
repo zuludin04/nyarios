@@ -16,19 +16,19 @@ class RecentChatProvider extends _$RecentChatProvider {
 
     final user = await localRepo.getUserProfile();
 
-    final chats$ = chatRepo.loadRecentChat(user.userId);
-    final users$ = profileRepo.streamProfiles();
+    // final chats$ = chatRepo.loadRecentChat(user.userId);
+    // final users$ = profileRepo.streamProfiles();
 
-    yield* Rx.combineLatest2(chats$, users$, (chatSnap, usersSnap) {
-      final users = {
-        for (final u in usersSnap.docs) u.id: Profile.fromMap(u.data()),
-      };
+    // yield* Rx.combineLatest2(chats$, users$, (chatSnap, usersSnap) {
+    //   final users = {
+    //     for (final u in usersSnap.docs) u.id: Profile.fromMap(u.data()),
+    //   };
 
-      return chatSnap.docs.map((p) {
-        final chats = Chat.fromMap(p.data());
-        // chats.profile = users[chats.profileId];
-        return chats;
-      }).toList();
-    });
+    //   return chatSnap.docs.map((p) {
+    //     final chats = Chat.fromMap(p.data());
+    //     // chats.profile = users[chats.profileId];
+    //     return chats;
+    //   }).toList();
+    // });
   }
 }

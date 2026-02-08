@@ -84,8 +84,8 @@ Future<String> getFileSize(File file) async {
   return '${(bytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
 }
 
-String messageDate(int? datetime) {
-  var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
+String messageDate(String datetime) {
+  var date = DateTime.parse(datetime);
   var today = DateTime.now();
 
   if (date.day == today.day) {
@@ -100,6 +100,6 @@ String messageDate(int? datetime) {
 String copiedMessage(Message chat, String? name) {
   var date = DateFormat(
     "MM/dd, hh:mm a",
-  ).format(DateTime.fromMillisecondsSinceEpoch(chat.sendDatetime!));
-  return "[$date] $name: ${chat.message}\n";
+  ).format(DateTime.parse(chat.createdAt));
+  return "[$date] $name: ${chat.text}\n";
 }

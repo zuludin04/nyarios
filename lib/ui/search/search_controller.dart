@@ -12,16 +12,15 @@ class SearchController extends _$SearchController {
   }
 
   Future<void> searchChat(String term) async {
-    final chatRepo = ref.watch(chatRepositoryProvider);
     final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
     final user = await localRepo.getUserProfile();
-    final chats = await chatRepo.loadDmChat(user.userId);
-    final chatProfiles = chats.map((e) async {
-      return e;
-    });
+    // final chats = await chatRepo.loadDmChat(user.userId);
+    // final chatProfiles = chats.map((e) async {
+    //   return e;
+    // });
 
-    final filtered = await Future.wait(chatProfiles);
+    // final filtered = await Future.wait(chatProfiles);
     // final results = filtered
     //     .where(
     //       (e) => e.profile!.name!.toLowerCase().contains(term.toLowerCase()),
@@ -29,21 +28,21 @@ class SearchController extends _$SearchController {
     //     .toList();
 
     state = AsyncData(
-      state.value!.copyWith(chatResult: filtered, userId: user.userId),
+      state.value!.copyWith(chatResult: [], userId: user.userId),
     );
   }
 
   Future<void> searchMessages(String roomId, String query) async {
-    final messageRepo = ref.watch(messageRepositoryProvider);
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
+    // final messageRepo = ref.watch(messageRepositoryProvider);
+    // final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
-    final user = await localRepo.getUserProfile();
-    final messages = await messageRepo.searchMessages(roomId);
-    final results = messages
-        .where((e) => e.message!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    state = AsyncData(
-      state.value!.copyWith(messageResult: results, userId: user.userId),
-    );
+    // final user = await localRepo.getUserProfile();
+    // final messages = await messageRepo.searchMessages(roomId);
+    // final results = messages
+    //     .where((e) => e.text!.toLowerCase().contains(query.toLowerCase()))
+    //     .toList();
+    // state = AsyncData(
+    //   state.value!.copyWith(messageResult: results, userId: user.userId),
+    // );
   }
 }

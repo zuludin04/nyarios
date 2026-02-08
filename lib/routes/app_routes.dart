@@ -40,11 +40,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: AppPages.home, builder: (context, state) => HomeScreen()),
       GoRoute(
-        path: '${AppPages.chatting}/:type',
+        path: AppPages.chatting,
+        name: AppPages.chatting,
         builder: (context, state) {
-          final String type = state.pathParameters['type'] ?? "";
-          final contact = state.extra as Contact;
-          return ChattingScreen(type: type, contact: contact);
+          final String chatId = state.uri.queryParameters["chatId"] ?? "";
+          final String profileId = state.uri.queryParameters["profileId"] ?? "";
+          final String username = state.uri.queryParameters["username"] ?? "";
+          return ChattingScreen(
+            chatId: chatId,
+            profileId: profileId,
+            userName: username,
+          );
         },
       ),
       GoRoute(

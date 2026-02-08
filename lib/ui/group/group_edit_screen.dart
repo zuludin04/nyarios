@@ -7,9 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/group.dart';
-import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/ui/group/widgets/group_edit_bottom_sheet.dart';
@@ -159,40 +157,9 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
     }
   }
 
-  Future<void> _addGroupInfoMessage(String chatId) async {
-    var repo = ref.watch(messageRepositoryProvider);
+  Future<void> _addGroupInfoMessage(String chatId) async {}
 
-    Message newMessage = Message(
-      message: 'update group image',
-      type: 'info',
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      url: '',
-      fileSize: '',
-      profileId: '',
-      chatId: chatId,
-    );
-
-    repo.sendNewMessage(newMessage);
-  }
-
-  Future<void> _updateGroupRecentMessage(Group group) async {
-    var repo = ref.watch(chatRepositoryProvider);
-
-    Chat chat = Chat(
-      isGroup: false,
-      title: '',
-      participants: [],
-      createdBy: '',
-      createdAt: '',
-      lastMessage: LastMessage(
-        text: 'text',
-        senderId: 'senderId',
-        createdAt: 'createdAt',
-      ),
-    );
-
-    await repo.updateGroupRecentChat(group, chat);
-  }
+  Future<void> _updateGroupRecentMessage(Group group) async {}
 }
 
 class ImageProfile extends StatelessWidget {

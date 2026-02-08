@@ -1,23 +1,18 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:nyarios/data/repositories/agora_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
-import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
-import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:uuid/uuid.dart';
 
 part 'chatting_provider.g.dart';
 
 @riverpod
 class ChattingAsyncController extends _$ChattingAsyncController {
-  late final MessageRepository messageRepo;
   late final ChatRepository chatRepo;
   late final ContactRepository contactRepo;
   late final AgoraRepository agoraRepo;
@@ -26,8 +21,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
   StreamSubscription<List<Message>>? messageSub;
 
   @override
-  FutureOr<ChattingState> build(String roomId, String profileId) async {
-    messageRepo = ref.read(messageRepositoryProvider);
+  FutureOr<ChattingState> build(String? chatId, String? profileId) async {
     chatRepo = ref.read(chatRepositoryProvider);
     contactRepo = ref.read(contactRepositoryProvider);
     agoraRepo = ref.read(agoraRepositoryProvider);
@@ -38,7 +32,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     final user = await localRepo.getUserProfile();
     final contact = await contactRepo.loadSingleContact(profileId);
 
-    messageSub = messageRepo.loadChatMessages(roomId).listen((message) {
+    messageSub = chatRepo.streamChatMessages(chatId).listen((message) {
       final current = state.value!;
       state = AsyncData(
         current.copyWith(
@@ -64,104 +58,8 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     return [...remote, ...uploading];
   }
 
-  Future<void> sendMessage(
-    String message,
-    String type,
-    String chatId,
-    String profileId, {
-    String url = "",
-    String fileSize = "",
-  }) async {
-    final user = state.value!.user;
-    Message newMessage = Message(
-      message: message,
-      type: type,
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      url: url,
-      fileSize: fileSize,
-      profileId: user?.userId,
-      chatId: chatId,
-    );
-
-    Chat chat = Chat(
-      isGroup: false,
-      title: '',
-      participants: [],
-      createdBy: '',
-      createdAt: '',
-      lastMessage: LastMessage(
-        text: 'text',
-        senderId: 'senderId',
-        createdAt: 'createdAt',
-      ),
-    );
-
-    chatRepo.updateRecentChat(true, chat, user?.userId);
-    chatRepo.updateRecentChat(false, chat, user?.userId);
-
-    messageRepo.sendNewMessage(newMessage);
-  }
-
-  Future<void> uploadFile(
-    File file,
-    String path,
-    String fileName,
-    String chatId,
-    String profileId,
-    String fileSize,
-  ) async {
-    final uploadId = const Uuid().v4();
-    final user = state.value!.user;
-
-    final uploadingMessage = Message.uploading(
-      uploadId: uploadId,
-      localFile: file,
-      sendDatetime: DateTime.now().millisecondsSinceEpoch,
-      userId: user?.userId ?? "",
-    );
-
-    state = AsyncData(
-      state.value!.copyWith(
-        messages: [...state.value!.messages, uploadingMessage],
-        uploadProgress: {...state.value!.uploadProgress, uploadId: 0.0},
-      ),
-    );
-
-    final sub = messageRepo
-        .uploadFile(path: path, fileName: fileName, file: file)
-        .listen((progress) {
-          state = AsyncData(
-            state.value!.copyWith(
-              uploadProgress: {
-                ...state.value!.uploadProgress,
-                uploadId: progress,
-              },
-            ),
-          );
-        });
-
-    try {
-      await sub.asFuture();
-
-      var url = await messageRepo.getImageUrl(path: path, fileName: fileName);
-      sendMessage(
-        fileName,
-        "image",
-        chatId,
-        profileId,
-        url: url,
-        fileSize: fileSize,
-      );
-
-      state = AsyncData(
-        state.value!.copyWith(
-          messages: state.value!.messages.where((e) => !e.isUploading).toList(),
-          uploadProgress: {...state.value!.uploadProgress..remove(uploadId)},
-        ),
-      );
-    } finally {
-      await sub.cancel();
-    }
+  Future<void> sendMessage(String message, String type, String chatId) async {
+    await chatRepo.sendMessage(chatId, type, message, '');
   }
 
   Future<void> changeContactStatus(String? profileId, String status) async {
@@ -197,7 +95,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     final selectedMessages = current.messages.where((e) {
       return e.isSelected;
     }).toList();
-    await messageRepo.messagesBatchDelete(chatId, selectedMessages);
+    await chatRepo.deleteMessages(chatId, selectedMessages);
     clearSelectedChat();
   }
 
@@ -210,5 +108,13 @@ class ChattingAsyncController extends _$ChattingAsyncController {
       uid: uid,
     );
     return token;
+  }
+
+  String getNameCopy(String messageUserId, String username) {
+    final current = state.value!;
+    final name = current.user!.userId == messageUserId
+        ? username
+        : current.user!.userName!;
+    return name;
   }
 }
