@@ -9,9 +9,6 @@ class SettingsProvider extends _$SettingsProvider {
   @override
   Stream<Profile> build() async* {
     final repo = ref.watch(profileRepositoryProvider);
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
-
-    final user = await localRepo.getUserProfile();
-    yield* repo.loadStreamProfile(user.userId);
+    yield* repo.loadStreamProfile();
   }
 }

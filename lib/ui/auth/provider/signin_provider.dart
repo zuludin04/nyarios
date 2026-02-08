@@ -6,6 +6,5 @@ import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
 final signInNotifierProvider =
     StateNotifierProvider<SignInNotifier, SignInState>((ref) {
       final profileRepo = ref.watch(profileRepositoryProvider);
-      final localRepo = ref.watch(sharedLocalRepositoryProvider);
-      return SignInNotifier(profileRepo: profileRepo, localRepo: localRepo);
+      return SignInNotifier(profileRepo: profileRepo);
     });

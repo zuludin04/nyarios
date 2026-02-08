@@ -36,7 +36,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     state = const AsyncData(ChattingState());
 
     final user = await localRepo.getUserProfile();
-    var contact = await contactRepo.loadSingleContact(profileId, user.userId);
+    final contact = await contactRepo.loadSingleContact(profileId);
 
     messageSub = messageRepo.loadChatMessages(roomId).listen((message) {
       final current = state.value!;
@@ -165,8 +165,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
   }
 
   Future<void> changeContactStatus(String? profileId, String status) async {
-    final user = state.value!.user;
-    await contactRepo.changeContactStatus(user?.userId, profileId, status);
+    await contactRepo.changeContactStatus(profileId, status);
   }
 
   Future<void> selectMessage(String messageId) async {

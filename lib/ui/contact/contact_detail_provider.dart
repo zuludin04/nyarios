@@ -21,13 +21,13 @@ class ContactDetailProvider extends _$ContactDetailProvider {
     final media = chats.where((e) => e.type == "image").toList();
     final doc = chats.where((e) => e.type == "file").toList();
 
-    final status = await profileRepo.loadUserStatus(profileId);
+    final profile = await profileRepo.loadSingleProfile(profileId);
 
-    onlineStatusSub = profileRepo.getOnlineStatus(profileId).listen((isOnline) {
+    onlineStatusSub = profileRepo.getOnlineStatus().listen((isOnline) {
       final current = state.value!;
       state = AsyncData(
         current.copyWith(
-          userStatus: status,
+          userStatus: profile.status,
           mediaMessages: media,
           docMessages: doc,
           isOnline: isOnline,

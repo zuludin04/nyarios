@@ -7,14 +7,20 @@ import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/message_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
+import 'package:nyarios/data/sources/firebase/firebase_contact_source.dart';
+import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
+import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/di/dio_module.dart';
 import 'package:nyarios/di/firebase_module.dart';
 import 'package:nyarios/di/shared_prefs_module.dart';
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  final firestore = firestoreProvider(ref);
-  final auth = firebaseAuthProvider(ref);
-  return ProfileRepository(firestore: firestore, auth: auth);
+  final firebaseProfile = ref.watch(firebaseProfileSourceProvider);
+  final sharedLocal = ref.watch(sharedLocalSourceProvider);
+  return ProfileRepository(
+    profileSource: firebaseProfile,
+    localSource: sharedLocal,
+  );
 });
 
 final callRepositoryProvider = Provider<CallRepository>((ref) {
@@ -28,8 +34,12 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 });
 
 final contactRepositoryProvider = Provider<ContactRepository>((ref) {
-  final firestore = firestoreProvider(ref);
-  return ContactRepository(firestore: firestore);
+  final contactSource = ref.watch(firebaseContactSourceProvider);
+  final sharedLocal = ref.watch(sharedLocalSourceProvider);
+  return ContactRepository(
+    contactSource: contactSource,
+    localSource: sharedLocal,
+  );
 });
 
 final groupRepositoryProvider = Provider<GroupRepository>((ref) {

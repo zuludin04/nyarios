@@ -53,11 +53,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     Center(
                       child: ImageProfile(
                         url: snapshot.data?.photo,
-                        onTap: () {
-                          _pickImage(false, (url) {
-                            provider.updateImageProfile(url);
-                          });
-                        },
+                        onTap: () {},
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -95,7 +91,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     );
   }
 
-  void _pickImage(bool fromGallery, Function(String) updateProfileImage) async {
+  void pickImage(bool fromGallery, Function(String) updateProfileImage) async {
     final pickedFile = await ImagePicker().pickImage(
       source: fromGallery ? ImageSource.gallery : ImageSource.camera,
       imageQuality: 50,

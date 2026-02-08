@@ -10,10 +10,8 @@ class FriendController extends _$FriendController {
   Future<List<Profile>> build() async {
     final profileRepo = ref.watch(profileRepositoryProvider);
     final contactRepo = ref.watch(contactRepositoryProvider);
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
 
-    final user = await localRepo.getUserProfile();
-    final contacts = await contactRepo.loadContacts(user.userId, 'friend');
+    final contacts = await contactRepo.loadContacts('friend');
     final friends = contacts.map((e) async {
       final profile = await profileRepo.loadSingleProfile(e.userId);
       return profile;

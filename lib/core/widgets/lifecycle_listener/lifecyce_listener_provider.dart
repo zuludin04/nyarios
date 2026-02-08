@@ -7,27 +7,19 @@ final lifecycleListenerWrapperProvider =
 class AppLifecycleController extends Notifier<void> {
   @override
   void build() async {
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
-    final user = await localRepo.getUserProfile();
-    ref.read(profileRepositoryProvider).updateOnlineStatus(true, user.userId);
+    ref.read(profileRepositoryProvider).setOnlineStatus(true);
   }
 
   void onPaused() async {
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
-    final user = await localRepo.getUserProfile();
-    ref.read(profileRepositoryProvider).updateOnlineStatus(false, user.userId);
+    ref.read(profileRepositoryProvider).setOnlineStatus(false);
   }
 
   void onResumed() async {
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
-    final user = await localRepo.getUserProfile();
-    ref.read(profileRepositoryProvider).updateOnlineStatus(true, user.userId);
+    ref.read(profileRepositoryProvider).setOnlineStatus(true);
   }
 
   void onInactive() async {
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
-    final user = await localRepo.getUserProfile();
-    ref.read(profileRepositoryProvider).updateOnlineStatus(false, user.userId);
+    ref.read(profileRepositoryProvider).setOnlineStatus(false);
   }
 
   void onDetached() {

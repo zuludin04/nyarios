@@ -1,99 +1,79 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
+import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/domain/model/profile.dart';
 
 class ProfileRepository {
-  final FirebaseFirestore firestore;
-  final FirebaseAuth auth;
+  final FirebaseProfileSource profileSource;
+  final SharedLocalSource localSource;
 
-  ProfileRepository({required this.firestore, required this.auth});
+  const ProfileRepository({
+    required this.profileSource,
+    required this.localSource,
+  });
 
-  Future<void> saveUserProfile(Profile profile) async {
-    final exist = await checkIfUserExist(profile.uid!);
-    final fcmToken = await loadFcmToken();
-    if (!exist) {
-      profile.fcmToken = fcmToken;
-      firestore.collection("profile").doc(profile.uid).set(profile.toMap());
-    } else {
-      final userProfile = await loadSingleProfile(profile.uid);
-      await updateFcmToken(fcmToken, userProfile.uid);
+  Future<bool> signInUser({
+    required String? accessToken,
+    required String? idToken,
+  }) async {
+    try {
+      final user = await profileSource.signInCredential(accessToken, idToken);
+      final profile = await profileSource.loadSingleProfile(user?.uid);
+      final fcmToken = await profileSource.loadFcmToken();
+
+      if (profile == null) {
+        final newProfile = Profile(
+          uid: user?.uid,
+          name: user?.displayName,
+          photo: user?.photoURL,
+          status: 'Hey there! Let\'s be friend',
+          email: user?.email,
+          visibility: true,
+          fcmToken: fcmToken,
+        );
+
+        await profileSource.saveUserProfile(newProfile);
+        await localSource.setUserLocal(newProfile);
+      } else {
+        await localSource.setUserLocal(profile);
+      }
+      await localSource.setAlreadyLogin(true);
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      // ignore: avoid_print
+      print("Google SignIn Error : ${e.message}");
+      return false;
     }
   }
 
-  Future<User?> signInCredential(String? accessToken, String? idToken) async {
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: accessToken,
-      idToken: idToken,
-    );
-
-    var credentialAuth = await auth.signInWithCredential(credential);
-    return credentialAuth.user;
+  Future<Profile> loadSingleProfile(String? userId) async {
+    final profile = await profileSource.loadSingleProfile(userId);
+    return profile!;
   }
 
-  Future<bool> checkIfUserExist(String? userId) async {
-    var doc = await firestore.collection("profile").doc(userId).get();
-    return doc.exists;
+  Stream<bool> getOnlineStatus() async* {
+    final user = await localSource.getUserProfile();
+    yield* profileSource.getOnlineStatus(user.userId);
   }
 
-  Future<Profile> loadSingleProfile(String? uid) async {
-    var ref = await firestore.collection("profile").doc(uid).get();
-    return Profile.fromMap(ref.data()!);
-  }
-
-  Stream<bool> getOnlineStatus(String? uid) {
-    return firestore.collection("profile").doc(uid).snapshots().map((snapshot) {
-      Profile profile = Profile.fromMap(snapshot.data()!);
-      return profile.visibility ?? false;
-    });
-  }
-
-  Stream<Profile> loadStreamProfile(String? uid) async* {
-    var profile = firestore.collection("profile").doc(uid).snapshots();
-    yield* profile.map((event) => Profile.fromMap(event.data()!));
+  Stream<Profile> loadStreamProfile() async* {
+    final user = await localSource.getUserProfile();
+    yield* profileSource.loadStreamProfile(user.userId);
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> streamProfiles() async* {
-    var profile = firestore.collection("profile").snapshots();
-    yield* profile;
+    yield* profileSource.streamProfiles();
   }
 
-  Future<void> updateImageProfile(String? profileId, String url) async {
-    firestore.collection("profile").doc(profileId).update({'photo': url});
+  Future<void> setOnlineStatus(bool status) async {
+    final user = await localSource.getUserProfile();
+    await profileSource.updateOnlineStatus(status, user.userId);
   }
 
-  Future<void> updateOnlineStatus(bool status, String? userId) async {
-    var exist = await checkIfUserExist(userId);
-    if (exist) {
-      firestore.collection("profile").doc(userId).update({
-        'visibility': status,
-      });
-    }
-  }
-
-  Future<String?> loadUserStatus(String? userId) async {
-    var collection = firestore.collection("profile");
-    var doc = await collection.doc(userId).get();
-    return doc.data()?['status'];
-  }
-
-  Future<void> updateProfile(
-    String? profileId,
-    String value,
-    bool updateName,
-  ) async {
-    var updateData = updateName ? {'name': value} : {'status': value};
-    firestore.collection("profile").doc(profileId).update(updateData);
-  }
-
-  Future<void> updateFcmToken(String? token, String? profileId) async {
-    var updateData = {'fcmToken': token};
-    firestore.collection("profile").doc(profileId).update(updateData);
-  }
-
-  Future<String?> loadFcmToken() async {
-    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-    final token = await firebaseMessaging.getToken();
-    return token;
+  Future<void> updateProfile(String value, bool updateName) async {
+    final user = await localSource.getUserProfile();
+    await profileSource.updateProfile(user.userId, value, updateName);
   }
 }
