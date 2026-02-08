@@ -25,7 +25,7 @@ class RecentChatScreen extends ConsumerWidget {
                 return SliverList.separated(
                   itemBuilder: (context, index) {
                     var chat = items[index];
-                    return LastMessageItem(lastMessage: chat);
+                    return LastMessageItem(recentChat: chat);
                   },
                   itemCount: items.length,
                   separatorBuilder: (BuildContext context, int index) =>

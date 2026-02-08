@@ -1,31 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/domain/model/chat.dart';
+import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/routes/app_routes.dart';
 
 class LastMessageItem extends ConsumerWidget {
-  final Chat lastMessage;
+  final RecentChat recentChat;
 
-  const LastMessageItem({super.key, required this.lastMessage});
+  const LastMessageItem({super.key, required this.recentChat});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: () {},
+      onTap: () => context.pushNamed(
+        AppPages.chatting,
+        queryParameters: {
+          "chatId": recentChat.chatId,
+          "profileId": recentChat.profileId,
+          "username": recentChat.title,
+        },
+      ),
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // ClipRRect(
-            //   borderRadius: BorderRadius.circular(40),
-            //   child: Image.network(
-            //     lastMessage.profile?.photo ?? "",
-            //     width: 40,
-            //     height: 40,
-            //     fit: BoxFit.cover,
-            //   ),
-            // ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: Image.network(
+                recentChat.iconUrl,
+                width: 40,
+                height: 40,
+                fit: BoxFit.cover,
+              ),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -33,7 +42,7 @@ class LastMessageItem extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "",
+                    recentChat.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -42,7 +51,11 @@ class LastMessageItem extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text("", maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(
+                    recentChat.lastMessage,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
@@ -51,7 +64,7 @@ class LastMessageItem extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(_lastMessageDate(context, 0)),
+                Text(_lastMessageDate(context, recentChat.lastMessageAt)),
                 const SizedBox(height: 4),
               ],
             ),
@@ -61,8 +74,8 @@ class LastMessageItem extends ConsumerWidget {
     );
   }
 
-  String _lastMessageDate(BuildContext context, int? datetime) {
-    var date = DateTime.fromMillisecondsSinceEpoch(datetime ?? 0);
+  String _lastMessageDate(BuildContext context, String datetime) {
+    var date = DateTime.parse(datetime);
     var today = DateTime.now();
 
     if (date.day == today.day) {

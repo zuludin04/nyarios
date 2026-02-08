@@ -5,10 +5,12 @@ import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
+import 'package:nyarios/data/repositories/recent_chat_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/data/sources/firebase/firebase_chat_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_contact_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
+import 'package:nyarios/data/sources/firebase/firebase_recent_chat_source.dart';
 import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/di/dio_module.dart';
 import 'package:nyarios/di/firebase_module.dart';
@@ -56,4 +58,13 @@ final agoraRepositoryProvider = Provider<AgoraRepository>((ref) {
 final sharedLocalRepositoryProvider = Provider<SharedLocalRepository>((ref) {
   final prefs = ref.watch(sharedPrefsProvider);
   return SharedLocalRepository(sharedPrefs: prefs);
+});
+
+final recentChatRepositoryProvider = Provider<RecentChatRepository>((ref) {
+  final recentChat = ref.watch(firebaseRecentChatSourceProvider);
+  final sharedLocal = ref.watch(sharedLocalSourceProvider);
+  return RecentChatRepository(
+    localSource: sharedLocal,
+    recentChatSource: recentChat,
+  );
 });

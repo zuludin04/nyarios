@@ -257,7 +257,12 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             data: (ChattingState data) => ChatInputMessage(
               isBlocked: data.status == 'blocked',
               onSendMessage: ({required type, message, file}) {
-                controller.sendMessage(message ?? "", type, widget.chatId);
+                controller.sendMessage(
+                  message ?? "",
+                  type,
+                  widget.chatId,
+                  widget.profileId,
+                );
               },
             ),
             error: (_, _) => SizedBox(),

@@ -20,6 +20,11 @@ class FirebaseChatSource {
     return doc.id;
   }
 
+  Future<Chat> loadChatDetail(String chatId) async {
+    final ref = await firestore.collection('chats').doc(chatId).get();
+    return Chat.fromMap(ref.data()!);
+  }
+
   Future<void> sendChatMessage(Message message) async {
     await firestore
         .collection('chats')

@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:nyarios/data/repositories/agora_repository.dart';
+import 'package:nyarios/data/repositories/recent_chat_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
+import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -17,6 +19,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
   late final ContactRepository contactRepo;
   late final AgoraRepository agoraRepo;
   late final SharedLocalRepository localRepo;
+  late final RecentChatRepository recentChatRepo;
 
   StreamSubscription<List<Message>>? messageSub;
 
@@ -26,6 +29,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     contactRepo = ref.read(contactRepositoryProvider);
     agoraRepo = ref.read(agoraRepositoryProvider);
     localRepo = ref.read(sharedLocalRepositoryProvider);
+    recentChatRepo = ref.read(recentChatRepositoryProvider);
 
     state = const AsyncData(ChattingState());
 
@@ -58,8 +62,25 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     return [...remote, ...uploading];
   }
 
-  Future<void> sendMessage(String message, String type, String chatId) async {
+  Future<void> sendMessage(
+    String message,
+    String type,
+    String chatId,
+    String ownerUserId,
+  ) async {
     await chatRepo.sendMessage(chatId, type, message, '');
+    final user = await localRepo.getUserProfile();
+
+    await updateRecentChat(
+      message: message,
+      ownerUserId: user.userId!,
+      chatId: chatId,
+    );
+    await updateRecentChat(
+      message: message,
+      ownerUserId: ownerUserId,
+      chatId: chatId,
+    );
   }
 
   Future<void> changeContactStatus(String? profileId, String status) async {
@@ -116,5 +137,27 @@ class ChattingAsyncController extends _$ChattingAsyncController {
         ? username
         : current.user!.userName!;
     return name;
+  }
+
+  Future<void> updateRecentChat({
+    required String message,
+    required String ownerUserId,
+    required String chatId,
+  }) async {
+    final user = await localRepo.getUserProfile();
+
+    final recentChat = RecentChat(
+      chatId: chatId,
+      profileId: "",
+      isGroup: false,
+      title: "",
+      iconUrl: "",
+      lastMessage: message,
+      lastMessageSenderId: user.userId ?? "",
+      lastMessageAt: DateTime.now().toIso8601String(),
+      unreadCount: 0,
+    );
+
+    await recentChatRepo.updateRecentChat(ownerUserId, recentChat);
   }
 }

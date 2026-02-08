@@ -13,7 +13,7 @@ part of 'recent_chat_provider.dart';
 const recentChatProviderProvider = RecentChatProviderProvider._();
 
 final class RecentChatProviderProvider
-    extends $StreamNotifierProvider<RecentChatProvider, List<Chat>> {
+    extends $StreamNotifierProvider<RecentChatProvider, List<RecentChat>> {
   const RecentChatProviderProvider._()
     : super(
         from: null,
@@ -34,20 +34,21 @@ final class RecentChatProviderProvider
 }
 
 String _$recentChatProviderHash() =>
-    r'0e587d565aa7dd1ac5645a22198c846d843bbed1';
+    r'cbf77a0c8b189cbed747cd5775a8b9a3c2ec14c5';
 
-abstract class _$RecentChatProvider extends $StreamNotifier<List<Chat>> {
-  Stream<List<Chat>> build();
+abstract class _$RecentChatProvider extends $StreamNotifier<List<RecentChat>> {
+  Stream<List<RecentChat>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<List<Chat>>, List<Chat>>;
+    final ref =
+        this.ref as $Ref<AsyncValue<List<RecentChat>>, List<RecentChat>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Chat>>, List<Chat>>,
-              AsyncValue<List<Chat>>,
+              AnyNotifier<AsyncValue<List<RecentChat>>, List<RecentChat>>,
+              AsyncValue<List<RecentChat>>,
               Object?,
               Object?
             >;

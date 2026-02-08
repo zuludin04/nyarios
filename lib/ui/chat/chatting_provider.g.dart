@@ -52,7 +52,7 @@ final class ChattingAsyncControllerProvider
 }
 
 String _$chattingAsyncControllerHash() =>
-    r'c2c11c3afa6e17bdab7fa126874a9366dc10e151';
+    r'8d1210f62dcd9c691cd97b3fff2260599e4768be';
 
 final class ChattingAsyncControllerFamily extends $Family
     with

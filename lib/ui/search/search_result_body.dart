@@ -4,7 +4,6 @@ import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
-import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 class SearchResultBody extends StatelessWidget {
@@ -42,16 +41,12 @@ class SearchResultBody extends StatelessWidget {
             child: ListView.builder(
               padding: const EdgeInsets.only(top: 85),
               itemBuilder: (context, index) {
-                if (typeResult == 'lastMessage') {
-                  return LastMessageItem(lastMessage: chatResult[index]);
-                } else {
-                  return _ChatSearchItem(
-                    chat: messageResult[index],
-                    term: searchTerm,
-                    user: user,
-                    userId: userId,
-                  );
-                }
+                return _ChatSearchItem(
+                  chat: messageResult[index],
+                  term: searchTerm,
+                  user: user,
+                  userId: userId,
+                );
               },
               itemCount: typeResult == 'lastMessage'
                   ? chatResult.length

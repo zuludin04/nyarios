@@ -41,4 +41,8 @@ class ChatRepository {
   Future<void> deleteMessages(String chatId, List<Message> messages) async {
     await chatSource.messagesBatchDelete(chatId, messages);
   }
+
+  Future<Chat> getChatDetail(String chatId) async {
+    return chatSource.loadChatDetail(chatId);
+  }
 }
