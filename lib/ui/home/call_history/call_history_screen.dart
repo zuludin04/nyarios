@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/ui/home/call_history/call_history_provider.dart';
 import 'package:nyarios/ui/home/call_history/call_history_item.dart';
 

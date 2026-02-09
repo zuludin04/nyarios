@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/constants.dart';
 import 'package:nyarios/core/controllers/language/language_controller.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/ui/language/widgets/language_item.dart';
 
 class LanguageSettingScreen extends ConsumerWidget {

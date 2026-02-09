@@ -14,7 +14,7 @@ import 'package:nyarios/core/controllers/notification/notification_action_contro
 import 'package:nyarios/core/utils/custom_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/firebase_options.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/core/services/notification_service.dart';
 

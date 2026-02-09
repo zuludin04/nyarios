@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/home/settings/settings_provider.dart';
 import 'package:settings_ui/settings_ui.dart';

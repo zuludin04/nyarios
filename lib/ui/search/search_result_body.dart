@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 class SearchResultBody extends StatelessWidget {

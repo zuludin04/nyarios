@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/ui/profile/profile_edit_provider.dart';
 import 'package:nyarios/ui/profile/widgets/profile_info_widget.dart';
 import 'package:percent_indicator/percent_indicator.dart';

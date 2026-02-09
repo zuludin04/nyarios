@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
 

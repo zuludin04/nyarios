@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/widgets/empty_widget.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 
 class ContactMediaTab extends StatefulWidget {
   final List<Message> messages;

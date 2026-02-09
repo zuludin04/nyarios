@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/l10n/app_localizations.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 
 class ChatInputMessage extends StatefulWidget {
   final bool isBlocked;
