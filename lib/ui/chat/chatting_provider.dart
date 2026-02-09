@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:nyarios/data/repositories/agora_repository.dart';
+import 'package:nyarios/data/repositories/chat_repository.dart';
+import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/recent_chat_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/data/repositories/chat_repository.dart';
-import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
@@ -17,7 +16,6 @@ part 'chatting_provider.g.dart';
 class ChattingAsyncController extends _$ChattingAsyncController {
   late final ChatRepository chatRepo;
   late final ContactRepository contactRepo;
-  late final AgoraRepository agoraRepo;
   late final SharedLocalRepository localRepo;
   late final RecentChatRepository recentChatRepo;
 
@@ -27,7 +25,6 @@ class ChattingAsyncController extends _$ChattingAsyncController {
   FutureOr<ChattingState> build(String? chatId, String? profileId) async {
     chatRepo = ref.read(chatRepositoryProvider);
     contactRepo = ref.read(contactRepositoryProvider);
-    agoraRepo = ref.read(agoraRepositoryProvider);
     localRepo = ref.read(sharedLocalRepositoryProvider);
     recentChatRepo = ref.read(recentChatRepositoryProvider);
 
@@ -120,13 +117,19 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     clearSelectedChat();
   }
 
-  Future<String> generateAgoraToken({
+  Future<String> createCallConversation({
     required String channelName,
     required int uid,
+    required String type,
+    required String receiverUserId,
   }) async {
-    final token = await agoraRepo.loadAgoraToken(
-      channel: channelName,
-      uid: uid,
+    final repo = ref.watch(callRepositoryProvider);
+
+    final token = await repo.createCall(
+      channelName,
+      DateTime.now().millisecondsSinceEpoch,
+      type,
+      receiverUserId,
     );
     return token;
   }

@@ -1,18 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nyarios/data/repositories/agora_repository.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/data/repositories/recent_chat_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
+import 'package:nyarios/data/sources/firebase/firebase_call_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_chat_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_contact_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
 import 'package:nyarios/data/sources/firebase/firebase_recent_chat_source.dart';
 import 'package:nyarios/data/sources/local/shared_local_source.dart';
-import 'package:nyarios/di/dio_module.dart';
-import 'package:nyarios/di/firebase_module.dart';
+import 'package:nyarios/data/sources/remote/agora_remote_source.dart';
 import 'package:nyarios/di/shared_prefs_module.dart';
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
@@ -25,8 +24,16 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
 });
 
 final callRepositoryProvider = Provider<CallRepository>((ref) {
-  final firestore = firestoreProvider(ref);
-  return CallRepository(firestore: firestore);
+  final callSource = ref.watch(firebaseCallSourceProvider);
+  final sharedLocal = ref.watch(sharedLocalSourceProvider);
+  final firebaseProfile = ref.watch(firebaseProfileSourceProvider);
+  final agoraSource = ref.watch(agoraRemoteSourceProvider);
+  return CallRepository(
+    callSource: callSource,
+    localSource: sharedLocal,
+    profileSource: firebaseProfile,
+    agoraSource: agoraSource,
+  );
 });
 
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
@@ -42,11 +49,6 @@ final contactRepositoryProvider = Provider<ContactRepository>((ref) {
     contactSource: contactSource,
     localSource: sharedLocal,
   );
-});
-
-final agoraRepositoryProvider = Provider<AgoraRepository>((ref) {
-  final dio = dioProvider(ref);
-  return AgoraRepository(dio: dio);
 });
 
 final sharedLocalRepositoryProvider = Provider<SharedLocalRepository>((ref) {

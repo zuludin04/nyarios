@@ -17,28 +17,30 @@ class CallHistoryItem extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: Row(
             children: [
-              _imageRecentChat(call.profile?.photo),
+              _imageRecentChat(call.image),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _nameRecentChat(call.profile?.name),
+                    _nameRecentChat(call.username),
                     const SizedBox(height: 4),
                     Row(
                       children: [
                         Icon(
-                          call.status == 'incoming_call'
+                          call.type == 'incoming_call'
                               ? Icons.call_received
                               : Icons.call_made,
-                          color: call.isAccepted! ? Colors.green : Colors.red,
+                          color: call.status == 'accept'
+                              ? Colors.green
+                              : Colors.red,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          DateFormat("dd MMM yyyy, HH:mm").format(
-                            DateTime.fromMillisecondsSinceEpoch(call.callDate!),
-                          ),
+                          DateFormat(
+                            "dd MMM yyyy, HH:mm",
+                          ).format(DateTime.parse(call.createdAt)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -84,7 +86,7 @@ class CallHistoryItem extends ConsumerWidget {
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontSize: 16,
-        color: call.isAccepted! ? Colors.green : Colors.red,
+        color: call.status == 'accept' ? Colors.green : Colors.red,
         fontWeight: FontWeight.w600,
       ),
     );

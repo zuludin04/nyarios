@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CallVideoScreen extends ConsumerStatefulWidget {
   final String token;
-  final Contact contact;
+  final String username;
+  final String chatId;
 
   const CallVideoScreen({
     super.key,
-    required this.contact,
     required this.token,
+    required this.username,
+    required this.chatId,
   });
 
   @override
@@ -102,15 +103,15 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
                                 //   ),
                                 // ),
                                 // const SizedBox(height: 16),
-                                // Text(
-                                //   widget.contact.profile!.name!,
-                                //   textAlign: TextAlign.center,
-                                //   maxLines: 2,
-                                //   style: const TextStyle(
-                                //     color: Colors.white,
-                                //     fontWeight: FontWeight.w700,
-                                //   ),
-                                // ),
+                                Text(
+                                  widget.username,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -188,7 +189,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       controller: VideoViewController.remote(
         rtcEngine: agoraEngine,
         canvas: VideoCanvas(uid: _remoteUid),
-        connection: RtcConnection(channelId: widget.contact.chatId),
+        connection: RtcConnection(channelId: widget.chatId),
       ),
     );
   }
@@ -258,7 +259,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
 
     await agoraEngine.joinChannel(
       token: token,
-      channelId: widget.contact.chatId,
+      channelId: widget.chatId,
       options: options,
       uid: 0,
     );

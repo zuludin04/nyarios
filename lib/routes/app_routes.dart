@@ -107,18 +107,30 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.callVideo,
+        name: AppPages.callVideo,
         builder: (context, state) {
-          final String token = state.pathParameters['token'] ?? "";
-          final contact = state.extra as Contact;
-          return CallVideoScreen(contact: contact, token: token);
+          final String token = state.uri.queryParameters['token'] ?? "";
+          final String username = state.uri.queryParameters['username'] ?? "";
+          final String chatId = state.uri.queryParameters['chatId'] ?? "";
+          return CallVideoScreen(
+            token: token,
+            username: username,
+            chatId: chatId,
+          );
         },
       ),
       GoRoute(
         path: AppPages.callVoice,
+        name: AppPages.callVoice,
         builder: (context, state) {
-          final String token = state.pathParameters['token'] ?? "";
-          final contact = state.extra as Contact;
-          return CallVoiceScreen(contact: contact, token: token);
+          final String token = state.uri.queryParameters['token'] ?? "";
+          final String username = state.uri.queryParameters['username'] ?? "";
+          final String chatId = state.uri.queryParameters['chatId'] ?? "";
+          return CallVoiceScreen(
+            token: token,
+            username: username,
+            chatId: chatId,
+          );
         },
       ),
     ],

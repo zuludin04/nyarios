@@ -1,41 +1,71 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nyarios/data/sources/firebase/firebase_call_source.dart';
+import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
+import 'package:nyarios/data/sources/local/shared_local_source.dart';
+import 'package:nyarios/data/sources/remote/agora_remote_source.dart';
 import 'package:nyarios/domain/model/call.dart';
+import 'package:uuid/uuid.dart';
 
 class CallRepository {
-  final FirebaseFirestore firestore;
+  final FirebaseCallSource callSource;
+  final SharedLocalSource localSource;
+  final AgoraRemoteSource agoraSource;
+  final FirebaseProfileSource profileSource;
 
-  CallRepository({required this.firestore});
+  const CallRepository({
+    required this.callSource,
+    required this.localSource,
+    required this.agoraSource,
+    required this.profileSource,
+  });
 
-  Future<void> saveCallHistory(String profileId, Call call) async {
-    await firestore
-        .collection('call')
-        .doc(profileId)
-        .collection('history')
-        .doc(call.callId)
-        .set(call.toMap());
-  }
-
-  Future<void> updateCallStatus(
-    String profileId,
-    String callId,
-    bool isAccepted,
+  Future<String> createCall(
+    String channel,
+    int agoraCallId,
+    String type,
+    String receiverUserId,
   ) async {
-    await firestore
-        .collection('call')
-        .doc(profileId)
-        .collection('history')
-        .doc(callId)
-        .update({'isAccepted': isAccepted});
+    final token = await agoraSource.loadAgoraToken(
+      channel: channel,
+      uid: agoraCallId,
+    );
+
+    final user = await localSource.getUserProfile();
+    final createdAt = DateTime.now().toIso8601String();
+    final callId = Uuid().v4();
+    final receiverProfile = await profileSource.loadSingleProfile(
+      receiverUserId,
+    );
+
+    final callerHistory = Call(
+      callId: callId,
+      username: receiverProfile!.name!,
+      image: receiverProfile.photo!,
+      type: type,
+      status: 'outgoing',
+      createdAt: createdAt,
+    );
+    await callSource.saveCallHistory(user.userId, callerHistory);
+
+    final receiverHistory = Call(
+      callId: callId,
+      username: user.userName!,
+      image: user.userImage!,
+      type: type,
+      status: 'incoming',
+      createdAt: createdAt,
+    );
+    await callSource.saveCallHistory(receiverUserId, receiverHistory);
+
+    return token;
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> loadCallHistory(
-    String? userId,
-  ) async* {
-    yield* firestore
-        .collection('call')
-        .doc(userId)
-        .collection('history')
-        .orderBy('callDate', descending: true)
-        .snapshots();
+  Future<void> updateCallStatus(String callId, String status) async {
+    final user = await localSource.getUserProfile();
+    await callSource.updateCallStatus(user.userId, callId, status);
+  }
+
+  Stream<List<Call>> streamCallHistories() async* {
+    final user = await localSource.getUserProfile();
+    yield* callSource.loadCallHistory(user.userId);
   }
 }

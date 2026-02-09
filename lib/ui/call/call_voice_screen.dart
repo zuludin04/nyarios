@@ -5,7 +5,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,12 +12,14 @@ import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class CallVoiceScreen extends ConsumerStatefulWidget {
   final String token;
-  final Contact contact;
+  final String username;
+  final String chatId;
 
   const CallVoiceScreen({
     super.key,
-    required this.contact,
     required this.token,
+    required this.username,
+    required this.chatId,
   });
 
   @override
@@ -70,14 +71,14 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
               //   ),
               // ),
               // const SizedBox(height: 24),
-              // Text(
-              //   widget.contact.profile!.name!,
-              //   style: const TextStyle(
-              //     color: Colors.white,
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.w700,
-              //   ),
-              // ),
+              Text(
+                widget.username,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: 16),
               _status(),
               const Spacer(flex: 7),
@@ -175,7 +176,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     final appId = dotenv.env["AGORA_APP_ID"];
     await agoraEngine?.initialize(RtcEngineContext(appId: appId));
 
-    join(widget.token, widget.contact.chatId, 0);
+    join(widget.token, widget.chatId, 0);
 
     agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(

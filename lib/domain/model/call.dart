@@ -1,44 +1,39 @@
-import 'package:nyarios/domain/model/profile.dart';
-
 class Call {
-  int? callDate;
-  String? callId;
-  String? profileId;
-  String? status;
-  String? type;
-  bool? isAccepted;
+  final String callId;
+  final String username;
+  final String image;
+  final String type;
+  final String status;
+  final String createdAt;
 
-  Profile? profile;
-
-  Call({
-    this.callDate,
-    this.callId,
-    this.profileId,
-    this.status,
-    this.type,
-    this.isAccepted,
-    this.profile,
+  const Call({
+    required this.callId,
+    required this.username,
+    required this.image,
+    required this.type,
+    required this.status,
+    required this.createdAt,
   });
 
   factory Call.fromMap(Map<String, dynamic> map) {
     return Call(
-      callDate: map['callDate'],
       callId: map['callId'],
-      profileId: map['profileId'],
+      username: map['username'],
+      image: map['image'],
       status: map['status'],
       type: map['type'],
-      isAccepted: map['isAccepted'],
+      createdAt: map['createdAt'],
     );
   }
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
-    map['callDate'] = callDate;
     map['callId'] = callId;
-    map['profileId'] = profileId;
+    map['username'] = username;
+    map['image'] = image;
     map['status'] = status;
     map['type'] = type;
-    map['isAccepted'] = isAccepted;
+    map['createdAt'] = createdAt;
     return map;
   }
 }

@@ -1,9 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nyarios/di/dio_module.dart';
 
-class AgoraRepository {
+final agoraRemoteSourceProvider = Provider<AgoraRemoteSource>((ref) {
+  final dio = dioProvider(ref);
+  return AgoraRemoteSource(dio: dio);
+});
+
+class AgoraRemoteSource {
   final Dio dio;
 
-  AgoraRepository({required this.dio});
+  const AgoraRemoteSource({required this.dio});
 
   Future<String> loadAgoraToken({
     required String channel,
