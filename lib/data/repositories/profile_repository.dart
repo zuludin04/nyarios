@@ -36,6 +36,8 @@ class ProfileRepository {
         await profileSource.saveUserProfile(newProfile);
         await localSource.setUserLocal(newProfile);
       } else {
+        profile.fcmToken = fcmToken;
+        await profileSource.saveUserProfile(profile);
         await localSource.setUserLocal(profile);
       }
       await localSource.setAlreadyLogin(true);

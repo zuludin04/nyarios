@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +24,11 @@ final FlutterLocalNotificationsPlugin notificationsPlugin =
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await NotificationService.showFromFCM(message.data);
+  if (message.data['type'] == 'message') {
+    await NotificationService.showFromFCM(message.data);
+  } else {
+    await NotificationService.showCallNotification(message.data);
+  }
 }
 
 @pragma('vm:entry-point')
@@ -63,8 +69,14 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
+    listenCallkitEvents(ref);
+
     FirebaseMessaging.onMessage.listen((message) async {
-      await NotificationService.showFromFCM(message.data);
+      if (message.data['type'] == 'message') {
+        await NotificationService.showFromFCM(message.data);
+      } else {
+        await NotificationService.showCallNotification(message.data);
+      }
     });
   }
 
@@ -92,6 +104,15 @@ class _MyAppState extends ConsumerState<MyApp> {
       loading: () => SizedBox(),
     );
   }
+
+  void listenCallkitEvents(WidgetRef ref) {
+    FlutterCallkitIncoming.onEvent.listen((event) {
+      final router = ref.read(routerProvider);
+      if (event?.event == Event.actionCallAccept) {
+        router.go(AppPages.callVoice);
+      }
+    });
+  }
 }
 
 class NotificationListenerWidget extends ConsumerWidget {
@@ -101,7 +122,16 @@ class NotificationListenerWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(notificationActionControllerProvider, (_, next) {
       final router = ref.read(routerProvider);
-      router.go("${AppPages.callVoice}/12213412");
+
+      final data = jsonDecode(next.value!.payload!);
+      router.pushNamed(
+        AppPages.chatting,
+        queryParameters: {
+          "chatId": data['chatId'],
+          "profileId": data['profileId'],
+          "username": data['name'],
+        },
+      );
     });
     return const SizedBox.shrink();
   }

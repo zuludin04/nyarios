@@ -15,8 +15,6 @@ class NotificationActionController {
   static void Function(NotificationResponse)? onAction;
 
   static void handle(NotificationResponse response) {
-    if (response.actionId == 'id_1') {
-      onAction?.call(response);
-    }
+    onAction?.call(response);
   }
 }

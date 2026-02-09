@@ -1,6 +1,9 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/android_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/notification_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:nyarios/core/controllers/notification/notification_action_controller.dart';
 import 'package:nyarios/main.dart';
@@ -22,24 +25,6 @@ class NotificationService {
     ticker: 'ticker',
     groupAlertBehavior: GroupAlertBehavior.all,
     setAsGroupSummary: false,
-    actions: [
-      AndroidNotificationAction(
-        'id_1',
-        'Accept',
-        titleColor: Colors.green,
-        icon: DrawableResourceAndroidBitmap('call_accept'),
-        contextual: true,
-        showsUserInterface: true,
-      ),
-      AndroidNotificationAction(
-        'id_2',
-        'Reject',
-        titleColor: Color.fromARGB(255, 255, 0, 0),
-        icon: DrawableResourceAndroidBitmap('call_reject'),
-        contextual: true,
-        showsUserInterface: true,
-      ),
-    ],
   );
 
   static NotificationDetails details = NotificationDetails(
@@ -75,6 +60,49 @@ class NotificationService {
   }
 
   static Future<void> showFromFCM(Map<String, dynamic> data) async {
-    await show(title: data['title'], body: data['body'], payload: data);
+    await show(
+      title: data['name'],
+      body: "There are new message",
+      payload: data,
+    );
+  }
+
+  static Future<void> showCallNotification(Map<String, dynamic> data) async {
+    await FlutterCallkitIncoming.showCallkitIncoming(
+      CallKitParams(
+        id: 'call_i1',
+        nameCaller: data['name'],
+        avatar: data['image'],
+        appName: 'Nyarios',
+        handle: 'Incoming Call',
+        type: data['type'] == 'voice_call' ? 0 : 1,
+        duration: 300000,
+        textAccept: 'Accept',
+        textDecline: 'Decline',
+        missedCallNotification: NotificationParams(
+          showNotification: true,
+          isShowCallback: true,
+          subtitle: 'Missed call',
+          callbackText: 'Call back',
+        ),
+        callingNotification: const NotificationParams(
+          showNotification: true,
+          isShowCallback: true,
+          subtitle: 'Calling...',
+          callbackText: 'Hang Up',
+        ),
+        android: const AndroidParams(
+          isCustomNotification: true,
+          isShowLogo: false,
+          ringtonePath: 'system_ringtone_default',
+          backgroundColor: '#0955fa',
+          actionColor: '#4CAF50',
+          textColor: '#ffffff',
+          incomingCallNotificationChannelName: "Incoming Call",
+          missedCallNotificationChannelName: "Missed Call",
+          isShowCallID: false,
+        ),
+      ),
+    );
   }
 }
