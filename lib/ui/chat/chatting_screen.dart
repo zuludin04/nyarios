@@ -256,7 +256,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
           chatAsync.when(
             data: (ChattingState data) => ChatInputMessage(
               isBlocked: data.status == 'blocked',
-              onSendMessage: ({required type, message, file}) {
+              onSendMessage: ({required type, message}) {
                 controller.sendMessage(
                   message ?? "",
                   type,

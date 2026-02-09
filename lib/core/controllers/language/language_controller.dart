@@ -1,15 +1,15 @@
-import 'package:nyarios/data/repositories/shared_local_repository.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
+import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'language_controller.g.dart';
 
 @riverpod
 class LanguageController extends _$LanguageController {
-  late final SharedLocalRepository localRepo;
+  late final SharedLocalSource localRepo;
+
   @override
   Future<String> build() async {
-    localRepo = ref.watch(sharedLocalRepositoryProvider);
+    localRepo = ref.watch(sharedLocalSourceProvider);
     final language = await localRepo.gelectedLanguage();
     return language;
   }

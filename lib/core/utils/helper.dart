@@ -5,7 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/domain/model/picked_message_file.dart';
 
 String? emailValidator(String? value) {
   String pattern =
@@ -47,7 +46,7 @@ String? emptyValidator(String? value) {
   return null;
 }
 
-Future<PickedMessageFile?> pickImage(bool fromGallery) async {
+Future<File?> pickImage(bool fromGallery) async {
   final pickedFile = await ImagePicker().pickImage(
     source: fromGallery ? ImageSource.gallery : ImageSource.camera,
     imageQuality: 50,
@@ -55,22 +54,22 @@ Future<PickedMessageFile?> pickImage(bool fromGallery) async {
 
   if (pickedFile != null) {
     var file = File(pickedFile.path);
-    var fileSize = await getFileSize(file);
+    // var fileSize = await getFileSize(file);
 
-    return PickedMessageFile(path: pickedFile.path, size: fileSize, file: file);
+    return file;
   } else {
     return null;
   }
 }
 
-Future<PickedMessageFile?> pickFile() async {
+Future<File?> pickFile() async {
   FilePickerResult? result = await FilePicker.platform.pickFiles();
 
   if (result != null) {
     File file = File(result.files.single.path!);
-    var fileSize = await getFileSize(file);
+    // var fileSize = await getFileSize(file);
 
-    return PickedMessageFile(path: file.path, size: fileSize, file: file);
+    return file;
   } else {
     return null;
   }

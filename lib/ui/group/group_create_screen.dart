@@ -1,21 +1,14 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/group/widgets/group_member_item.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 
 class GroupCreateScreen extends ConsumerStatefulWidget {
   const GroupCreateScreen({super.key});
@@ -51,7 +44,7 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
             Row(
               children: [
                 GestureDetector(
-                  onTap: () => _pickImage(false),
+                  onTap: () {},
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(50),
                     child: _imageFile == null
@@ -149,111 +142,12 @@ class _GroupCreateScreenState extends ConsumerState<GroupCreateScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          var chatId = const Uuid().v4();
-          var group = Group(
-            name: _groupTitleController.text,
-            members: members.map((e) => e.uid!).toList(),
-            chatId: chatId,
-            adminId: '',
-          );
-
-          if (_imageFile != null) {
-            _createGroup(group, _imageFile!);
-          } else {
-            var file = await getImageFileFromAssets();
-            _createGroup(group, file);
-          }
-        },
+        onPressed: () async {},
         child: ImageAsset(
           assets: 'assets/icons/ic_done.png',
           color: Theme.of(context).iconTheme.color!,
         ),
       ),
     );
-  }
-
-  void _createGroup(Group group, File file) {
-    var storage = FirebaseStorage.instance.ref();
-    var uploadImage = storage
-        .child('nyarios/group/${_groupTitleController.text}.jpg')
-        .putFile(file);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Row(
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(width: 8),
-            Text(AppLocalizations.of(context)!.create_group),
-          ],
-        ),
-      ),
-    );
-
-    uploadImage.snapshotEvents.listen((event) async {
-      switch (event.state) {
-        case TaskState.running:
-          debugPrint("Upload is running.");
-          break;
-        case TaskState.paused:
-          debugPrint("Upload is paused.");
-          break;
-        case TaskState.canceled:
-          debugPrint("Upload was canceled");
-          break;
-        case TaskState.error:
-          debugPrint("Upload was error");
-          break;
-        case TaskState.success:
-          var url = await storage
-              .child('nyarios/group/${_groupTitleController.text}.jpg')
-              .getDownloadURL();
-          group.photo = url;
-          ref.watch(groupRepositoryProvider).createGroupChat(group).then((
-            value,
-          ) async {
-            await _updateGroupRecentMessage(group);
-            await _addGroupInfoMessage(group.chatId!);
-            if (mounted) {
-              context.pop();
-              context.pop();
-            }
-          });
-          break;
-      }
-    });
-  }
-
-  Future<void> _updateGroupRecentMessage(Group group) async {}
-
-  Future<void> _addGroupInfoMessage(String chatId) async {}
-
-  void _pickImage(bool fromGallery) async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: fromGallery ? ImageSource.gallery : ImageSource.camera,
-      imageQuality: 50,
-    );
-
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    }
-  }
-
-  Future<File> getImageFileFromAssets() async {
-    final byteData = await rootBundle.load('assets/group.png');
-
-    final file = File('${(await getTemporaryDirectory()).path}/group.png');
-    await file.writeAsBytes(
-      byteData.buffer.asUint8List(
-        byteData.offsetInBytes,
-        byteData.lengthInBytes,
-      ),
-    );
-
-    return file;
   }
 }

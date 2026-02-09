@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/domain/model/contact.dart';
-import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/ui/auth/signin_screen.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_screen.dart';
 import 'package:nyarios/ui/call/call_video_screen.dart';
@@ -97,15 +96,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '${AppPages.groupMemberPick}/:source',
         builder: (context, state) {
           final String source = state.pathParameters['source'] ?? "";
-          final group = state.extra as Group;
-          return GroupMemberPickScreen(group: group, source: source);
+          return GroupMemberPickScreen(source: source);
         },
       ),
       GoRoute(
         path: AppPages.groupEdit,
         builder: (context, state) {
-          final group = state.extra as Group;
-          return GroupEditScreen(group: group);
+          return GroupEditScreen();
         },
       ),
       GoRoute(

@@ -2,14 +2,10 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nyarios/domain/model/group.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 
 class GroupEditBottomSheet extends ConsumerStatefulWidget {
-  final Group group;
-
-  const GroupEditBottomSheet({super.key, required this.group});
+  const GroupEditBottomSheet({super.key});
 
   @override
   ConsumerState<GroupEditBottomSheet> createState() =>
@@ -29,9 +25,7 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(AppLocalizations.of(context)!.group_name),
-          TextFormField(
-            controller: _textEditingController..text = widget.group.name!,
-          ),
+          TextFormField(),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -45,19 +39,19 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
               TextButton(
                 onPressed: () {
                   if (_textEditingController.text.isNotEmpty) {
-                    ref
-                        .watch(groupRepositoryProvider)
-                        .updateGroupName(
-                          widget.group.groupId!,
-                          _textEditingController.text,
-                        )
-                        .then((value) async {
-                          await _updateGroupRecentMessage(widget.group);
-                          await _addGroupInfoMessage(widget.group.chatId!);
-                          if (context.mounted) {
-                            context.pop();
-                          }
-                        });
+                    // ref
+                    //     .watch(groupRepositoryProvider)
+                    //     .updateGroupName(
+                    //       widget.group.groupId!,
+                    //       _textEditingController.text,
+                    //     )
+                    //     .then((value) async {
+                    //       await _updateGroupRecentMessage(widget.group);
+                    //       await _addGroupInfoMessage(widget.group.chatId!);
+                    //       if (context.mounted) {
+                    //         context.pop();
+                    //       }
+                    //     });
                   } else {
                     Flushbar(
                       message: AppLocalizations.of(context)!.fill_message,
@@ -74,35 +68,5 @@ class _GroupEditBottomSheetState extends ConsumerState<GroupEditBottomSheet> {
         ],
       ),
     );
-  }
-
-  Future<void> _addGroupInfoMessage(String chatId) async {
-    // var repo = ref.read(messageRepositoryProvider);
-
-    // Message newMessage = Message(
-    //   message: '${StorageServices.to.userName} update group name',
-    //   type: 'info',
-    //   sendDatetime: DateTime.now().millisecondsSinceEpoch,
-    //   url: '',
-    //   fileSize: '',
-    //   profileId: StorageServices.to.userId,
-    //   chatId: chatId,
-    // );
-
-    // repo.sendNewMessage(newMessage);
-  }
-
-  Future<void> _updateGroupRecentMessage(Group group) async {
-    // var repo = ref.read(chatRepositoryProvider);
-
-    // var chat = Chat(
-    //   profileId: group.groupId,
-    //   lastMessage: '${StorageServices.to.userName} update group image',
-    //   lastMessageSent: DateTime.now().millisecondsSinceEpoch,
-    //   chatId: group.chatId,
-    //   type: 'group',
-    // );
-
-    // await repo.updateGroupRecentChat(group, chat);
   }
 }

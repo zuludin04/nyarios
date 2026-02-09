@@ -1,21 +1,11 @@
-import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/group.dart';
-import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
-import 'package:nyarios/ui/group/widgets/group_edit_bottom_sheet.dart';
 
 class GroupEditScreen extends ConsumerStatefulWidget {
-  final Group group;
-
-  const GroupEditScreen({super.key, required this.group});
+  const GroupEditScreen({super.key});
 
   @override
   ConsumerState<GroupEditScreen> createState() => _GroupEditScreenState();
@@ -31,135 +21,76 @@ class _GroupEditScreenState extends ConsumerState<GroupEditScreen> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: StreamBuilder(
-              stream: ref
-                  .watch(groupRepositoryProvider)
-                  .loadStreamGroup(widget.group.groupId!),
-              builder: (context, snapshot) {
-                return Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    Center(
-                      child: ImageProfile(
-                        url: snapshot.data?.photo,
-                        onTap: () {
-                          _pickImage(false, widget.group.name!);
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    InkWell(
-                      onTap: () {
-                        showBottomSheet(
-                          context: context,
-                          builder: (context) =>
-                              GroupEditBottomSheet(group: widget.group),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Row(
-                          children: [
-                            ImageAsset(
-                              assets: 'assets/icons/ic_group_2.png',
-                              color: Theme.of(context).iconTheme.color!,
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(context)!.name,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodySmall,
-                                  ),
-                                  Text(
-                                    snapshot.data?.name ?? "-",
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleMedium,
-                                  ),
-                                  const Divider(),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(16),
+          //   child: StreamBuilder(
+          //     stream: ref
+          //         .watch(groupRepositoryProvider)
+          //         .loadStreamGroup(widget.group.groupId!),
+          //     builder: (context, snapshot) {
+          //       return Column(
+          //         children: [
+          //           const SizedBox(height: 16),
+          //           Center(
+          //             child: ImageProfile(
+          //               url: snapshot.data?.photo,
+          //               onTap: () {
+          //                 _pickImage(false, widget.group.name!);
+          //               },
+          //             ),
+          //           ),
+          //           const SizedBox(height: 32),
+          //           InkWell(
+          //             onTap: () {
+          //               showBottomSheet(
+          //                 context: context,
+          //                 builder: (context) =>
+          //                     GroupEditBottomSheet(group: widget.group),
+          //               );
+          //             },
+          //             child: Padding(
+          //               padding: const EdgeInsets.symmetric(vertical: 12),
+          //               child: Row(
+          //                 children: [
+          //                   ImageAsset(
+          //                     assets: 'assets/icons/ic_group_2.png',
+          //                     color: Theme.of(context).iconTheme.color!,
+          //                   ),
+          //                   const SizedBox(width: 16),
+          //                   Expanded(
+          //                     child: Column(
+          //                       crossAxisAlignment: CrossAxisAlignment.start,
+          //                       mainAxisAlignment: MainAxisAlignment.start,
+          //                       children: [
+          //                         Text(
+          //                           AppLocalizations.of(context)!.name,
+          //                           style: Theme.of(
+          //                             context,
+          //                           ).textTheme.bodySmall,
+          //                         ),
+          //                         Text(
+          //                           snapshot.data?.name ?? "-",
+          //                           style: Theme.of(
+          //                             context,
+          //                           ).textTheme.titleMedium,
+          //                         ),
+          //                         const Divider(),
+          //                       ],
+          //                     ),
+          //                   ),
+          //                 ],
+          //               ),
+          //             ),
+          //           ),
+          //         ],
+          //       );
+          //     },
+          //   ),
+          // ),
         ],
       ),
     );
   }
-
-  void _pickImage(bool fromGallery, String imageName) async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: fromGallery ? ImageSource.gallery : ImageSource.camera,
-      imageQuality: 50,
-    );
-
-    if (pickedFile != null) {
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return const Center(child: CircularProgressIndicator());
-          },
-        );
-
-        var storage = FirebaseStorage.instance.ref();
-        var uploadImage = storage
-            .child('nyarios/group/$imageName.jpg')
-            .putFile(File(pickedFile.path));
-
-        uploadImage.snapshotEvents.listen((event) async {
-          switch (event.state) {
-            case TaskState.running:
-              debugPrint("Upload is running.");
-              break;
-            case TaskState.paused:
-              debugPrint("Upload is paused.");
-              break;
-            case TaskState.canceled:
-              debugPrint("Upload was canceled");
-              break;
-            case TaskState.error:
-              debugPrint("Upload was error");
-              break;
-            case TaskState.success:
-              var url = await storage
-                  .child('nyarios/group/$imageName.jpg')
-                  .getDownloadURL();
-              ref
-                  .watch(groupRepositoryProvider)
-                  .updateImageGroup(widget.group.groupId!, url)
-                  .then((value) async {
-                    await _updateGroupRecentMessage(widget.group);
-                    await _addGroupInfoMessage(widget.group.chatId!);
-                    if (mounted) {
-                      context.pop();
-                    }
-                  });
-              break;
-          }
-        });
-      }
-    }
-  }
-
-  Future<void> _addGroupInfoMessage(String chatId) async {}
-
-  Future<void> _updateGroupRecentMessage(Group group) async {}
 }
 
 class ImageProfile extends StatelessWidget {

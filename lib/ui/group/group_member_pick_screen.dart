@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/group.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 
 class GroupMemberPickScreen extends ConsumerStatefulWidget {
   final String source;
-  final Group group;
 
-  const GroupMemberPickScreen({
-    super.key,
-    required this.group,
-    required this.source,
-  });
+  const GroupMemberPickScreen({super.key, required this.source});
 
   @override
   ConsumerState<GroupMemberPickScreen> createState() =>

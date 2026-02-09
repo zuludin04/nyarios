@@ -2,17 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/domain/model/picked_message_file.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 
 class ChatInputMessage extends StatefulWidget {
   final bool isBlocked;
-  final Function({
-    required String type,
-    String? message,
-    PickedMessageFile? file,
-  })
-  onSendMessage;
+  final Function({required String type, String? message}) onSendMessage;
 
   const ChatInputMessage({
     super.key,
@@ -122,7 +116,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                         onPressed: () async {
                           final image = await pickImage(false);
                           if (image != null) {
-                            widget.onSendMessage(type: 'image', file: image);
+                            widget.onSendMessage(type: 'image');
                           }
                         },
                         icon: ImageAsset(
@@ -166,12 +160,12 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
         if (title == AppLocalizations.of(context)!.gallery) {
           final image = await pickImage(true);
           if (image != null) {
-            widget.onSendMessage(type: 'image', file: image);
+            widget.onSendMessage(type: 'image');
           }
         } else {
           final file = await pickFile();
           if (file != null) {
-            widget.onSendMessage(type: 'file', file: file);
+            widget.onSendMessage(type: 'file');
           }
         }
       },

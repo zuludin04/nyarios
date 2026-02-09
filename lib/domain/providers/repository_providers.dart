@@ -3,7 +3,6 @@ import 'package:nyarios/data/repositories/agora_repository.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
-import 'package:nyarios/data/repositories/group_repository.dart';
 import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/data/repositories/recent_chat_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
@@ -43,11 +42,6 @@ final contactRepositoryProvider = Provider<ContactRepository>((ref) {
     contactSource: contactSource,
     localSource: sharedLocal,
   );
-});
-
-final groupRepositoryProvider = Provider<GroupRepository>((ref) {
-  final firestore = firestoreProvider(ref);
-  return GroupRepository(firestore: firestore);
 });
 
 final agoraRepositoryProvider = Provider<AgoraRepository>((ref) {
