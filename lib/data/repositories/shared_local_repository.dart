@@ -1,7 +1,7 @@
 import 'package:nyarios/core/constants.dart';
 import 'package:nyarios/domain/model/local_user.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/services/shared_prefs_service.dart';
+import 'package:nyarios/core/services/shared_prefs_service.dart';
 
 class SharedLocalRepository {
   final SharedPrefsService sharedPrefs;

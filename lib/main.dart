@@ -16,7 +16,7 @@ import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapp
 import 'package:nyarios/firebase_options.dart';
 import 'package:nyarios/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/services/notification_service.dart';
+import 'package:nyarios/core/services/notification_service.dart';
 
 final FlutterLocalNotificationsPlugin notificationsPlugin =
     FlutterLocalNotificationsPlugin();
