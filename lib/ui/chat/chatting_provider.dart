@@ -82,6 +82,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
 
   Future<void> changeContactStatus(String? profileId, String status) async {
     await contactRepo.changeContactStatus(profileId, status);
+    state = AsyncData(state.value!.copyWith(status: status));
   }
 
   Future<void> selectMessage(String messageId) async {

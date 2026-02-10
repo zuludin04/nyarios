@@ -232,7 +232,6 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
           });
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          saveCallHistory();
           setState(() {
             _remoteUid = remoteUid;
           });
@@ -272,20 +271,5 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
     });
     agoraEngine.leaveChannel();
     context.pop();
-  }
-
-  void saveCallHistory() async {
-    // final callId = const Uuid().v4();
-
-    // var call = Call(
-    //   callDate: DateTime.now().millisecondsSinceEpoch,
-    //   callId: callId,
-    //   profileId: contact.profileId,
-    //   status: 'incoming_call',
-    //   type: 'video_call',
-    //   isAccepted: true,
-    // );
-
-    // callRepo.saveCallHistory(StorageServices.to.userId, call);
   }
 }

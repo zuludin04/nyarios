@@ -143,10 +143,10 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                   case 1:
                     break;
                   case 2:
-                    controller.changeContactStatus(widget.profileId, 'blocked');
-                    break;
-                  case 3:
-                    context.pushNamed("${AppPages.groupMemberPick}/add");
+                    final status = chatAsync.value!.status == 'blocked'
+                        ? 'pending'
+                        : 'blocked';
+                    controller.changeContactStatus(widget.profileId, status);
                     break;
                 }
               },
@@ -210,7 +210,10 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                   controller.changeContactStatus(widget.profileId, 'friend');
                 },
                 onBlock: () {
-                  controller.changeContactStatus(widget.profileId, 'blocked');
+                  controller.changeContactStatus(
+                    widget.profileId,
+                    data.status != 'blocked' ? 'blocked' : 'pending',
+                  );
                 },
               );
             },
