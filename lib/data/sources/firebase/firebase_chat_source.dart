@@ -46,6 +46,18 @@ class FirebaseChatSource {
         });
   }
 
+  Future<List<Message>> loadChatMessages(String chatId) async {
+    final results = await firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .get();
+    final messages = results.docs
+        .map((e) => Message.fromMap(e.data()))
+        .toList();
+    return messages;
+  }
+
   Future<void> messagesBatchDelete(
     String roomId,
     List<Message> chatMessages,

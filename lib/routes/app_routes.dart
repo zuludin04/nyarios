@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/ui/auth/signin_screen.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_screen.dart';
 import 'package:nyarios/ui/call/call_video_screen.dart';
@@ -64,9 +63,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.contactDetail,
+        name: AppPages.contactDetail,
         builder: (context, state) {
-          final Contact contact = state.extra as Contact;
-          return ContactDetailScreen(contact: contact);
+          final String chatId = state.uri.queryParameters['chatId'] ?? '';
+          final String userId = state.uri.queryParameters['userId'] ?? '';
+          return ContactDetailScreen(chatId: chatId, userId: userId);
         },
       ),
       GoRoute(

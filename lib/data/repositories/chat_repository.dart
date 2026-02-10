@@ -45,4 +45,8 @@ class ChatRepository {
   Future<Chat> getChatDetail(String chatId) async {
     return chatSource.loadChatDetail(chatId);
   }
+
+  Future<List<Message>> loadMessages(String chatId) async {
+    return chatSource.loadChatMessages(chatId);
+  }
 }

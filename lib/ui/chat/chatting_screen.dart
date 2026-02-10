@@ -61,7 +61,13 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                 ),
               ),
         stream: true,
-        onTapTitle: () => context.pushNamed(AppPages.contactDetail),
+        onTapTitle: () => context.pushNamed(
+          AppPages.contactDetail,
+          queryParameters: {
+            'chatId': widget.chatId,
+            'userId': widget.profileId,
+          },
+        ),
         elevation: 0,
         actions: [
           IconButton(
@@ -138,7 +144,13 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
               onSelected: (value) {
                 switch (value) {
                   case 0:
-                    context.pushNamed(AppPages.contactDetail);
+                    context.pushNamed(
+                      AppPages.contactDetail,
+                      queryParameters: {
+                        'chatId': widget.chatId,
+                        'userId': widget.profileId,
+                      },
+                    );
                     break;
                   case 1:
                     break;

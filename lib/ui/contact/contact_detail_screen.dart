@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
+import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/ui/contact/contact_detail_provider.dart';
 import 'package:nyarios/ui/contact/contact_media_tab.dart';
 
 class ContactDetailScreen extends ConsumerStatefulWidget {
-  final Contact contact;
+  final String chatId;
+  final String userId;
 
-  const ContactDetailScreen({super.key, required this.contact});
+  const ContactDetailScreen({
+    super.key,
+    required this.chatId,
+    required this.userId,
+  });
 
   @override
   ConsumerState<ContactDetailScreen> createState() =>
@@ -35,10 +39,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
   @override
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
-      contactDetailProviderProvider(
-        widget.contact.chatId,
-        widget.contact.userId,
-      ),
+      contactDetailProviderProvider(widget.chatId, widget.userId),
     );
 
     return Scaffold(
@@ -55,36 +56,38 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(80),
-                        child: Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black26,
-                              width: 1.5,
-                            ),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Image.network(
-                            " widget.contact.profile!.photo!",
-                            width: 80,
-                            height: 80,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                      child: chatAsync.value?.profile?.photo != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(80),
+                              child: Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.black26,
+                                    width: 1.5,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.network(
+                                  chatAsync.value?.profile?.photo ?? "-",
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          : SizedBox(),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "widget.contact.profile!.name!",
+                      chatAsync.value?.profile?.name ?? "-",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(chatAsync.value?.userStatus ?? "-"),
+                    Text(chatAsync.value?.profile?.status ?? "-"),
                     const SizedBox(height: 16),
                     chatAsync.when(
                       data: (data) => Visibility(

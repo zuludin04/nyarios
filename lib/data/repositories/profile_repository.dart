@@ -55,9 +55,8 @@ class ProfileRepository {
     return profile!;
   }
 
-  Stream<bool> getOnlineStatus() async* {
-    final user = await localSource.getUserProfile();
-    yield* profileSource.getOnlineStatus(user.userId);
+  Stream<bool> getOnlineStatus(String userId) async* {
+    yield* profileSource.getOnlineStatus(userId);
   }
 
   Stream<Profile> loadStreamProfile() async* {
