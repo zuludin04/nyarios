@@ -8,13 +8,15 @@ import 'package:nyarios/ui/search/search_result_body.dart';
 class SearchScreen extends ConsumerStatefulWidget {
   final String type;
   final String roomId;
-  final String user;
+  final String userId;
+  final String username;
 
   const SearchScreen({
     super.key,
     required this.type,
     required this.roomId,
-    required this.user,
+    required this.userId,
+    required this.username,
   });
 
   @override
@@ -34,7 +36,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             chatResult: data.chatResult,
             messageResult: data.messageResult,
             typeResult: widget.type,
-            userId: data.userId,
+            userId: widget.userId,
+            username: widget.username,
           ),
           error: (_, _) => SizedBox(),
           loading: () => CircularProgressIndicator(),

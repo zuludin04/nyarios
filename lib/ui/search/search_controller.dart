@@ -12,37 +12,22 @@ class SearchController extends _$SearchController {
   }
 
   Future<void> searchChat(String term) async {
-    final localRepo = ref.watch(sharedLocalRepositoryProvider);
+    final recentChatRepo = ref.watch(recentChatRepositoryProvider);
+    final chats = await recentChatRepo.loadRecentChats();
+    final results = chats
+        .where((e) => e.title.toLowerCase().contains(term.toLowerCase()))
+        .toList();
 
-    final user = await localRepo.getUserProfile();
-    // final chats = await chatRepo.loadDmChat(user.userId);
-    // final chatProfiles = chats.map((e) async {
-    //   return e;
-    // });
-
-    // final filtered = await Future.wait(chatProfiles);
-    // final results = filtered
-    //     .where(
-    //       (e) => e.profile!.name!.toLowerCase().contains(term.toLowerCase()),
-    //     )
-    //     .toList();
-
-    state = AsyncData(
-      state.value!.copyWith(chatResult: [], userId: user.userId),
-    );
+    state = AsyncData(state.value!.copyWith(chatResult: results));
   }
 
-  Future<void> searchMessages(String roomId, String query) async {
-    // final messageRepo = ref.watch(messageRepositoryProvider);
-    // final localRepo = ref.watch(sharedLocalRepositoryProvider);
+  Future<void> searchMessages(String chatId, String query) async {
+    final chatRepo = ref.watch(chatRepositoryProvider);
+    final messages = await chatRepo.loadMessages(chatId);
+    final results = messages
+        .where((e) => e.text.toLowerCase().contains(query.toLowerCase()))
+        .toList();
 
-    // final user = await localRepo.getUserProfile();
-    // final messages = await messageRepo.searchMessages(roomId);
-    // final results = messages
-    //     .where((e) => e.text!.toLowerCase().contains(query.toLowerCase()))
-    //     .toList();
-    // state = AsyncData(
-    //   state.value!.copyWith(messageResult: results, userId: user.userId),
-    // );
+    state = AsyncData(state.value!.copyWith(messageResult: results));
   }
 }

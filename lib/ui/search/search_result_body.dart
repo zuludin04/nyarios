@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:nyarios/core/widgets/empty_widget.dart';
-import 'package:nyarios/domain/model/chat.dart';
-import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
+import 'package:nyarios/core/widgets/empty_widget.dart';
+import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/domain/model/recent_chat.dart';
+import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
 import 'package:substring_highlight/substring_highlight.dart';
 
 class SearchResultBody extends StatelessWidget {
-  final List<Chat> chatResult;
+  final List<RecentChat> chatResult;
   final List<Message> messageResult;
   final String typeResult;
   final String searchTerm;
-  final String user;
+  final String username;
   final String userId;
 
   const SearchResultBody({
@@ -20,7 +21,7 @@ class SearchResultBody extends StatelessWidget {
     required this.messageResult,
     required this.typeResult,
     this.searchTerm = "",
-    this.user = "",
+    required this.username,
     required this.userId,
   });
 
@@ -41,12 +42,16 @@ class SearchResultBody extends StatelessWidget {
             child: ListView.builder(
               padding: const EdgeInsets.only(top: 85),
               itemBuilder: (context, index) {
-                return _ChatSearchItem(
-                  chat: messageResult[index],
-                  term: searchTerm,
-                  user: user,
-                  userId: userId,
-                );
+                if (typeResult == 'lastMessage') {
+                  return LastMessageItem(recentChat: chatResult[index]);
+                } else {
+                  return _ChatSearchItem(
+                    chat: messageResult[index],
+                    term: searchTerm,
+                    user: username,
+                    userId: userId,
+                  );
+                }
               },
               itemCount: typeResult == 'lastMessage'
                   ? chatResult.length
@@ -84,23 +89,15 @@ class _ChatSearchItem extends StatelessWidget {
             children: [
               Text(
                 chat.senderProfileId == userId
-                    ? AppLocalizations.of(context)!.you
-                    : user,
+                    ? user
+                    : AppLocalizations.of(context)!.you,
               ),
               Text(_lastMessageDate(context, chat.createdAt)),
             ],
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: SubstringHighlight(
-              text: chat.text,
-              term: term,
-              textStyle: TextStyle(
-                color: Theme.of(
-                  context,
-                ).colorScheme.surface.withValues(alpha: 0.6),
-              ),
-            ),
+            child: SubstringHighlight(text: chat.text, term: term),
           ),
           const Divider(),
         ],

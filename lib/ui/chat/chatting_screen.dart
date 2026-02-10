@@ -153,6 +153,15 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     );
                     break;
                   case 1:
+                    context.pushNamed(
+                      AppPages.search,
+                      queryParameters: {
+                        'type': 'chat',
+                        'roomId': widget.chatId,
+                        'username': widget.userName,
+                        'userId': widget.profileId,
+                      },
+                    );
                     break;
                   case 2:
                     final status = chatAsync.value!.status == 'blocked'

@@ -50,4 +50,16 @@ class FirebaseRecentChatSource {
               .toList();
         });
   }
+
+  Future<List<RecentChat>> loadRecentChats(String userId) async {
+    final results = await firestore
+        .collection('recentChat')
+        .doc(userId)
+        .collection('items')
+        .get();
+    final chats = results.docs
+        .map((e) => RecentChat.fromMap(e.data()))
+        .toList();
+    return chats;
+  }
 }

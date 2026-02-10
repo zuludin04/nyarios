@@ -23,4 +23,9 @@ class RecentChatRepository {
     final user = await localSource.getUserProfile();
     yield* recentChatSource.streamRecentChats(user.userId);
   }
+
+  Future<List<RecentChat>> loadRecentChats() async {
+    final user = await localSource.getUserProfile();
+    return recentChatSource.loadRecentChats(user.userId!);
+  }
 }

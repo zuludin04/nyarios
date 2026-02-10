@@ -72,11 +72,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.search,
+        name: AppPages.search,
         builder: (context, state) {
           final String type = state.uri.queryParameters['type'] ?? "";
           final String roomId = state.uri.queryParameters['roomId'] ?? "";
-          final String user = state.uri.queryParameters['user'] ?? "";
-          return SearchScreen(type: type, roomId: roomId, user: user);
+          final String user = state.uri.queryParameters['username'] ?? "";
+          final String userId = state.uri.queryParameters['userId'] ?? "";
+          return SearchScreen(
+            type: type,
+            roomId: roomId,
+            username: user,
+            userId: userId,
+          );
         },
       ),
       GoRoute(

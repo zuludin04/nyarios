@@ -35,7 +35,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               queryParameters: {
                 'type': 'lastMessage',
                 'roomId': '',
-                'user': '',
+                'username': '',
+                'userId': ''
               },
             ),
             icon: ImageAsset(

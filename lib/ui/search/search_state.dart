@@ -1,26 +1,22 @@
-import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/domain/model/recent_chat.dart';
 
 class SearchState {
   final List<Message> messageResult;
-  final List<Chat> chatResult;
-  final String userId;
+  final List<RecentChat> chatResult;
 
   const SearchState({
     this.messageResult = const [],
     this.chatResult = const [],
-    this.userId = "",
   });
 
   SearchState copyWith({
     List<Message>? messageResult,
-    List<Chat>? chatResult,
-    String? userId,
+    List<RecentChat>? chatResult,
   }) {
     return SearchState(
       messageResult: messageResult ?? this.messageResult,
       chatResult: chatResult ?? this.chatResult,
-      userId: userId ?? this.userId,
     );
   }
 }
