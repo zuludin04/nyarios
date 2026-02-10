@@ -6,7 +6,7 @@ class ProfileInfoWidget extends StatelessWidget {
   final String icon;
   final String title;
   final String data;
-  final Function(String, bool) onUpdateProfile;
+  final Function(String) onUpdateProfile;
 
   const ProfileInfoWidget({
     super.key,
@@ -21,13 +21,13 @@ class ProfileInfoWidget extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (title != 'E-Mail') {
-          showBottomSheet(
+          showModalBottomSheet(
             context: context,
             builder: (context) => ProfileEditBottomSheet(
               initialValue: data,
               updateName: title == 'Name',
               onUpdateProfile: (value) {
-                onUpdateProfile(value, title == 'Name');
+                onUpdateProfile(value);
               },
             ),
           );

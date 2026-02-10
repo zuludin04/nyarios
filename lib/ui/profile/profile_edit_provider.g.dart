@@ -13,7 +13,7 @@ part of 'profile_edit_provider.dart';
 const profileEditProviderProvider = ProfileEditProviderProvider._();
 
 final class ProfileEditProviderProvider
-    extends $NotifierProvider<ProfileEditProvider, void> {
+    extends $AsyncNotifierProvider<ProfileEditProvider, ProfileEditState> {
   const ProfileEditProviderProvider._()
     : super(
         from: null,
@@ -31,34 +31,27 @@ final class ProfileEditProviderProvider
   @$internal
   @override
   ProfileEditProvider create() => ProfileEditProvider();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(void value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<void>(value),
-    );
-  }
 }
 
 String _$profileEditProviderHash() =>
-    r'e7e29b384f4a12db09ea2481ce96433819cda548';
+    r'763cb66f9b02ab88f131ced031ab607c38d43b6f';
 
-abstract class _$ProfileEditProvider extends $Notifier<void> {
-  void build();
+abstract class _$ProfileEditProvider extends $AsyncNotifier<ProfileEditState> {
+  FutureOr<ProfileEditState> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    build();
-    final ref = this.ref as $Ref<void, void>;
+    final created = build();
+    final ref =
+        this.ref as $Ref<AsyncValue<ProfileEditState>, ProfileEditState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<void, void>,
-              void,
+              AnyNotifier<AsyncValue<ProfileEditState>, ProfileEditState>,
+              AsyncValue<ProfileEditState>,
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleValue(ref, created);
   }
 }

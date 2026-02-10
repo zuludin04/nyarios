@@ -34,7 +34,7 @@ final class LanguageControllerProvider
 }
 
 String _$languageControllerHash() =>
-    r'0eda3961fa1013c882f957021bbfaa2e80abdc61';
+    r'4f587dc13da9706fc9d6f7f223c4fdfd3a08925c';
 
 abstract class _$LanguageController extends $AsyncNotifier<String> {
   FutureOr<String> build();

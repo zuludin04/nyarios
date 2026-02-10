@@ -34,7 +34,7 @@ final class CallHistoryProviderProvider
 }
 
 String _$callHistoryProviderHash() =>
-    r'2e7397dc6542264b4219a04402cc999e8810a20d';
+    r'25dccdf44f64194b99efdc3fec085f4c384c97ec';
 
 abstract class _$CallHistoryProvider extends $StreamNotifier<List<Call>> {
   Stream<List<Call>> build();
