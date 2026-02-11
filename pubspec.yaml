@@ -51,6 +51,7 @@ dependencies:
   go_router: ^17.0.0
   shared_preferences: ^2.5.3
   flutter_callkit_incoming: ^3.0.0
+  google_fonts: ^6.3.2
   flutter_localizations:
     sdk: flutter
 

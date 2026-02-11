@@ -11,12 +11,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/controllers/language/language_controller.dart';
 import 'package:nyarios/core/controllers/notification/notification_action_controller.dart';
+import 'package:nyarios/core/controllers/theme/theme_controller.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
+import 'package:nyarios/core/services/notification_service.dart';
 import 'package:nyarios/core/utils/custom_theme.dart';
+import 'package:nyarios/core/utils/text_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/firebase_options.dart';
-import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/core/services/notification_service.dart';
 
 final FlutterLocalNotificationsPlugin notificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -84,24 +86,24 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final controller = ref.watch(languageControllerProvider);
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeControllerProvider);
 
-    return controller.when(
-      data: (data) => MaterialApp.router(
-        title: 'Nyarios',
-        theme: CustomTheme.defaultTheme,
-        darkTheme: CustomTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        debugShowCheckedModeBanner: false,
-        routerConfig: router,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: Locale(data),
-        builder: (context, child) {
-          return Stack(children: [child!, const NotificationListenerWidget()]);
-        },
-      ),
-      error: (_, _) => SizedBox(),
-      loading: () => SizedBox(),
+    TextTheme textTheme = createTextTheme(context, "Nunito", "Nunito");
+    CustomTheme theme = CustomTheme(textTheme);
+
+    return MaterialApp.router(
+      title: 'Nyarios',
+      theme: theme.light(),
+      darkTheme: theme.dark(),
+      themeMode: themeMode.value,
+      debugShowCheckedModeBanner: false,
+      routerConfig: router,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: controller.value != null ? Locale(controller.value!) : null,
+      builder: (context, child) {
+        return Stack(children: [child!, const NotificationListenerWidget()]);
+      },
     );
   }
 

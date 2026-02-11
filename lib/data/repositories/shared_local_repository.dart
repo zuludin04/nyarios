@@ -1,20 +1,20 @@
 import 'package:nyarios/core/constants.dart';
+import 'package:nyarios/core/services/shared_prefs_service.dart';
 import 'package:nyarios/domain/model/local_user.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/core/services/shared_prefs_service.dart';
 
 class SharedLocalRepository {
   final SharedPrefsService sharedPrefs;
 
   SharedLocalRepository({required this.sharedPrefs});
 
-  Future<void> setDarkMode(bool value) async {
-    await sharedPrefs.setBool(darkModeKey, value);
+  Future<void> setAppTheme(String value) async {
+    await sharedPrefs.setString(darkModeKey, value);
   }
 
-  Future<bool> isDarkMode() async {
-    final result = await sharedPrefs.getBool(darkModeKey);
-    return result ?? false;
+  Future<String> getAppTheme() async {
+    final result = await sharedPrefs.getString(darkModeKey);
+    return result ?? "";
   }
 
   Future<void> setAlreadyLogin(bool value) async {

@@ -13,7 +13,7 @@ part of 'settings_provider.dart';
 const settingsProviderProvider = SettingsProviderProvider._();
 
 final class SettingsProviderProvider
-    extends $StreamNotifierProvider<SettingsProvider, Profile> {
+    extends $AsyncNotifierProvider<SettingsProvider, SettingsState> {
   const SettingsProviderProvider._()
     : super(
         from: null,
@@ -33,20 +33,20 @@ final class SettingsProviderProvider
   SettingsProvider create() => SettingsProvider();
 }
 
-String _$settingsProviderHash() => r'84c249430a433a12529cda23722cab638efa3c07';
+String _$settingsProviderHash() => r'4668e8a4d2e551a83b956dfb999fb91d160879c3';
 
-abstract class _$SettingsProvider extends $StreamNotifier<Profile> {
-  Stream<Profile> build();
+abstract class _$SettingsProvider extends $AsyncNotifier<SettingsState> {
+  FutureOr<SettingsState> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<Profile>, Profile>;
+    final ref = this.ref as $Ref<AsyncValue<SettingsState>, SettingsState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<Profile>, Profile>,
-              AsyncValue<Profile>,
+              AnyNotifier<AsyncValue<SettingsState>, SettingsState>,
+              AsyncValue<SettingsState>,
               Object?,
               Object?
             >;
