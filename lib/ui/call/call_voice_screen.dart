@@ -1,5 +1,4 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class CallVoiceScreen extends ConsumerStatefulWidget {
@@ -35,12 +33,6 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   bool isSpeaker = false;
 
   final StopWatchTimer _stopWatchTimer = StopWatchTimer();
-
-  @override
-  void initState() {
-    super.initState();
-    handleCallPermission();
-  }
 
   @override
   void dispose() async {
@@ -153,24 +145,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     }
   }
 
-  Future<void> handleCallPermission() async {
-    await [Permission.microphone].request();
-
-    if (await Permission.microphone.isDenied) {
-      if (mounted) {
-        context.pop();
-        Flushbar(
-          message: AppLocalizations.of(context)!.microphone_permission,
-        ).show(context);
-      }
-    } else {
-      setupVoiceSDKEngine();
-    }
-  }
-
   Future<void> setupVoiceSDKEngine() async {
-    await [Permission.microphone].request();
-
     agoraEngine = createAgoraRtcEngine();
 
     final appId = dotenv.env["AGORA_APP_ID"];

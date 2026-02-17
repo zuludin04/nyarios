@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
-import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/core/services/google_signin_service.dart';
+import 'package:nyarios/routes/app_routes.dart';
+import 'package:nyarios/ui/auth/permission_request_dialog.dart';
 import 'package:nyarios/ui/auth/provider/signin_provider.dart';
 import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
 
@@ -61,13 +62,20 @@ class SignInScreen extends ConsumerWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            final googleAuth = await signInGoogle();
-                            ref
-                                .read(signInNotifierProvider.notifier)
-                                .signIn(
-                                  googleAuth.accessToken,
-                                  googleAuth.idToken,
-                                );
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => PermissionRequestDialog(
+                                onPermissionAccepted: () async {
+                                  final googleAuth = await signInGoogle();
+                                  ref
+                                      .read(signInNotifierProvider.notifier)
+                                      .signIn(
+                                        googleAuth.accessToken,
+                                        googleAuth.idToken,
+                                      );
+                                },
+                              ),
+                            );
                           },
                           style: ButtonStyle(
                             padding: WidgetStatePropertyAll(

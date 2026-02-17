@@ -1,12 +1,10 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class CallVideoScreen extends ConsumerStatefulWidget {
   final String token;
@@ -31,12 +29,6 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
   int? _remoteUid;
   bool _isJoined = false;
   late RtcEngine agoraEngine;
-
-  @override
-  void initState() {
-    super.initState();
-    handleVideoCallPermission();
-  }
 
   @override
   void dispose() {
@@ -192,28 +184,6 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
         connection: RtcConnection(channelId: widget.chatId),
       ),
     );
-  }
-
-  Future<void> handleVideoCallPermission() async {
-    await [Permission.microphone, Permission.camera].request();
-
-    if (await Permission.microphone.isDenied) {
-      if (mounted) {
-        context.pop();
-        Flushbar(
-          message: AppLocalizations.of(context)!.microphone_permission,
-        ).show(context);
-      }
-    } else if (await Permission.camera.isDenied) {
-      if (mounted) {
-        context.pop();
-        Flushbar(
-          message: AppLocalizations.of(context)!.camera_permission,
-        ).show(context);
-      }
-    } else {
-      setupVideoSDKEngine();
-    }
   }
 
   Future<void> setupVideoSDKEngine() async {
