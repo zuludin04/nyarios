@@ -25,7 +25,6 @@ class SignInScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -92,13 +91,11 @@ class SignInScreen extends ConsumerWidget {
                                     Image.asset(
                                       'assets/google.png',
                                       width: 24,
-                                      color: Colors.white,
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
                                       AppLocalizations.of(context)!.get_started,
                                       style: TextStyle(
-                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
                                       ),
