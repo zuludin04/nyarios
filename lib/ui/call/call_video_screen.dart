@@ -4,19 +4,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
+import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 
 class CallVideoScreen extends ConsumerStatefulWidget {
-  final String token;
-  final String username;
-  final String chatId;
+  final DataCall call;
 
-  const CallVideoScreen({
-    super.key,
-    required this.token,
-    required this.username,
-    required this.chatId,
-  });
+  const CallVideoScreen({super.key, required this.call});
 
   @override
   ConsumerState<CallVideoScreen> createState() => _CallVideoScreenState();
@@ -29,6 +23,12 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
   int? _remoteUid;
   bool _isJoined = false;
   late RtcEngine agoraEngine;
+
+  @override
+  void initState() {
+    setupVideoSDKEngine();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -85,18 +85,8 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // ClipRRect(
-                                //   borderRadius: BorderRadius.circular(100),
-                                //   child: Image.network(
-                                //     widget.contact.profile!.photo!,
-                                //     width: 70,
-                                //     height: 70,
-                                //     fit: BoxFit.fill,
-                                //   ),
-                                // ),
-                                // const SizedBox(height: 16),
                                 Text(
-                                  widget.username,
+                                  widget.call.name,
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
                                   style: const TextStyle(
@@ -181,7 +171,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       controller: VideoViewController.remote(
         rtcEngine: agoraEngine,
         canvas: VideoCanvas(uid: _remoteUid),
-        connection: RtcConnection(channelId: widget.chatId),
+        connection: RtcConnection(channelId: widget.call.chatId),
       ),
     );
   }
@@ -189,10 +179,15 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
   Future<void> setupVideoSDKEngine() async {
     agoraEngine = createAgoraRtcEngine();
     final appId = dotenv.env["AGORA_APP_ID"];
-    await agoraEngine.initialize(RtcEngineContext(appId: appId));
+    await agoraEngine.initialize(
+      RtcEngineContext(
+        appId: appId,
+        channelProfile: ChannelProfileType.channelProfileCommunication,
+      ),
+    );
 
     await agoraEngine.enableVideo();
-    join(widget.token);
+    join();
 
     agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
@@ -218,19 +213,22 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
     );
   }
 
-  void join(String token) async {
+  void join() async {
     await agoraEngine.startPreview();
 
     ChannelMediaOptions options = const ChannelMediaOptions(
+      autoSubscribeVideo: true,
+      autoSubscribeAudio: true,
+      publishCameraTrack: true,
+      publishMicrophoneTrack: true,
       clientRoleType: ClientRoleType.clientRoleBroadcaster,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
     );
 
     await agoraEngine.joinChannel(
-      token: token,
-      channelId: widget.chatId,
+      token: widget.call.token,
+      channelId: widget.call.chatId,
       options: options,
-      uid: 0,
+      uid: DateTime.now().millisecondsSinceEpoch,
     );
   }
 

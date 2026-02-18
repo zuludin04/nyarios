@@ -120,7 +120,6 @@ class ChattingAsyncController extends _$ChattingAsyncController {
 
   Future<String> createCallConversation({
     required String channelName,
-    required int uid,
     required String type,
     required String receiverUserId,
   }) async {
@@ -131,6 +130,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
       DateTime.now().millisecondsSinceEpoch,
       type,
       receiverUserId,
+      chatId!
     );
     return token;
   }

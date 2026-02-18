@@ -9,6 +9,7 @@ import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/chat/chatting_provider.dart';
@@ -74,19 +75,18 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             onPressed: () async {
               final token = await controller.createCallConversation(
                 channelName: widget.chatId,
-                uid: 0,
-                type: 'voice_call',
+                type: 'video_call',
                 receiverUserId: widget.profileId,
               );
 
               if (context.mounted) {
                 context.pushNamed(
                   AppPages.callVideo,
-                  queryParameters: {
-                    'token': token,
-                    'username': widget.userName,
-                    'chatId': widget.chatId,
-                  },
+                  extra: DataCall(
+                    token: token,
+                    name: widget.userName,
+                    chatId: widget.chatId,
+                  ),
                 );
               }
             },
@@ -99,7 +99,6 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             onPressed: () async {
               final token = await controller.createCallConversation(
                 channelName: widget.chatId,
-                uid: 0,
                 type: 'voice_call',
                 receiverUserId: widget.profileId,
               );
@@ -107,11 +106,11 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
               if (context.mounted) {
                 context.pushNamed(
                   AppPages.callVoice,
-                  queryParameters: {
-                    'token': token,
-                    'username': widget.userName,
-                    'chatId': widget.chatId,
-                  },
+                  extra: DataCall(
+                    token: token,
+                    name: widget.userName,
+                    chatId: widget.chatId,
+                  ),
                 );
               }
             },

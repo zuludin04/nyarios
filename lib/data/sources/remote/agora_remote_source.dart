@@ -22,11 +22,11 @@ class AgoraRemoteSource {
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
-        baseUrl: "http://localhost:4000/api/v1/",
+        baseUrl: "https://nyarios-api.netlify.app/api/v1/",
       );
       dio.options = options;
       final response = await dio.get(
-        "agora?channelName=test&uid=1",
+        "agora",
         queryParameters: {"channelName": channel, "uid": uid},
       );
 

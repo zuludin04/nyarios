@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/ui/auth/signin_screen.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_screen.dart';
 import 'package:nyarios/ui/call/call_video_screen.dart';
@@ -117,28 +118,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppPages.callVideo,
         name: AppPages.callVideo,
         builder: (context, state) {
-          final String token = state.uri.queryParameters['token'] ?? "";
-          final String username = state.uri.queryParameters['username'] ?? "";
-          final String chatId = state.uri.queryParameters['chatId'] ?? "";
-          return CallVideoScreen(
-            token: token,
-            username: username,
-            chatId: chatId,
-          );
+          final call = state.extra as DataCall;
+          return CallVideoScreen(call: call);
         },
       ),
       GoRoute(
         path: AppPages.callVoice,
         name: AppPages.callVoice,
         builder: (context, state) {
-          final String token = state.uri.queryParameters['token'] ?? "";
-          final String username = state.uri.queryParameters['username'] ?? "";
-          final String chatId = state.uri.queryParameters['chatId'] ?? "";
-          return CallVoiceScreen(
-            token: token,
-            username: username,
-            chatId: chatId,
-          );
+          final call = state.extra as DataCall;
+          return CallVoiceScreen(call: call);
         },
       ),
     ],

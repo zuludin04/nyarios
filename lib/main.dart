@@ -17,6 +17,7 @@ import 'package:nyarios/core/services/notification_service.dart';
 import 'package:nyarios/core/utils/custom_theme.dart';
 import 'package:nyarios/core/utils/text_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
+import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/firebase_options.dart';
 import 'package:nyarios/routes/app_routes.dart';
 
@@ -111,7 +112,23 @@ class _MyAppState extends ConsumerState<MyApp> {
     FlutterCallkitIncoming.onEvent.listen((event) {
       final router = ref.read(routerProvider);
       if (event?.event == Event.actionCallAccept) {
-        router.go(AppPages.callVoice);
+        final data = event!.body;
+        final call = DataCall(
+          token: data['extra']['agoraToken'],
+          name: data['nameCaller'],
+          chatId: data['extra']['chatId'],
+        );
+        if (data['extra']['type'] == 'voice_call') {
+          router.go(
+            AppPages.callVoice,
+            extra: call,
+          );
+        } else if (data['extra']['type'] == 'video_call') {
+          router.go(
+            AppPages.callVideo,
+            extra: call,
+          );
+        }
       }
     });
   }

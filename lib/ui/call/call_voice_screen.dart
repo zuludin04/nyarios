@@ -5,20 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
+import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class CallVoiceScreen extends ConsumerStatefulWidget {
-  final String token;
-  final String username;
-  final String chatId;
+  final DataCall call;
 
-  const CallVoiceScreen({
-    super.key,
-    required this.token,
-    required this.username,
-    required this.chatId,
-  });
+  const CallVoiceScreen({super.key, required this.call});
 
   @override
   ConsumerState<CallVoiceScreen> createState() => _CallVoiceScreenState();
@@ -33,6 +27,12 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   bool isSpeaker = false;
 
   final StopWatchTimer _stopWatchTimer = StopWatchTimer();
+
+  @override
+  void initState() {
+    setupVoiceSDKEngine();
+    super.initState();
+  }
 
   @override
   void dispose() async {
@@ -64,7 +64,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
               // ),
               // const SizedBox(height: 24),
               Text(
-                widget.username,
+                widget.call.name,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -149,9 +149,14 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     agoraEngine = createAgoraRtcEngine();
 
     final appId = dotenv.env["AGORA_APP_ID"];
-    await agoraEngine?.initialize(RtcEngineContext(appId: appId));
+    await agoraEngine?.initialize(
+      RtcEngineContext(
+        appId: appId,
+        channelProfile: ChannelProfileType.channelProfileCommunication,
+      ),
+    );
 
-    join(widget.token, widget.chatId, 0);
+    await join();
 
     agoraEngine?.registerEventHandler(
       RtcEngineEventHandler(
@@ -177,17 +182,18 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     );
   }
 
-  void join(String token, String channelName, int uid) async {
+  Future<void> join() async {
     ChannelMediaOptions options = const ChannelMediaOptions(
+      autoSubscribeAudio: true, // Automatically subscribe to all audio streams
+      publishMicrophoneTrack: true, // Publish microphone-captured audio
       clientRoleType: ClientRoleType.clientRoleBroadcaster,
-      channelProfile: ChannelProfileType.channelProfileCommunication,
     );
 
     await agoraEngine?.joinChannel(
-      token: token,
-      channelId: channelName,
+      token: widget.call.token,
+      channelId: widget.call.chatId,
       options: options,
-      uid: uid,
+      uid: DateTime.now().millisecondsSinceEpoch,
     );
   }
 

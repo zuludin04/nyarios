@@ -79,6 +79,7 @@ class NotificationService {
         duration: 300000,
         textAccept: 'Accept',
         textDecline: 'Decline',
+        extra: data,
         missedCallNotification: NotificationParams(
           showNotification: true,
           isShowCallback: true,
