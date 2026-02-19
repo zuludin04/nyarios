@@ -72,17 +72,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           SettingsSection(
             title: Text(AppLocalizations.of(context)!.common),
             tiles: [
-              SettingsTile.switchTile(
-                // activeSwitchColor: Theme,
-                initialValue: data.themeMode == ThemeMode.dark,
-                onToggle: (value) {
-                  ref.read(settingsProviderProvider.notifier).changeTheme();
-                },
-                title: Text(AppLocalizations.of(context)!.dark_mode),
+              SettingsTile(
+                title: Text(AppLocalizations.of(context)!.theme),
                 leading: ImageAsset(
                   assets: 'assets/icons/ic_dark_mode.png',
                   color: Theme.of(context).iconTheme.color!,
                 ),
+                onPressed: (context) {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => _ThemeSelectorSheet(
+                      mode: data.themeMode,
+                      onSelectTheme: (mode) {
+                        ref
+                            .read(settingsProviderProvider.notifier)
+                            .changeTheme(mode);
+                      },
+                    ),
+                  );
+                },
               ),
               SettingsTile(
                 title: Text(AppLocalizations.of(context)!.language),
@@ -162,5 +170,53 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } catch (e) {
       debugPrint("error sign out");
     }
+  }
+}
+
+class _ThemeSelectorSheet extends ConsumerWidget {
+  final ThemeMode mode;
+  final Function(ThemeMode) onSelectTheme;
+
+  const _ThemeSelectorSheet({required this.mode, required this.onSelectTheme});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(settingsProviderProvider);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: Text(AppLocalizations.of(context)!.system),
+          leading: Icon(
+            Icons.check,
+            color: provider.value!.themeMode == ThemeMode.system
+                ? Theme.of(context).iconTheme.color
+                : Colors.transparent,
+          ),
+          onTap: () => onSelectTheme(ThemeMode.system),
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)!.dark),
+          leading: Icon(
+            Icons.check,
+            color: provider.value!.themeMode == ThemeMode.dark
+                ? Theme.of(context).iconTheme.color
+                : Colors.transparent,
+          ),
+          onTap: () => onSelectTheme(ThemeMode.dark),
+        ),
+        ListTile(
+          title: Text(AppLocalizations.of(context)!.light),
+          leading: Icon(
+            Icons.check,
+            color: provider.value!.themeMode == ThemeMode.light
+                ? Theme.of(context).iconTheme.color
+                : Colors.transparent,
+          ),
+          onTap: () => onSelectTheme(ThemeMode.light),
+        ),
+      ],
+    );
   }
 }

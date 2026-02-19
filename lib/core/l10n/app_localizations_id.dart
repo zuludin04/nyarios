@@ -230,4 +230,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get call => 'Panggilan';
+
+  @override
+  String get system => 'Sistem';
+
+  @override
+  String get dark => 'Gelap';
+
+  @override
+  String get light => 'Terang';
+
+  @override
+  String get theme => 'Tema';
 }

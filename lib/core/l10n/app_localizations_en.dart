@@ -18,7 +18,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get common => 'Comon';
+  String get common => 'Common';
 
   @override
   String get other => 'Other';
@@ -229,4 +229,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get call => 'Call';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get dark => 'Dark';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get theme => 'Theme';
 }

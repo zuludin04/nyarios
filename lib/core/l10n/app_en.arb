@@ -72,5 +72,9 @@
   "success_download": "Success downloading file",
   "file_exist": "File is already exist",
   "chat": "Chat",
-  "call": "Call"
+  "call": "Call",
+  "system": "System",
+  "dark": "Dark",
+  "light": "Light",
+  "theme": "Theme"
 }

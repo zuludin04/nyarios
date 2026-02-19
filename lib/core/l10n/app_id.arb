@@ -72,5 +72,9 @@
   "success_download": "Berhasil mengunduh berkas",
   "file_exist": "Berkas sudah ada",
   "chat": "Obrolan",
-  "call": "Panggilan"
+  "call": "Panggilan",
+  "system": "Sistem",
+  "dark": "Gelap",
+  "light": "Terang",
+  "theme": "Tema"
 }

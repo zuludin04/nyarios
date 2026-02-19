@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:nyarios/core/controllers/theme/theme_controller.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
@@ -33,10 +34,9 @@ class SettingsProvider extends _$SettingsProvider {
     return const SettingsState();
   }
 
-  Future<void> changeTheme() async {
-    final theme = await ref
-        .read(themeControllerProvider.notifier)
-        .changeThemeMode();
-    state = AsyncData(state.value!.copyWith(themeMode: theme));
+  Future<void> changeTheme(ThemeMode mode) async {
+    final theme = mode.toString().split(".")[1];
+    await ref.read(themeControllerProvider.notifier).changeThemeMode(theme);
+    state = AsyncData(state.value!.copyWith(themeMode: mode));
   }
 }

@@ -19,13 +19,19 @@ class ThemeController extends _$ThemeController {
     }
   }
 
-  Future<ThemeMode> changeThemeMode() async {
+  Future<void> changeThemeMode(String mode) async {
     final localRepo = ref.watch(sharedLocalRepositoryProvider);
-    final theme = await localRepo.getAppTheme();
-    final currentTheme = theme == 'dark' ? 'light' : 'dark';
-    await localRepo.setAppTheme(currentTheme);
-    final mode = currentTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
-    state = AsyncData(mode);
-    return mode;
+    await localRepo.setAppTheme(mode);
+    late ThemeMode themeMode;
+
+    if (mode == 'light') {
+      themeMode = ThemeMode.light;
+    } else if (mode == 'dark') {
+      themeMode = ThemeMode.dark;
+    } else {
+      themeMode = ThemeMode.system;
+    }
+
+    state = AsyncData(themeMode);
   }
 }
