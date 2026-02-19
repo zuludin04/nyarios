@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/domain/model/data_call.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 
 class CallVideoScreen extends ConsumerStatefulWidget {
@@ -207,7 +208,7 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
               int remoteUid,
               UserOfflineReasonType reason,
             ) {
-              context.pop();
+              leave();
             },
       ),
     );
@@ -238,6 +239,11 @@ class _CallVideoScreenState extends ConsumerState<CallVideoScreen> {
       _remoteUid = null;
     });
     agoraEngine.leaveChannel();
-    context.pop();
+    agoraEngine.release();
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(AppPages.home);
+    }
   }
 }

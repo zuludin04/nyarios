@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/domain/model/data_call.dart';
+import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
@@ -21,7 +22,7 @@ class CallVoiceScreen extends ConsumerStatefulWidget {
 class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   int? _remoteUid;
   bool _isJoined = false;
-  RtcEngine? agoraEngine;
+  late RtcEngine agoraEngine;
 
   bool isMuted = false;
   bool isSpeaker = false;
@@ -36,10 +37,8 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
 
   @override
   void dispose() async {
-    if (agoraEngine != null) {
-      agoraEngine?.leaveChannel();
-      agoraEngine?.release();
-    }
+    agoraEngine.leaveChannel();
+    agoraEngine.release();
     super.dispose();
   }
 
@@ -85,7 +84,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
                       setState(() {
                         isMuted = !isMuted;
                       });
-                      agoraEngine?.muteLocalAudioStream(isMuted);
+                      agoraEngine.muteLocalAudioStream(isMuted);
                     },
                   ),
                   CallActionButton(
@@ -104,7 +103,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
                       setState(() {
                         isSpeaker = !isSpeaker;
                       });
-                      agoraEngine?.setEnableSpeakerphone(isSpeaker);
+                      agoraEngine.setEnableSpeakerphone(isSpeaker);
                     },
                   ),
                 ],
@@ -149,7 +148,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
     agoraEngine = createAgoraRtcEngine();
 
     final appId = dotenv.env["AGORA_APP_ID"];
-    await agoraEngine?.initialize(
+    await agoraEngine.initialize(
       RtcEngineContext(
         appId: appId,
         channelProfile: ChannelProfileType.channelProfileCommunication,
@@ -158,7 +157,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
 
     await join();
 
-    agoraEngine?.registerEventHandler(
+    agoraEngine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
           setState(() {
@@ -176,7 +175,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
               int remoteUid,
               UserOfflineReasonType reason,
             ) {
-              context.pop();
+              leave();
             },
       ),
     );
@@ -184,12 +183,12 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
 
   Future<void> join() async {
     ChannelMediaOptions options = const ChannelMediaOptions(
-      autoSubscribeAudio: true, // Automatically subscribe to all audio streams
-      publishMicrophoneTrack: true, // Publish microphone-captured audio
+      autoSubscribeAudio: true,
+      publishMicrophoneTrack: true,
       clientRoleType: ClientRoleType.clientRoleBroadcaster,
     );
 
-    await agoraEngine?.joinChannel(
+    await agoraEngine.joinChannel(
       token: widget.call.token,
       channelId: widget.call.chatId,
       options: options,
@@ -198,8 +197,12 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   }
 
   void leave() {
-    agoraEngine?.leaveChannel();
-    agoraEngine?.release();
-    context.pop();
+    agoraEngine.leaveChannel();
+    agoraEngine.release();
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(AppPages.home);
+    }
   }
 }
