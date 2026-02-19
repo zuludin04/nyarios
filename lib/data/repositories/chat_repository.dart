@@ -29,6 +29,7 @@ class ChatRepository {
     String text,
     String replyTo,
     String receiverUserId,
+    String fileSize,
   ) async {
     final user = await localSource.getUserProfile();
     final messageId = const Uuid().v4();
@@ -40,6 +41,7 @@ class ChatRepository {
       text: text,
       replyToMessageId: replyTo,
       createdAt: DateTime.now().toIso8601String(),
+      fileSize: fileSize,
     );
     await chatSource.sendChatMessage(message);
 

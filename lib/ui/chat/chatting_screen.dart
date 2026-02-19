@@ -301,12 +301,13 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
           chatAsync.when(
             data: (ChattingState data) => ChatInputMessage(
               isBlocked: data.status == 'blocked',
-              onSendMessage: ({required type, message}) {
+              onSendMessage: ({required type, message, fileSize}) {
                 controller.sendMessage(
                   message ?? "",
                   type,
                   widget.chatId,
                   widget.profileId,
+                  fileSize ?? "",
                 );
               },
             ),

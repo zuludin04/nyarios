@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/message.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ChatItem extends StatelessWidget {
   final Message chat;
@@ -128,16 +129,83 @@ class ChatItem extends StatelessWidget {
   }
 
   Widget _showChatType(String type) {
-    return Text(
-      chat.text,
-      style: TextStyle(
-        color: _isLink(chat.text) ? Colors.blueGrey : Colors.white,
-        fontSize: 16,
-        decoration: _isLink(chat.text)
-            ? TextDecoration.underline
-            : TextDecoration.none,
-      ),
-    );
+    switch (type) {
+      case 'image':
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Stack(
+            children: [
+              Image.network(chat.text),
+              Positioned(
+                bottom: 5,
+                right: 10,
+                child: Text(
+                  chat.fileSize,
+                  style: const TextStyle(fontSize: 13, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        );
+      case 'file':
+        return Container(
+          decoration: BoxDecoration(
+            color: chat.senderProfileId != userId
+                ? Colors.black.withValues(alpha: 0.1)
+                : Colors.red.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              CircularPercentIndicator(
+                radius: 24,
+                center: const Icon(Icons.attach_file),
+                percent: 100,
+                lineWidth: 2,
+                progressColor: chat.senderProfileId != userId
+                    ? Colors.black
+                    : Colors.red,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      chat.text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      chat.fileSize!,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      default:
+        return Text(
+          chat.text,
+          style: TextStyle(
+            color: _isLink(chat.text) ? Colors.blueGrey : Colors.white,
+            fontSize: 16,
+            decoration: _isLink(chat.text)
+                ? TextDecoration.underline
+                : TextDecoration.none,
+          ),
+        );
+    }
   }
 
   bool _isLink(String input) {

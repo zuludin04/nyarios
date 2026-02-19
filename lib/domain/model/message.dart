@@ -7,6 +7,7 @@ class Message {
   final String type;
   final String text;
   final String replyToMessageId;
+  final String fileSize;
   final String createdAt;
   bool isUploading;
   bool isSelected;
@@ -19,6 +20,7 @@ class Message {
     required this.text,
     required this.replyToMessageId,
     required this.createdAt,
+    required this.fileSize,
     this.isUploading = false,
     this.isSelected = false,
   });
@@ -32,6 +34,7 @@ class Message {
     data['text'] = text;
     data['replyToMessageId'] = replyToMessageId;
     data['createdAt'] = createdAt;
+    data['fileSize'] = fileSize;
     return data;
   }
 
@@ -44,6 +47,7 @@ class Message {
       text: map['text'],
       replyToMessageId: map['replyToMessageId'],
       createdAt: map['createdAt'],
+      fileSize: map['fileSize'],
     );
   }
 
@@ -62,6 +66,7 @@ class Message {
       text: '',
       replyToMessageId: '',
       createdAt: '',
+      fileSize: '',
     );
   }
 }

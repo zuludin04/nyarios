@@ -64,8 +64,16 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     String type,
     String chatId,
     String ownerUserId,
+    String fileSize,
   ) async {
-    await chatRepo.sendMessage(chatId, type, message, '', ownerUserId);
+    await chatRepo.sendMessage(
+      chatId,
+      type,
+      message,
+      '',
+      ownerUserId,
+      fileSize,
+    );
     final user = await localRepo.getUserProfile();
 
     await updateRecentChat(

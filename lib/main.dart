@@ -20,6 +20,7 @@ import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapp
 import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/firebase_options.dart';
 import 'package:nyarios/routes/app_routes.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final FlutterLocalNotificationsPlugin notificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -46,6 +47,11 @@ void main() async {
   await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL'] ?? "",
+    anonKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY'] ?? "",
+  );
 
   await NotificationService.init();
 

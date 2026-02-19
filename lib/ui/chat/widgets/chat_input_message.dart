@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
-import 'package:nyarios/core/l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatInputMessage extends StatefulWidget {
   final bool isBlocked;
-  final Function({required String type, String? message}) onSendMessage;
+  final Function({required String type, String? message, String? fileSize})
+  onSendMessage;
 
   const ChatInputMessage({
     super.key,
@@ -116,7 +118,31 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                         onPressed: () async {
                           final image = await pickImage(false);
                           if (image != null) {
-                            widget.onSendMessage(type: 'image');
+                            final fileName = DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString();
+                            final supabase = Supabase.instance.client;
+                            await supabase.storage
+                                .from('image')
+                                .upload(
+                                  'uploads/$fileName.jpg',
+                                  image,
+                                  fileOptions: const FileOptions(
+                                    cacheControl: '3600',
+                                    upsert: false,
+                                  ),
+                                );
+
+                            final publicUrl = supabase.storage
+                                .from('image')
+                                .getPublicUrl('uploads/$fileName.jpg');
+                            final fileSize = await getFileSize(image);
+
+                            widget.onSendMessage(
+                              type: 'image',
+                              message: publicUrl,
+                              fileSize: fileSize,
+                            );
                           }
                         },
                         icon: ImageAsset(
@@ -157,15 +183,57 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
     return InkWell(
       onTap: () async {
         context.pop();
+        final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        final supabase = Supabase.instance.client;
+
         if (title == AppLocalizations.of(context)!.gallery) {
           final image = await pickImage(true);
           if (image != null) {
-            widget.onSendMessage(type: 'image');
+            await supabase.storage
+                .from('image')
+                .upload(
+                  'uploads/$fileName.jpg',
+                  image,
+                  fileOptions: const FileOptions(
+                    cacheControl: '3600',
+                    upsert: false,
+                  ),
+                );
+
+            final publicUrl = supabase.storage
+                .from('image')
+                .getPublicUrl('uploads/$fileName.jpg');
+            final fileSize = await getFileSize(image);
+
+            widget.onSendMessage(
+              type: 'image',
+              message: publicUrl,
+              fileSize: fileSize,
+            );
           }
         } else {
           final file = await pickFile();
           if (file != null) {
-            widget.onSendMessage(type: 'file');
+            await supabase.storage
+                .from('file')
+                .upload(
+                  'uploads/$fileName.jpg',
+                  file,
+                  fileOptions: const FileOptions(
+                    cacheControl: '3600',
+                    upsert: false,
+                  ),
+                );
+
+            final publicUrl = supabase.storage
+                .from('file')
+                .getPublicUrl('uploads/$fileName.jpg');
+            final fileSize = await getFileSize(file);
+            widget.onSendMessage(
+              type: 'file',
+              message: publicUrl,
+              fileSize: fileSize,
+            );
           }
         }
       },
