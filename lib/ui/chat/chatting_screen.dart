@@ -22,12 +22,14 @@ class ChattingScreen extends ConsumerStatefulWidget {
   final String chatId;
   final String profileId;
   final String userName;
+  final String photo;
 
   const ChattingScreen({
     super.key,
     required this.chatId,
     required this.profileId,
     required this.userName,
+    required this.photo,
   });
 
   @override
@@ -86,6 +88,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     token: token,
                     name: widget.userName,
                     chatId: widget.chatId,
+                    photo: widget.photo,
                   ),
                 );
               }
@@ -110,6 +113,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     token: token,
                     name: widget.userName,
                     chatId: widget.chatId,
+                    photo: widget.photo,
                   ),
                 );
               }

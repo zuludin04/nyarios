@@ -117,17 +117,12 @@ class _MyAppState extends ConsumerState<MyApp> {
           token: data['extra']['agoraToken'],
           name: data['nameCaller'],
           chatId: data['extra']['chatId'],
+          photo: data['extra']['image'],
         );
         if (data['extra']['type'] == 'voice_call') {
-          router.go(
-            AppPages.callVoice,
-            extra: call,
-          );
+          router.go(AppPages.callVoice, extra: call);
         } else if (data['extra']['type'] == 'video_call') {
-          router.go(
-            AppPages.callVideo,
-            extra: call,
-          );
+          router.go(AppPages.callVideo, extra: call);
         }
       }
     });
@@ -149,6 +144,7 @@ class NotificationListenerWidget extends ConsumerWidget {
           "chatId": data['chatId'],
           "profileId": data['profileId'],
           "username": data['name'],
+          "profile": data['photo'],
         },
       );
     });

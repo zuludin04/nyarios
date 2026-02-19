@@ -45,10 +45,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           final String chatId = state.uri.queryParameters["chatId"] ?? "";
           final String profileId = state.uri.queryParameters["profileId"] ?? "";
           final String username = state.uri.queryParameters["username"] ?? "";
+          final String photo = state.uri.queryParameters["photo"] ?? "";
           return ChattingScreen(
             chatId: chatId,
             profileId: profileId,
             userName: username,
+            photo: photo,
           );
         },
       ),

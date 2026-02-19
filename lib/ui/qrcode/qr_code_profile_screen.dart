@@ -28,8 +28,13 @@ class QrCodeProfileScreen extends ConsumerWidget {
         });
       } else if (next.value!.successLoadContact) {
         context.pushNamed(
-          '${AppPages.chatting}/dm',
-          extra: next.value!.contact,
+          AppPages.chatting,
+          queryParameters: {
+            "chatId": next.value!.contact!.chatId,
+            "profileId": next.value!.profile!.uid!,
+            "username": next.value!.profile!.name,
+            "photo": next.value!.profile!.photo,
+          },
         );
       }
     });

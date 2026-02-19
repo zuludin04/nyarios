@@ -52,16 +52,16 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
           child: Column(
             children: [
               const Spacer(flex: 1),
-              // ClipRRect(
-              //   borderRadius: BorderRadius.circular(100),
-              //   child: Image.network(
-              //     widget.contact.profile!.photo!,
-              //     width: 100,
-              //     height: 100,
-              //     fit: BoxFit.fill,
-              //   ),
-              // ),
-              // const SizedBox(height: 24),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image.network(
+                  widget.call.photo,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.fill,
+                ),
+              ),
+              const SizedBox(height: 24),
               Text(
                 widget.call.name,
                 style: const TextStyle(
