@@ -47,4 +47,30 @@ class NotificationRemoteSource {
       throw Exception(e.toString());
     }
   }
+
+  Future<String> sendMessageNotification({
+    required String uid,
+    required String name,
+    required String image,
+    required String chatId,
+  }) async {
+    try {
+      final options = BaseOptions(
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        baseUrl: "https://nyarios-api.netlify.app/api/v1/",
+      );
+      dio.options = options;
+      final response = await dio.post(
+        "firebase/sendChatNotification/$uid",
+        data: {"name": name, "photo": image, "chatId": chatId},
+      );
+
+      return response.data["data"];
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

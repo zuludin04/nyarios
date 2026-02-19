@@ -42,7 +42,14 @@ final callRepositoryProvider = Provider<CallRepository>((ref) {
 final chatRepositoryProvider = Provider<ChatRepository>((ref) {
   final chatSource = ref.watch(firebaseChatSourceProvider);
   final localSource = ref.watch(sharedLocalSourceProvider);
-  return ChatRepository(chatSource: chatSource, localSource: localSource);
+  final notificationSource = ref.watch(notificationRemoteSourceProvider);
+  final firebaseProfile = ref.watch(firebaseProfileSourceProvider);
+  return ChatRepository(
+    chatSource: chatSource,
+    localSource: localSource,
+    notificationSource: notificationSource,
+    profileSource: firebaseProfile,
+  );
 });
 
 final contactRepositoryProvider = Provider<ContactRepository>((ref) {

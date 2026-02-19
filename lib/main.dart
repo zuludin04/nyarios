@@ -27,10 +27,11 @@ final FlutterLocalNotificationsPlugin notificationsPlugin =
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if (message.data['type'] == 'message') {
-    await NotificationService.showFromFCM(message.data);
-  } else {
+  if (message.data['type'] == 'voice_call' ||
+      message.data['type'] == 'video_call') {
     await NotificationService.showCallNotification(message.data);
+  } else {
+    await NotificationService.showFromFCM(message.data);
   }
 }
 
@@ -75,10 +76,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     listenCallkitEvents(ref);
 
     FirebaseMessaging.onMessage.listen((message) async {
-      if (message.data['type'] == 'message') {
-        await NotificationService.showFromFCM(message.data);
-      } else {
+      if (message.data['type'] == 'voice_call' ||
+          message.data['type'] == 'video_call') {
         await NotificationService.showCallNotification(message.data);
+      } else {
+        await NotificationService.showFromFCM(message.data);
       }
     });
   }
