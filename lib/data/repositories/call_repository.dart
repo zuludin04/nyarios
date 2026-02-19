@@ -23,15 +23,11 @@ class CallRepository {
 
   Future<String> createCall(
     String channel,
-    int agoraCallId,
     String type,
     String receiverUserId,
     String chatId,
   ) async {
-    final token = await agoraSource.loadAgoraToken(
-      channel: channel,
-      uid: agoraCallId,
-    );
+    final token = await agoraSource.loadAgoraToken(channel: channel);
 
     final user = await localSource.getUserProfile();
     final createdAt = DateTime.now().toIso8601String();

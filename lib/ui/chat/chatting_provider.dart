@@ -127,10 +127,9 @@ class ChattingAsyncController extends _$ChattingAsyncController {
 
     final token = await repo.createCall(
       channelName,
-      DateTime.now().millisecondsSinceEpoch,
       type,
       receiverUserId,
-      chatId!
+      chatId!,
     );
     return token;
   }

@@ -12,10 +12,7 @@ class AgoraRemoteSource {
 
   const AgoraRemoteSource({required this.dio});
 
-  Future<String> loadAgoraToken({
-    required String channel,
-    required int uid,
-  }) async {
+  Future<String> loadAgoraToken({required String channel}) async {
     try {
       final options = BaseOptions(
         headers: {
@@ -27,7 +24,7 @@ class AgoraRemoteSource {
       dio.options = options;
       final response = await dio.get(
         "agora",
-        queryParameters: {"channelName": channel, "uid": uid},
+        queryParameters: {"channelName": channel},
       );
 
       return response.data["key"];
