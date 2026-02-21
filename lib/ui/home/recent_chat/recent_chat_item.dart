@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
+import 'package:nyarios/domain/model/data_chat.dart';
 import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:nyarios/routes/app_routes.dart';
 
@@ -16,12 +17,12 @@ class LastMessageItem extends ConsumerWidget {
     return InkWell(
       onTap: () => context.pushNamed(
         AppPages.chatting,
-        queryParameters: {
-          "chatId": recentChat.chatId,
-          "profileId": recentChat.profileId,
-          "username": recentChat.title,
-          "photo": recentChat.iconUrl,
-        },
+        extra: DataChat(
+          chatId: recentChat.chatId,
+          profileId: recentChat.profileId,
+          username: recentChat.title,
+          photo: recentChat.iconUrl,
+        ),
       ),
       child: Container(
         padding: const EdgeInsets.all(16),

@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:nyarios/domain/model/data_call.dart';
+import 'package:nyarios/domain/model/data_chat.dart';
 import 'package:nyarios/ui/auth/signin_screen.dart';
 import 'package:nyarios/ui/blocked/blocked_friend_screen.dart';
 import 'package:nyarios/ui/call/call_video_screen.dart';
@@ -42,16 +43,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppPages.chatting,
         name: AppPages.chatting,
         builder: (context, state) {
-          final String chatId = state.uri.queryParameters["chatId"] ?? "";
-          final String profileId = state.uri.queryParameters["profileId"] ?? "";
-          final String username = state.uri.queryParameters["username"] ?? "";
-          final String photo = state.uri.queryParameters["photo"] ?? "";
-          return ChattingScreen(
-            chatId: chatId,
-            profileId: profileId,
-            userName: username,
-            photo: photo,
-          );
+          final DataChat chat = state.extra as DataChat;
+          return ChattingScreen(chat: chat);
         },
       ),
       GoRoute(

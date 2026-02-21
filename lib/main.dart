@@ -18,6 +18,7 @@ import 'package:nyarios/core/utils/custom_theme.dart';
 import 'package:nyarios/core/utils/text_theme.dart';
 import 'package:nyarios/core/widgets/lifecycle_listener/lifecycle_listener_wrapper.dart';
 import 'package:nyarios/domain/model/data_call.dart';
+import 'package:nyarios/domain/model/data_chat.dart';
 import 'package:nyarios/firebase_options.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -146,15 +147,7 @@ class NotificationListenerWidget extends ConsumerWidget {
       final router = ref.read(routerProvider);
 
       final data = jsonDecode(next.value!.payload!);
-      router.pushNamed(
-        AppPages.chatting,
-        queryParameters: {
-          "chatId": data['chatId'],
-          "profileId": data['profileId'],
-          "username": data['name'],
-          "profile": data['photo'],
-        },
-      );
+      router.go(AppPages.chatting, extra: DataChat.fromMap(data));
     });
     return const SizedBox.shrink();
   }

@@ -10,6 +10,7 @@ import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
 import 'package:nyarios/domain/model/data_call.dart';
+import 'package:nyarios/domain/model/data_chat.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/chat/chatting_provider.dart';
@@ -19,18 +20,9 @@ import 'package:nyarios/ui/chat/widgets/chat_item.dart';
 import 'package:nyarios/ui/chat/widgets/contact_friend_info.dart';
 
 class ChattingScreen extends ConsumerStatefulWidget {
-  final String chatId;
-  final String profileId;
-  final String userName;
-  final String photo;
+  final DataChat chat;
 
-  const ChattingScreen({
-    super.key,
-    required this.chatId,
-    required this.profileId,
-    required this.userName,
-    required this.photo,
-  });
+  const ChattingScreen({super.key, required this.chat});
 
   @override
   ConsumerState<ChattingScreen> createState() => _ChattingScreenState();
@@ -40,24 +32,36 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
   @override
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
-      chattingAsyncControllerProvider(widget.chatId, widget.profileId),
+      chattingAsyncControllerProvider(
+        widget.chat.chatId,
+        widget.chat.profileId,
+      ),
     );
     final controller = ref.read(
-      chattingAsyncControllerProvider(widget.chatId, widget.profileId).notifier,
+      chattingAsyncControllerProvider(
+        widget.chat.chatId,
+        widget.chat.profileId,
+      ).notifier,
     );
 
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
         context,
         "",
-        titleWidget: Text(widget.userName),
+        titleWidget: Text(widget.chat.username),
         leading: chatAsync.value!.isSelectMode
             ? IconButton(
                 onPressed: controller.clearSelectedChat,
                 icon: const Icon(Icons.close),
               )
             : IconButton(
-                onPressed: context.pop,
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(AppPages.home);
+                  }
+                },
                 icon: ImageAsset(
                   assets: 'assets/icons/ic_back.png',
                   color: Theme.of(context).iconTheme.color!,
@@ -67,8 +71,8 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
         onTapTitle: () => context.pushNamed(
           AppPages.contactDetail,
           queryParameters: {
-            'chatId': widget.chatId,
-            'userId': widget.profileId,
+            'chatId': widget.chat.chatId,
+            'userId': widget.chat.profileId,
           },
         ),
         elevation: 0,
@@ -76,9 +80,9 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
           IconButton(
             onPressed: () async {
               final token = await controller.createCallConversation(
-                channelName: widget.chatId,
+                channelName: widget.chat.chatId,
                 type: 'video_call',
-                receiverUserId: widget.profileId,
+                receiverUserId: widget.chat.profileId,
               );
 
               if (context.mounted) {
@@ -86,9 +90,9 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                   AppPages.callVideo,
                   extra: DataCall(
                     token: token,
-                    name: widget.userName,
-                    chatId: widget.chatId,
-                    photo: widget.photo,
+                    name: widget.chat.username,
+                    chatId: widget.chat.chatId,
+                    photo: widget.chat.photo,
                   ),
                 );
               }
@@ -101,9 +105,9 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
           IconButton(
             onPressed: () async {
               final token = await controller.createCallConversation(
-                channelName: widget.chatId,
+                channelName: widget.chat.chatId,
                 type: 'voice_call',
-                receiverUserId: widget.profileId,
+                receiverUserId: widget.chat.profileId,
               );
 
               if (context.mounted) {
@@ -111,9 +115,9 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                   AppPages.callVoice,
                   extra: DataCall(
                     token: token,
-                    name: widget.userName,
-                    chatId: widget.chatId,
-                    photo: widget.photo,
+                    name: widget.chat.username,
+                    chatId: widget.chat.chatId,
+                    photo: widget.chat.photo,
                   ),
                 );
               }
@@ -150,8 +154,8 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     context.pushNamed(
                       AppPages.contactDetail,
                       queryParameters: {
-                        'chatId': widget.chatId,
-                        'userId': widget.profileId,
+                        'chatId': widget.chat.chatId,
+                        'userId': widget.chat.profileId,
                       },
                     );
                     break;
@@ -160,9 +164,9 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                       AppPages.search,
                       queryParameters: {
                         'type': 'chat',
-                        'roomId': widget.chatId,
-                        'username': widget.userName,
-                        'userId': widget.profileId,
+                        'roomId': widget.chat.chatId,
+                        'username': widget.chat.username,
+                        'userId': widget.chat.profileId,
                       },
                     );
                     break;
@@ -170,7 +174,10 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     final status = chatAsync.value!.status == 'blocked'
                         ? 'pending'
                         : 'blocked';
-                    controller.changeContactStatus(widget.profileId, status);
+                    controller.changeContactStatus(
+                      widget.chat.profileId,
+                      status,
+                    );
                     break;
                 }
               },
@@ -187,7 +194,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     .map((e) {
                       final name = controller.getNameCopy(
                         e.senderProfileId,
-                        widget.userName,
+                        widget.chat.username,
                       );
                       return copiedMessage(e, name);
                     })
@@ -213,7 +220,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
             visible: chatAsync.value!.isSelectMode,
             child: IconButton(
               onPressed: () {
-                controller.clearMessages(widget.chatId);
+                controller.clearMessages(widget.chat.chatId);
               },
               icon: ImageAsset(
                 assets: 'assets/icons/ic_delete.png',
@@ -231,11 +238,14 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                 isAlreadyFriend: data.status == 'friend',
                 isBlocked: data.status == 'blocked',
                 onAddFriend: () {
-                  controller.changeContactStatus(widget.profileId, 'friend');
+                  controller.changeContactStatus(
+                    widget.chat.profileId,
+                    'friend',
+                  );
                 },
                 onBlock: () {
                   controller.changeContactStatus(
-                    widget.profileId,
+                    widget.chat.profileId,
                     data.status != 'blocked' ? 'blocked' : 'pending',
                   );
                 },
@@ -305,8 +315,8 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                 controller.sendMessage(
                   message ?? "",
                   type,
-                  widget.chatId,
-                  widget.profileId,
+                  widget.chat.chatId,
+                  widget.chat.profileId,
                   fileSize ?? "",
                 );
               },

@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/domain/model/data_chat.dart';
 import 'package:nyarios/domain/model/profile.dart';
-import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/qrcode/qr_code_profile_controller.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -29,12 +30,12 @@ class QrCodeProfileScreen extends ConsumerWidget {
       } else if (next.value!.successLoadContact) {
         context.pushNamed(
           AppPages.chatting,
-          queryParameters: {
-            "chatId": next.value!.contact!.chatId,
-            "profileId": next.value!.profile!.uid!,
-            "username": next.value!.profile!.name,
-            "photo": next.value!.profile!.photo,
-          },
+          extra: DataChat(
+            chatId: next.value!.contact!.chatId,
+            profileId: next.value!.profile!.uid!,
+            username: next.value!.profile!.name!,
+            photo: next.value!.profile!.photo!,
+          ),
         );
       }
     });

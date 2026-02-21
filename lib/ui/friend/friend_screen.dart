@@ -5,6 +5,7 @@ import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
+import 'package:nyarios/domain/model/data_chat.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/friend/friend_controller.dart';
@@ -129,12 +130,12 @@ class _FriendItem extends StatelessWidget {
     return InkWell(
       onTap: () => context.pushNamed(
         AppPages.chatting,
-        queryParameters: {
-          "chatId": profile.chatId,
-          "profileId": profile.uid,
-          "username": profile.name,
-          "photo": profile.photo,
-        },
+        extra: DataChat(
+          chatId: profile.chatId!,
+          profileId: profile.uid!,
+          username: profile.name!,
+          photo: profile.photo!,
+        ),
       ),
       child: Container(
         padding: const EdgeInsets.all(16),
