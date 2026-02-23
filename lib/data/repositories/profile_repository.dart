@@ -1,16 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
 import 'package:nyarios/data/sources/local/shared_local_source.dart';
+import 'package:nyarios/data/sources/remote/profile_remote_source.dart';
 import 'package:nyarios/domain/model/profile.dart';
 
 class ProfileRepository {
   final FirebaseProfileSource profileSource;
   final SharedLocalSource localSource;
+  final ProfileRemoteSource remoteSource;
 
   const ProfileRepository({
     required this.profileSource,
     required this.localSource,
+    required this.remoteSource,
   });
 
   Future<bool> signInUser({
@@ -19,27 +21,19 @@ class ProfileRepository {
   }) async {
     try {
       final user = await profileSource.signInCredential(accessToken, idToken);
-      final profile = await profileSource.loadSingleProfile(user?.uid);
       final fcmToken = await profileSource.loadFcmToken();
+      final profile = Profile(
+        uid: user?.uid,
+        name: user?.displayName,
+        photo: user?.photoURL,
+        status: 'Hey there! Let\'s be friend',
+        email: user?.email,
+        visibility: true,
+        fcmToken: fcmToken,
+      );
 
-      if (profile == null) {
-        final newProfile = Profile(
-          uid: user?.uid,
-          name: user?.displayName,
-          photo: user?.photoURL,
-          status: 'Hey there! Let\'s be friend',
-          email: user?.email,
-          visibility: true,
-          fcmToken: fcmToken,
-        );
-
-        await profileSource.saveUserProfile(newProfile);
-        await localSource.setUserLocal(newProfile);
-      } else {
-        profile.fcmToken = fcmToken;
-        await profileSource.saveUserProfile(profile);
-        await localSource.setUserLocal(profile);
-      }
+      final response = await remoteSource.saveProfile(profile);
+      await localSource.setUserLocal(response);
       await localSource.setAlreadyLogin(true);
 
       return true;
@@ -50,9 +44,13 @@ class ProfileRepository {
     }
   }
 
-  Future<Profile> loadSingleProfile(String? userId) async {
-    final profile = await profileSource.loadSingleProfile(userId);
-    return profile!;
+  Future<Profile> loadSingleProfile(String? profileId) async {
+    try {
+      final result = await remoteSource.getProfile(profileId!);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Stream<bool> getOnlineStatus(String userId) async* {
@@ -64,17 +62,17 @@ class ProfileRepository {
     yield* profileSource.loadStreamProfile(user.userId);
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> streamProfiles() async* {
-    yield* profileSource.streamProfiles();
-  }
-
   Future<void> setOnlineStatus(bool status) async {
     final user = await localSource.getUserProfile();
-    await profileSource.updateOnlineStatus(status, user.userId);
+    await remoteSource.changeOnlineStatus(user.userId!, status);
   }
 
   Future<void> updateProfile(String value, bool updateName) async {
     final user = await localSource.getUserProfile();
-    await profileSource.updateProfile(user.userId, value, updateName);
+    await remoteSource.updateProfile(
+      user.userId!,
+      updateName ? value : "",
+      updateName ? "" : value,
+    );
   }
 }

@@ -17,10 +17,6 @@ class FirebaseProfileSource {
 
   const FirebaseProfileSource({required this.firestore, required this.auth});
 
-  Future<void> saveUserProfile(Profile profile) async {
-    firestore.collection("profile").doc(profile.uid).set(profile.toMap());
-  }
-
   Future<User?> signInCredential(String? accessToken, String? idToken) async {
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: accessToken,
@@ -29,11 +25,6 @@ class FirebaseProfileSource {
 
     var credentialAuth = await auth.signInWithCredential(credential);
     return credentialAuth.user;
-  }
-
-  Future<bool> checkIfUserExist(String? userId) async {
-    var doc = await firestore.collection("profile").doc(userId).get();
-    return doc.exists;
   }
 
   Future<Profile?> loadSingleProfile(String? uid) async {
@@ -55,29 +46,6 @@ class FirebaseProfileSource {
   Stream<Profile> loadStreamProfile(String? uid) async* {
     var profile = firestore.collection("profile").doc(uid).snapshots();
     yield* profile.map((event) => Profile.fromMap(event.data()!));
-  }
-
-  Stream<QuerySnapshot<Map<String, dynamic>>> streamProfiles() async* {
-    var profile = firestore.collection("profile").snapshots();
-    yield* profile;
-  }
-
-  Future<void> updateOnlineStatus(bool status, String? userId) async {
-    var exist = await checkIfUserExist(userId);
-    if (exist) {
-      firestore.collection("profile").doc(userId).update({
-        'visibility': status,
-      });
-    }
-  }
-
-  Future<void> updateProfile(
-    String? profileId,
-    String value,
-    bool updateName,
-  ) async {
-    var updateData = updateName ? {'name': value} : {'status': value};
-    firestore.collection("profile").doc(profileId).update(updateData);
   }
 
   Future<String?> loadFcmToken() async {

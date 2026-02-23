@@ -13,14 +13,17 @@ import 'package:nyarios/data/sources/firebase/firebase_recent_chat_source.dart';
 import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/data/sources/remote/agora_remote_source.dart';
 import 'package:nyarios/data/sources/remote/notification_remote_source.dart';
+import 'package:nyarios/data/sources/remote/profile_remote_source.dart';
 import 'package:nyarios/di/shared_prefs_module.dart';
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   final firebaseProfile = ref.watch(firebaseProfileSourceProvider);
   final sharedLocal = ref.watch(sharedLocalSourceProvider);
+  final remoteSource = ref.watch(profileRemoteSourceProvider);
   return ProfileRepository(
     profileSource: firebaseProfile,
     localSource: sharedLocal,
+    remoteSource: remoteSource,
   );
 });
 
