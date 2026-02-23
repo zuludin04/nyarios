@@ -63,11 +63,11 @@ class QrCodeProfileScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(16),
                   dataModuleStyle: QrDataModuleStyle(
                     dataModuleShape: QrDataModuleShape.circle,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   eyeStyle: QrEyeStyle(
                     eyeShape: QrEyeShape.circle,
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 error: (_, _) => SizedBox(),
