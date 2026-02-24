@@ -1,16 +1,15 @@
-import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/profile.dart';
 
 class QrCodeProfileState {
   final String userId;
+  final String chatId;
   final Profile? profile;
-  final Contact? contact;
   final bool showProfileDialog;
   final bool successLoadContact;
 
   QrCodeProfileState({
     this.userId = "",
-    this.contact,
+    this.chatId = "",
     this.profile,
     this.showProfileDialog = false,
     this.successLoadContact = false,
@@ -18,14 +17,14 @@ class QrCodeProfileState {
 
   QrCodeProfileState copyWith({
     String? userId,
+    String? chatId,
     Profile? profile,
-    Contact? contact,
     bool? showProfileDialog,
     bool? successLoadContact,
   }) {
     return QrCodeProfileState(
       userId: userId ?? this.userId,
-      contact: contact ?? this.contact,
+      chatId: chatId ?? this.chatId,
       profile: profile ?? this.profile,
       showProfileDialog: showProfileDialog ?? this.showProfileDialog,
       successLoadContact: successLoadContact ?? this.successLoadContact,

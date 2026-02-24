@@ -9,7 +9,7 @@ Dio dioProvider(Ref ref) {
       "Accept": "application/json",
       "Content-Type": "application/json",
     },
-    baseUrl: "http://10.0.2.2:4000/api/v1/",
+    baseUrl: "https://nyarios-api.netlify.app/api/v1/",
   );
   dio.options = options;
   return dio;

@@ -31,7 +31,7 @@ class QrCodeProfileScreen extends ConsumerWidget {
         context.pushNamed(
           AppPages.chatting,
           extra: DataChat(
-            chatId: next.value!.contact!.chatId,
+            chatId: next.value!.chatId,
             profileId: next.value!.profile!.uid!,
             username: next.value!.profile!.name!,
             photo: next.value!.profile!.photo!,
