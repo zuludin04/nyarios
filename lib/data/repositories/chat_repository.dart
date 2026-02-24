@@ -4,6 +4,7 @@ import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/data/sources/remote/chat_remote_source.dart';
 import 'package:nyarios/data/sources/remote/notification_remote_source.dart';
 import 'package:nyarios/data/sources/remote/post/chat_room_post.dart';
+import 'package:nyarios/data/sources/remote/post/message_post.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:uuid/uuid.dart';
@@ -50,12 +51,12 @@ class ChatRepository {
     String type,
     String text,
     String replyTo,
-    String receiverUserId,
+    String receiverProfileId,
     String fileSize,
   ) async {
     final user = await localSource.getUserProfile();
     final messageId = const Uuid().v4();
-    final message = Message(
+    final message = MessagePost(
       messageId: messageId,
       chatId: chatId,
       senderProfileId: user.userId ?? "",
@@ -64,17 +65,9 @@ class ChatRepository {
       replyToMessageId: replyTo,
       createdAt: DateTime.now().toIso8601String(),
       fileSize: fileSize,
+      receiverProfileId: receiverProfileId,
     );
-    await chatSource.sendChatMessage(message);
-
-    final profile = await profileSource.loadSingleProfile(receiverUserId);
-
-    await notificationSource.sendMessageNotification(
-      uid: receiverUserId,
-      name: profile!.name!,
-      image: profile.photo!,
-      chatId: chatId,
-    );
+    await remoteSource.sendMessage(message);
   }
 
   Stream<List<Message>> streamChatMessages(String? chatId) {

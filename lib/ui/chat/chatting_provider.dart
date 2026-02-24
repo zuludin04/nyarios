@@ -70,21 +70,9 @@ class ChattingAsyncController extends _$ChattingAsyncController {
       chatId,
       type,
       message,
-      '',
+      "-",
       ownerUserId,
       fileSize,
-    );
-    final user = await localRepo.getUserProfile();
-
-    await updateRecentChat(
-      message: message,
-      ownerUserId: user.userId!,
-      chatId: chatId,
-    );
-    await updateRecentChat(
-      message: message,
-      ownerUserId: ownerUserId,
-      chatId: chatId,
     );
   }
 
