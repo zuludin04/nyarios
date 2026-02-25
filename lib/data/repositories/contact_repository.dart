@@ -1,16 +1,13 @@
-import 'package:nyarios/data/sources/firebase/firebase_contact_source.dart';
 import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/data/sources/remote/contact_remote_source.dart';
 import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/profile.dart';
 
 class ContactRepository {
-  final FirebaseContactSource contactSource;
   final SharedLocalSource localSource;
   final ContactRemoteSource remoteSource;
 
   const ContactRepository({
-    required this.contactSource,
     required this.localSource,
     required this.remoteSource,
   });

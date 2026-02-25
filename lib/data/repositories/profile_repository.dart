@@ -1,16 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nyarios/data/sources/firebase/firebase_profile_source.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/data/sources/remote/profile_remote_source.dart';
 import 'package:nyarios/domain/model/profile.dart';
 
 class ProfileRepository {
-  final FirebaseProfileSource profileSource;
   final SharedLocalSource localSource;
   final ProfileRemoteSource remoteSource;
 
   const ProfileRepository({
-    required this.profileSource,
     required this.localSource,
     required this.remoteSource,
   });
@@ -20,8 +18,8 @@ class ProfileRepository {
     required String? idToken,
   }) async {
     try {
-      final user = await profileSource.signInCredential(accessToken, idToken);
-      final fcmToken = await profileSource.loadFcmToken();
+      final user = await remoteSource.signInCredential(accessToken, idToken);
+      final fcmToken = await _loadFcmToken();
       final profile = Profile(
         uid: user?.uid,
         name: user?.displayName,
@@ -54,12 +52,12 @@ class ProfileRepository {
   }
 
   Stream<bool> getOnlineStatus(String userId) async* {
-    yield* profileSource.getOnlineStatus(userId);
+    yield* remoteSource.getOnlineStatus(userId);
   }
 
   Stream<Profile> loadStreamProfile() async* {
     final user = await localSource.getUserProfile();
-    yield* profileSource.loadStreamProfile(user.userId);
+    yield* remoteSource.loadStreamProfile(user.userId);
   }
 
   Future<void> setOnlineStatus(bool status) async {
@@ -74,5 +72,11 @@ class ProfileRepository {
       updateName ? value : "",
       updateName ? "" : value,
     );
+  }
+
+  Future<String?> _loadFcmToken() async {
+    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    final token = await firebaseMessaging.getToken();
+    return token;
   }
 }

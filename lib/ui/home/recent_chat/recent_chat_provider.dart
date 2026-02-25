@@ -9,9 +9,10 @@ part 'recent_chat_provider.g.dart';
 @riverpod
 class RecentChatProvider extends _$RecentChatProvider {
   StreamSubscription<List<RecentChat>>? messageSub;
+
   @override
   Stream<List<RecentChat>> build() {
-    final recentChatRepo = ref.watch(recentChatRepositoryProvider);
-    return recentChatRepo.streamRecentChats();
+    final repo = ref.watch(chatRepositoryProvider);
+    return repo.streamRecentChats();
   }
 }
