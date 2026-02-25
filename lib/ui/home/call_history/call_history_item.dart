@@ -29,10 +29,10 @@ class CallHistoryItem extends ConsumerWidget {
                     Row(
                       children: [
                         Icon(
-                          call.type == 'incoming_call'
+                          call.status == 'incoming_call'
                               ? Icons.call_received
                               : Icons.call_made,
-                          color: call.status == 'accept'
+                          color: call.status.contains("pickup")
                               ? Colors.green
                               : Colors.red,
                         ),

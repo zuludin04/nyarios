@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/data/repositories/contact_repository.dart';
-import 'package:nyarios/data/repositories/recent_chat_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/domain/model/message.dart';
-import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -17,7 +15,6 @@ class ChattingAsyncController extends _$ChattingAsyncController {
   late final ChatRepository chatRepo;
   late final ContactRepository contactRepo;
   late final SharedLocalRepository localRepo;
-  late final RecentChatRepository recentChatRepo;
 
   StreamSubscription<List<Message>>? messageSub;
 
@@ -26,7 +23,6 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     chatRepo = ref.read(chatRepositoryProvider);
     contactRepo = ref.read(contactRepositoryProvider);
     localRepo = ref.read(sharedLocalRepositoryProvider);
-    recentChatRepo = ref.read(recentChatRepositoryProvider);
 
     state = const AsyncData(ChattingState());
 
@@ -120,13 +116,7 @@ class ChattingAsyncController extends _$ChattingAsyncController {
     required String receiverUserId,
   }) async {
     final repo = ref.watch(callRepositoryProvider);
-
-    final token = await repo.createCall(
-      channelName,
-      type,
-      receiverUserId,
-      chatId!,
-    );
+    final token = await repo.createCall(type, receiverUserId, channelName);
     return token;
   }
 
@@ -136,27 +126,5 @@ class ChattingAsyncController extends _$ChattingAsyncController {
         ? username
         : current.user!.userName!;
     return name;
-  }
-
-  Future<void> updateRecentChat({
-    required String message,
-    required String ownerUserId,
-    required String chatId,
-  }) async {
-    final user = await localRepo.getUserProfile();
-
-    final recentChat = RecentChat(
-      chatId: chatId,
-      profileId: "",
-      isGroup: false,
-      title: "",
-      iconUrl: "",
-      lastMessage: message,
-      lastMessageSenderId: user.userId ?? "",
-      lastMessageAt: DateTime.now().toIso8601String(),
-      unreadCount: 0,
-    );
-
-    await recentChatRepo.updateRecentChat(ownerUserId, recentChat);
   }
 }
