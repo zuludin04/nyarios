@@ -15,10 +15,6 @@ class ContactRepository {
     required this.remoteSource,
   });
 
-  Future<void> saveContact(String? userId, Contact contact) async {
-    await contactSource.saveContact(userId, contact);
-  }
-
   Future<List<Profile>> loadContacts(String status) async {
     final user = await localSource.getUserProfile();
     final contacts = await remoteSource.getContactByStatus(
@@ -30,14 +26,14 @@ class ContactRepository {
 
   Future<void> changeContactStatus(String? otherUserId, String status) async {
     final user = await localSource.getUserProfile();
-    await contactSource.changeContactStatus(user.userId, otherUserId, status);
+    await remoteSource.updateContactStatus(user.userId!, otherUserId!, status);
   }
 
   Future<Contact?> loadSingleContact(String? profileId) async {
     final user = await localSource.getUserProfile();
-    final contact = await contactSource.loadSingleContact(
-      profileId,
-      user.userId,
+    final contact = await remoteSource.getContactDetail(
+      user.userId!,
+      profileId!,
     );
     return contact;
   }
