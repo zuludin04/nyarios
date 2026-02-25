@@ -12,8 +12,8 @@ class SearchController extends _$SearchController {
   }
 
   Future<void> searchChat(String term) async {
-    final recentChatRepo = ref.watch(recentChatRepositoryProvider);
-    final chats = await recentChatRepo.loadRecentChats();
+    final chatRepo = ref.watch(chatRepositoryProvider);
+    final chats = await chatRepo.loadRecentChats();
     final results = chats
         .where((e) => e.title.toLowerCase().contains(term.toLowerCase()))
         .toList();

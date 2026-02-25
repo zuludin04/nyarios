@@ -7,6 +7,7 @@ import 'package:nyarios/data/sources/remote/post/chat_room_post.dart';
 import 'package:nyarios/data/sources/remote/post/message_post.dart';
 import 'package:nyarios/domain/model/chat.dart';
 import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatRepository {
@@ -83,6 +84,11 @@ class ChatRepository {
   }
 
   Future<List<Message>> loadMessages(String chatId) async {
-    return chatSource.loadChatMessages(chatId);
+    return remoteSource.getMessages(chatId);
+  }
+
+  Future<List<RecentChat>> loadRecentChats() async {
+    final user = await localSource.getUserProfile();
+    return remoteSource.getRecentChats(user.userId!);
   }
 }
