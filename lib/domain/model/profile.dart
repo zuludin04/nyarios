@@ -43,4 +43,17 @@ class Profile {
       visibility: map['visibility'] != null ? map['visibility'] as bool : null,
     );
   }
+
+  factory Profile.fromContact(Map<String, dynamic> map) {
+    return Profile(
+      uid: map['uid'] != null ? map['uid'] as String : null,
+      name: map['name'] != null ? map['name'] as String : null,
+      photo: map['photo'] != null ? map['photo'] as String : null,
+      status: map['status'] != null ? map['status'] as String : null,
+      email: map['email'] != null ? map['email'] as String : null,
+      fcmToken: map['fcmToken'] != null ? map['fcmToken'] as String : null,
+      visibility: map['visibility'] != null ? map['visibility'] as bool : null,
+      chatId: map['chatId'] != null ? map['chatId'] as String : null,
+    );
+  }
 }

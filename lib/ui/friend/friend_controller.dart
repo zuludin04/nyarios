@@ -8,15 +8,8 @@ part 'friend_controller.g.dart';
 class FriendController extends _$FriendController {
   @override
   Future<List<Profile>> build() async {
-    final profileRepo = ref.watch(profileRepositoryProvider);
     final contactRepo = ref.watch(contactRepositoryProvider);
-
     final contacts = await contactRepo.loadContacts('friend');
-    final friends = contacts.map((e) async {
-      final profile = await profileRepo.loadSingleProfile(e.userId);
-      profile.chatId = e.chatId;
-      return profile;
-    });
-    return Future.wait(friends);
+    return contacts;
   }
 }

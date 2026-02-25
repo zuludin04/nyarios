@@ -14,6 +14,7 @@ import 'package:nyarios/data/sources/local/shared_local_source.dart';
 import 'package:nyarios/data/sources/remote/agora_remote_source.dart';
 import 'package:nyarios/data/sources/remote/call_remote_source.dart';
 import 'package:nyarios/data/sources/remote/chat_remote_source.dart';
+import 'package:nyarios/data/sources/remote/contact_remote_source.dart';
 import 'package:nyarios/data/sources/remote/notification_remote_source.dart';
 import 'package:nyarios/data/sources/remote/profile_remote_source.dart';
 import 'package:nyarios/di/shared_prefs_module.dart';
@@ -64,9 +65,11 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 final contactRepositoryProvider = Provider<ContactRepository>((ref) {
   final contactSource = ref.watch(firebaseContactSourceProvider);
   final sharedLocal = ref.watch(sharedLocalSourceProvider);
+  final remoteSource = ref.watch(contactRemoteSourceProvider);
   return ContactRepository(
     contactSource: contactSource,
     localSource: sharedLocal,
+    remoteSource: remoteSource,
   );
 });
 

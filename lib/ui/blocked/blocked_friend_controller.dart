@@ -8,15 +8,8 @@ part 'blocked_friend_controller.g.dart';
 class BlockedFriendController extends _$BlockedFriendController {
   @override
   Future<List<Profile>> build() async {
-    final profileRepo = ref.watch(profileRepositoryProvider);
     final contactRepo = ref.watch(contactRepositoryProvider);
-
     final contacts = await contactRepo.loadContacts('blocked');
-    final blocked = contacts.map((e) async {
-      final profile = await profileRepo.loadSingleProfile(e.userId);
-      profile.chatId = e.chatId;
-      return profile;
-    });
-    return Future.wait(blocked);
+    return contacts;
   }
 }
