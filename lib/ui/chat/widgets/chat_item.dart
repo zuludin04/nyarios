@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nyarios/domain/model/message.dart';
+import 'package:nyarios/ui/chat/widgets/voice_message_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class ChatItem extends StatelessWidget {
@@ -182,7 +183,7 @@ class ChatItem extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      chat.fileSize!,
+                      chat.fileSize,
                       style: const TextStyle(
                         fontSize: 13,
                         color: Colors.black54,
@@ -194,6 +195,8 @@ class ChatItem extends StatelessWidget {
             ],
           ),
         );
+      case 'voice':
+        return VoiceMessageWidget(url: chat.text);
       default:
         return Text(
           chat.text,

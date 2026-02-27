@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/utils/helper.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
+import 'package:nyarios/ui/chat/widgets/voice_record_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatInputMessage extends StatefulWidget {
@@ -173,6 +174,11 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                   padding: const EdgeInsets.all(10),
                   child: const ImageAsset(assets: 'assets/icons/ic_send.png'),
                 ),
+              ),
+              VoiceRecorderUI(
+                onSend: (url) {
+                  widget.onSendMessage(type: 'voice', message: url);
+                },
               ),
               const SizedBox(width: 8),
             ],
