@@ -31,7 +31,6 @@ class CallRemoteSource {
     String callId,
     String receiverProfileId,
     String callerProfileId,
-    bool isPickup,
   ) async {
     try {
       final response = await dio.post(
@@ -40,7 +39,6 @@ class CallRemoteSource {
           "callId": callId,
           "receiverProfileId": receiverProfileId,
           "callerProfileId": callerProfileId,
-          "isPickup": isPickup,
         },
       );
       return response.data["success"];

@@ -31,9 +31,9 @@ class CallRepository {
     return token;
   }
 
-  Future<void> updateCallStatus(String callId, String status) async {
+  Future<void> updateCallStatus(String callId, String callerProfileId) async {
     final user = await localSource.getUserProfile();
-    await remoteSource.updateCallStatus(user.userId!, callId, status, true);
+    await remoteSource.updateCallStatus(callId, user.userId!, callerProfileId);
   }
 
   Stream<List<Call>> streamCallHistories() async* {

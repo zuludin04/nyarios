@@ -34,7 +34,7 @@ final class RecentChatProviderProvider
 }
 
 String _$recentChatProviderHash() =>
-    r'cbf77a0c8b189cbed747cd5775a8b9a3c2ec14c5';
+    r'8cb29977a4a30bb9ddeb0b3f030a9c78609d6373';
 
 abstract class _$RecentChatProvider extends $StreamNotifier<List<RecentChat>> {
   Stream<List<RecentChat>> build();

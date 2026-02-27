@@ -86,7 +86,7 @@ class CallHistoryItem extends ConsumerWidget {
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
         fontSize: 16,
-        color: call.status == 'accept' ? Colors.green : Colors.red,
+        color: call.status.contains("pickup") ? Colors.green : Colors.red,
         fontWeight: FontWeight.w600,
       ),
     );

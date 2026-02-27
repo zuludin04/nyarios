@@ -1,5 +1,6 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/routes/app_routes.dart';
+import 'package:nyarios/ui/call/call_controller.dart';
 import 'package:nyarios/ui/call/widgets/call_action_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
@@ -32,6 +34,7 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   @override
   void initState() {
     setupVoiceSDKEngine();
+    updateStatusCall();
     super.initState();
   }
 
@@ -199,10 +202,16 @@ class _CallVoiceScreenState extends ConsumerState<CallVoiceScreen> {
   void leave() {
     agoraEngine.leaveChannel();
     agoraEngine.release();
+    FlutterCallkitIncoming.endAllCalls();
     if (context.canPop()) {
       context.pop();
     } else {
       context.go(AppPages.home);
     }
+  }
+
+  Future<void> updateStatusCall() async {
+    final controller = ref.read(callControllerProvider(widget.call).notifier);
+    controller.updateCallStatus(widget.call);
   }
 }

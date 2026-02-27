@@ -118,7 +118,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   void listenCallkitEvents(WidgetRef ref) {
-    FlutterCallkitIncoming.onEvent.listen((event) {
+    FlutterCallkitIncoming.onEvent.listen((event) async {
       final router = ref.read(routerProvider);
       if (event?.event == Event.actionCallAccept) {
         final data = event!.body;
@@ -127,6 +127,8 @@ class _MyAppState extends ConsumerState<MyApp> {
           name: data['nameCaller'],
           chatId: data['extra']['chatId'],
           photo: data['extra']['image'],
+          isAcceptCall: true,
+          notificationData: data['extra'],
         );
         if (data['extra']['type'] == 'voice_call') {
           router.go(AppPages.callVoice, extra: call);

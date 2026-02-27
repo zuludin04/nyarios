@@ -93,6 +93,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     name: widget.chat.username,
                     chatId: widget.chat.chatId,
                     photo: widget.chat.photo,
+                    isAcceptCall: false,
                   ),
                 );
               }
@@ -118,6 +119,7 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
                     name: widget.chat.username,
                     chatId: widget.chat.chatId,
                     photo: widget.chat.photo,
+                    isAcceptCall: false,
                   ),
                 );
               }
