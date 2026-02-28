@@ -94,10 +94,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.groupCreate,
+        name: AppPages.groupCreate,
         builder: (context, state) => GroupCreateScreen(),
       ),
       GoRoute(
         path: '${AppPages.groupMemberPick}/:source',
+        name: AppPages.groupMemberPick,
         builder: (context, state) {
           final String source = state.pathParameters['source'] ?? "";
           return GroupMemberPickScreen(source: source);
@@ -105,6 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppPages.groupEdit,
+        name: AppPages.groupEdit,
         builder: (context, state) {
           return GroupEditScreen();
         },
