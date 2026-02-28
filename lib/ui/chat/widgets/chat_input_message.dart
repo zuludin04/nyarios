@@ -154,7 +154,6 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                   color: Colors.black12,
                 ),
               ],
-              color: Theme.of(context).colorScheme.surface,
             ),
             margin: const EdgeInsets.all(8),
             child: Row(
@@ -165,10 +164,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
                             'Recording... ${_formatDuration(_recordingDuration)}',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         )
                       : TextFormField(
@@ -180,7 +176,6 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
                             hintText: AppLocalizations.of(context)!.message,
                             border: InputBorder.none,
                           ),
-                          cursorColor: const Color(0xffb3404a),
                           onFieldSubmitted: (value) {
                             if (value.isNotEmpty) {
                               widget.onSendMessage(
@@ -232,14 +227,14 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
             }
           },
           child: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xffb3404a),
+              color: Theme.of(context).colorScheme.tertiary,
             ),
             padding: const EdgeInsets.all(10),
             child: Icon(
               _isTextEmpty ? Icons.mic : Icons.send,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onTertiary,
             ),
           ),
         ),
@@ -249,7 +244,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
   }
 
   void _showPickerMenu(BuildContext context) {
-    showBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => SizedBox(
         height: 100,
@@ -294,7 +289,7 @@ class _ChatInputMessageState extends State<ChatInputMessage> {
             size: 32,
           ),
           const SizedBox(height: 8),
-          Text(title.toLowerCase()),
+          Text(title),
         ],
       ),
     );
