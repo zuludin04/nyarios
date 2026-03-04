@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
@@ -17,6 +18,7 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepository(
     localSource: sharedLocal,
     remoteSource: remoteSource,
+    firebaseMessaging: FirebaseMessaging.instance,
   );
 });
 

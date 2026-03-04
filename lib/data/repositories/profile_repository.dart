@@ -7,10 +7,12 @@ import 'package:nyarios/domain/model/profile.dart';
 class ProfileRepository {
   final SharedLocalSource localSource;
   final ProfileRemoteSource remoteSource;
+  final FirebaseMessaging firebaseMessaging;
 
   const ProfileRepository({
     required this.localSource,
     required this.remoteSource,
+    required this.firebaseMessaging,
   });
 
   Future<bool> signInUser({
@@ -75,7 +77,6 @@ class ProfileRepository {
   }
 
   Future<String?> _loadFcmToken() async {
-    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
     final token = await firebaseMessaging.getToken();
     return token;
   }

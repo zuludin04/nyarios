@@ -1086,7 +1086,7 @@ packages:
     source: hosted
     version: "1.0.6"
   mockito:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: mockito
       sha256: "2314cbe9165bcd16106513df9cf3c3224713087f09723b128928dc11a4379f99"
