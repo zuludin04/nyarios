@@ -51,7 +51,7 @@ final class ContactDetailProviderProvider
 }
 
 String _$contactDetailProviderHash() =>
-    r'f160e959a77d3128173fe6a2e45549fb363fd922';
+    r'bcfe599d8f13da515a84f4acc737066f3ad86fa4';
 
 final class ContactDetailProviderFamily extends $Family
     with

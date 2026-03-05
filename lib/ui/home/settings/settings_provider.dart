@@ -15,23 +15,22 @@ class SettingsProvider extends _$SettingsProvider {
 
   @override
   FutureOr<SettingsState> build() async {
-    final profileRepo = ref.watch(profileRepositoryProvider);
-    final themeController = ref.watch(themeControllerProvider);
-
-    state = const AsyncData(SettingsState());
+    final profileRepo = ref.read(profileRepositoryProvider);
+    final themeMode = await ref.watch(themeControllerProvider.future);
 
     profileSub = profileRepo.loadStreamProfile().listen((profile) {
-      final current = state.value!;
-      state = AsyncData(
-        current.copyWith(profile: profile, themeMode: themeController.value),
-      );
+      if (state.hasValue) {
+        state = AsyncData(
+          state.value!.copyWith(profile: profile, themeMode: themeMode),
+        );
+      }
     });
 
     ref.onDispose(() {
       profileSub?.cancel();
     });
 
-    return const SettingsState();
+    return SettingsState(themeMode: themeMode);
   }
 
   Future<void> changeTheme(ThemeMode mode) async {
