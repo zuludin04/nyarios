@@ -26,9 +26,9 @@ You can try this app by clicking this link below.
 - [x]  Group message
 - [ ]  Forward, Reply, and Star message
 - [x]  Block user/friend
-- [ ]  Voice message
+- [x]  Voice message
 - [x]  Video and Call message
 
 ## Contact
 
-Send me email if you have something to ask, zmauludin04@gmail.com
+Send me email if you have something to ask, zulfikar.mauludin29@gmail.com
