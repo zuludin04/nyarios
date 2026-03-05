@@ -7,9 +7,9 @@ import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/data/repositories/shared_local_repository.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/ui/home/settings/settings_provider.dart';
+import 'package:nyarios/ui/home/settings/settings_controller.dart';
 
-import 'settings_provider_test.mocks.dart';
+import 'settings_controller_test.mocks.dart';
 
 @GenerateMocks([ProfileRepository, SharedLocalRepository])
 void main() {
@@ -46,14 +46,14 @@ void main() {
 
         // Use listen to keep provider alive
         final subscription = container.listen(
-          settingsProviderProvider,
+          settingsControllerProvider,
           (prev, next) {},
         );
 
-        await container.read(settingsProviderProvider.future);
+        await container.read(settingsControllerProvider.future);
         await Future.delayed(Duration.zero);
 
-        final state = container.read(settingsProviderProvider).value;
+        final state = container.read(settingsControllerProvider).value;
 
         expect(state?.profile, profile);
         expect(state?.themeMode, ThemeMode.light);
@@ -70,12 +70,12 @@ void main() {
       when(mockLocalRepo.getAppTheme()).thenAnswer((_) async => 'light');
       when(mockLocalRepo.setAppTheme(any)).thenAnswer((_) async => {});
 
-      final controller = container.read(settingsProviderProvider.notifier);
-      await container.read(settingsProviderProvider.future);
+      final controller = container.read(settingsControllerProvider.notifier);
+      await container.read(settingsControllerProvider.future);
 
       await controller.changeTheme(ThemeMode.dark);
 
-      final state = container.read(settingsProviderProvider).value;
+      final state = container.read(settingsControllerProvider).value;
       expect(state?.themeMode, ThemeMode.dark);
       verify(mockLocalRepo.setAppTheme('dark')).called(1);
     });

@@ -5,9 +5,9 @@ import 'package:mockito/mockito.dart';
 import 'package:nyarios/data/repositories/call_repository.dart';
 import 'package:nyarios/domain/model/call.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/ui/home/call_history/call_history_provider.dart';
+import 'package:nyarios/ui/home/call_history/call_history_controller.dart';
 
-import 'call_history_provider_test.mocks.dart';
+import 'call_history_controller_test.mocks.dart';
 
 @GenerateMocks([CallRepository])
 void main() {
@@ -17,9 +17,7 @@ void main() {
   setUp(() {
     mockCallRepo = MockCallRepository();
     container = ProviderContainer(
-      overrides: [
-        callRepositoryProvider.overrideWithValue(mockCallRepo),
-      ],
+      overrides: [callRepositoryProvider.overrideWithValue(mockCallRepo)],
     );
   });
 
@@ -40,20 +38,21 @@ void main() {
         ),
       ];
 
-      when(mockCallRepo.streamCallHistories())
-          .thenAnswer((_) => Stream.value(callHistories));
+      when(
+        mockCallRepo.streamCallHistories(),
+      ).thenAnswer((_) => Stream.value(callHistories));
 
       // Use listen to keep the provider alive during the test
       final subscription = container.listen(
-        callHistoryProviderProvider,
+        callHistoryControllerProvider,
         (previous, next) {},
       );
 
-      final result = await container.read(callHistoryProviderProvider.future);
+      final result = await container.read(callHistoryControllerProvider.future);
 
       expect(result, callHistories);
       verify(mockCallRepo.streamCallHistories()).called(1);
-      
+
       subscription.close();
     });
   });

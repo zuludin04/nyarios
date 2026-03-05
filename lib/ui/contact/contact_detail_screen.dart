@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/ui/contact/contact_detail_provider.dart';
+import 'package:nyarios/ui/contact/contact_detail_controller.dart';
 import 'package:nyarios/ui/contact/contact_media_tab.dart';
 
 class ContactDetailScreen extends ConsumerStatefulWidget {
@@ -39,7 +39,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen>
   @override
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
-      contactDetailProviderProvider(widget.chatId, widget.userId),
+      contactDetailControllerProvider(widget.chatId, widget.userId),
     );
 
     return Scaffold(

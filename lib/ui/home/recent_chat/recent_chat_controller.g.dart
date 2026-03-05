@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'recent_chat_provider.dart';
+part of 'recent_chat_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,34 +9,35 @@ part of 'recent_chat_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(RecentChatProvider)
-const recentChatProviderProvider = RecentChatProviderProvider._();
+@ProviderFor(RecentChatController)
+const recentChatControllerProvider = RecentChatControllerProvider._();
 
-final class RecentChatProviderProvider
-    extends $StreamNotifierProvider<RecentChatProvider, List<RecentChat>> {
-  const RecentChatProviderProvider._()
+final class RecentChatControllerProvider
+    extends $StreamNotifierProvider<RecentChatController, List<RecentChat>> {
+  const RecentChatControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'recentChatProviderProvider',
+        name: r'recentChatControllerProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$recentChatProviderHash();
+  String debugGetCreateSourceHash() => _$recentChatControllerHash();
 
   @$internal
   @override
-  RecentChatProvider create() => RecentChatProvider();
+  RecentChatController create() => RecentChatController();
 }
 
-String _$recentChatProviderHash() =>
-    r'8cb29977a4a30bb9ddeb0b3f030a9c78609d6373';
+String _$recentChatControllerHash() =>
+    r'95b2076a2b71e548ae2161ae9abf201e9330941b';
 
-abstract class _$RecentChatProvider extends $StreamNotifier<List<RecentChat>> {
+abstract class _$RecentChatController
+    extends $StreamNotifier<List<RecentChat>> {
   Stream<List<RecentChat>> build();
   @$mustCallSuper
   @override

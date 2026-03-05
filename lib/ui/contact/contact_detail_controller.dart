@@ -4,10 +4,10 @@ import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/contact/contact_detail_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'contact_detail_provider.g.dart';
+part 'contact_detail_controller.g.dart';
 
 @riverpod
-class ContactDetailProvider extends _$ContactDetailProvider {
+class ContactDetailController extends _$ContactDetailController {
   StreamSubscription<bool>? onlineStatusSub;
 
   @override

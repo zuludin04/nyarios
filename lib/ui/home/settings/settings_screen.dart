@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/ui/home/settings/settings_provider.dart';
+import 'package:nyarios/ui/home/settings/settings_controller.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -19,7 +19,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
-    final provider = ref.watch(settingsProviderProvider);
+    final provider = ref.watch(settingsControllerProvider);
 
     return provider.when(
       data: (data) => SettingsList(
@@ -85,7 +85,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       mode: data.themeMode,
                       onSelectTheme: (mode) {
                         ref
-                            .read(settingsProviderProvider.notifier)
+                            .read(settingsControllerProvider.notifier)
                             .changeTheme(mode);
                       },
                     ),
@@ -181,7 +181,7 @@ class _ThemeSelectorSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = ref.watch(settingsProviderProvider);
+    final provider = ref.watch(settingsControllerProvider);
 
     return Column(
       mainAxisSize: MainAxisSize.min,

@@ -13,7 +13,7 @@ import 'package:nyarios/domain/model/data_call.dart';
 import 'package:nyarios/domain/model/data_chat.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/ui/chat/chatting_provider.dart';
+import 'package:nyarios/ui/chat/chatting_controller.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
 import 'package:nyarios/ui/chat/widgets/chat_input_message.dart';
 import 'package:nyarios/ui/chat/widgets/chat_item.dart';
@@ -32,13 +32,13 @@ class _ChattingScreenState extends ConsumerState<ChattingScreen> {
   @override
   Widget build(BuildContext context) {
     final chatAsync = ref.watch(
-      chattingAsyncControllerProvider(
+      chattingControllerProvider(
         widget.chat.chatId,
         widget.chat.profileId,
       ),
     );
     final controller = ref.read(
-      chattingAsyncControllerProvider(
+      chattingControllerProvider(
         widget.chat.chatId,
         widget.chat.profileId,
       ).notifier,

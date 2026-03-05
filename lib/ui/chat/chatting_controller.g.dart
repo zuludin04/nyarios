@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'chatting_provider.dart';
+part of 'chatting_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,40 +9,39 @@ part of 'chatting_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(ChattingAsyncController)
-const chattingAsyncControllerProvider = ChattingAsyncControllerFamily._();
+@ProviderFor(ChattingController)
+const chattingControllerProvider = ChattingControllerFamily._();
 
-final class ChattingAsyncControllerProvider
-    extends $AsyncNotifierProvider<ChattingAsyncController, ChattingState> {
-  const ChattingAsyncControllerProvider._({
-    required ChattingAsyncControllerFamily super.from,
+final class ChattingControllerProvider
+    extends $AsyncNotifierProvider<ChattingController, ChattingState> {
+  const ChattingControllerProvider._({
+    required ChattingControllerFamily super.from,
     required (String?, String?) super.argument,
   }) : super(
          retry: null,
-         name: r'chattingAsyncControllerProvider',
+         name: r'chattingControllerProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$chattingAsyncControllerHash();
+  String debugGetCreateSourceHash() => _$chattingControllerHash();
 
   @override
   String toString() {
-    return r'chattingAsyncControllerProvider'
+    return r'chattingControllerProvider'
         ''
         '$argument';
   }
 
   @$internal
   @override
-  ChattingAsyncController create() => ChattingAsyncController();
+  ChattingController create() => ChattingController();
 
   @override
   bool operator ==(Object other) {
-    return other is ChattingAsyncControllerProvider &&
-        other.argument == argument;
+    return other is ChattingControllerProvider && other.argument == argument;
   }
 
   @override
@@ -51,38 +50,35 @@ final class ChattingAsyncControllerProvider
   }
 }
 
-String _$chattingAsyncControllerHash() =>
-    r'1c17871439ea633ded0fdff31ade99751b7ce38a';
+String _$chattingControllerHash() =>
+    r'dbbc8ab02cdfa5e8287ff183324f45248c0a6692';
 
-final class ChattingAsyncControllerFamily extends $Family
+final class ChattingControllerFamily extends $Family
     with
         $ClassFamilyOverride<
-          ChattingAsyncController,
+          ChattingController,
           AsyncValue<ChattingState>,
           ChattingState,
           FutureOr<ChattingState>,
           (String?, String?)
         > {
-  const ChattingAsyncControllerFamily._()
+  const ChattingControllerFamily._()
     : super(
         retry: null,
-        name: r'chattingAsyncControllerProvider',
+        name: r'chattingControllerProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  ChattingAsyncControllerProvider call(String? chatId, String? profileId) =>
-      ChattingAsyncControllerProvider._(
-        argument: (chatId, profileId),
-        from: this,
-      );
+  ChattingControllerProvider call(String? chatId, String? profileId) =>
+      ChattingControllerProvider._(argument: (chatId, profileId), from: this);
 
   @override
-  String toString() => r'chattingAsyncControllerProvider';
+  String toString() => r'chattingControllerProvider';
 }
 
-abstract class _$ChattingAsyncController extends $AsyncNotifier<ChattingState> {
+abstract class _$ChattingController extends $AsyncNotifier<ChattingState> {
   late final _$args = ref.$arg as (String?, String?);
   String? get chatId => _$args.$1;
   String? get profileId => _$args.$2;

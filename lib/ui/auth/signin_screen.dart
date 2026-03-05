@@ -6,21 +6,20 @@ import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/services/google_signin_service.dart';
 import 'package:nyarios/routes/app_routes.dart';
 import 'package:nyarios/ui/auth/permission_request_dialog.dart';
-import 'package:nyarios/ui/auth/provider/signin_provider.dart';
-import 'package:nyarios/ui/auth/provider/state/signin_state.dart';
+import 'package:nyarios/ui/auth/signin_controller.dart';
 
 class SignInScreen extends ConsumerWidget {
   const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(signInNotifierProvider);
-    ref.listen(signInNotifierProvider.select((value) => value), (prev, next) {
-      if (next is Success) {
+    final state = ref.watch(signInControllerProvider);
+    ref.listen(signInControllerProvider.select((value) => value), (prev, next) {
+      if (next.value!.successLogin) {
         context.go(AppPages.home);
-      } else if (next is Error) {
+      } else if (next.value!.message.isNotEmpty) {
         context.pop();
-        Flushbar(message: next.message).show(context);
+        Flushbar(message: next.value!.message).show(context);
       }
     });
 
@@ -67,7 +66,7 @@ class SignInScreen extends ConsumerWidget {
                                 onPermissionAccepted: () async {
                                   final googleAuth = await signInGoogle();
                                   ref
-                                      .read(signInNotifierProvider.notifier)
+                                      .read(signInControllerProvider.notifier)
                                       .signIn(
                                         googleAuth.accessToken,
                                         googleAuth.idToken,
@@ -81,27 +80,33 @@ class SignInScreen extends ConsumerWidget {
                               const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
-                          child: state == SignInState.loading()
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/google.png',
-                                      width: 24,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      AppLocalizations.of(context)!.get_started,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                          child: state.when(
+                            data: (data) => state.value!.isLoading
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/google.png',
+                                        width: 24,
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.get_started,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                            error: (_, _) => SizedBox(),
+                            loading: () => SizedBox(),
+                          ),
                         ),
                       ),
                     ),

@@ -4,10 +4,10 @@ import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'recent_chat_provider.g.dart';
+part 'recent_chat_controller.g.dart';
 
 @riverpod
-class RecentChatProvider extends _$RecentChatProvider {
+class RecentChatController extends _$RecentChatController {
   StreamSubscription<List<RecentChat>>? messageSub;
 
   @override

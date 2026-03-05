@@ -10,9 +10,9 @@ import 'package:nyarios/domain/model/contact.dart';
 import 'package:nyarios/domain/model/local_user.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/ui/chat/chatting_provider.dart';
+import 'package:nyarios/ui/chat/chatting_controller.dart';
 
-import 'chatting_provider_test.mocks.dart';
+import 'chatting_controller_test.mocks.dart';
 
 @GenerateMocks([
   ChatRepository,
@@ -90,19 +90,19 @@ void main() {
 
         // Listen to keep provider alive if autoDispose (though @riverpod default is autoDispose)
         final subscription = container.listen(
-          chattingAsyncControllerProvider(chatId, profileId),
+          chattingControllerProvider(chatId, profileId),
           (previous, next) {},
         );
 
         await container.read(
-          chattingAsyncControllerProvider(chatId, profileId).future,
+          chattingControllerProvider(chatId, profileId).future,
         );
 
         // Give some time for stream listener to update state
         await Future.delayed(Duration.zero);
 
         final currentState = container
-            .read(chattingAsyncControllerProvider(chatId, profileId))
+            .read(chattingControllerProvider(chatId, profileId))
             .requireValue;
 
         expect(currentState.user, user);
@@ -130,10 +130,10 @@ void main() {
       ).thenAnswer((_) => const Stream.empty());
 
       final controller = container.read(
-        chattingAsyncControllerProvider(chatId, profileId).notifier,
+        chattingControllerProvider(chatId, profileId).notifier,
       );
       await container.read(
-        chattingAsyncControllerProvider(chatId, profileId).future,
+        chattingControllerProvider(chatId, profileId).future,
       );
 
       await controller.sendMessage(
@@ -175,10 +175,10 @@ void main() {
         ).thenAnswer((_) => const Stream.empty());
 
         final controller = container.read(
-          chattingAsyncControllerProvider(chatId, profileId).notifier,
+          chattingControllerProvider(chatId, profileId).notifier,
         );
         await container.read(
-          chattingAsyncControllerProvider(chatId, profileId).future,
+          chattingControllerProvider(chatId, profileId).future,
         );
 
         await controller.changeContactStatus(profileId, 'blocked');
@@ -187,7 +187,7 @@ void main() {
           mockContactRepo.changeContactStatus(profileId, 'blocked'),
         ).called(1);
         final state = container
-            .read(chattingAsyncControllerProvider(chatId, profileId))
+            .read(chattingControllerProvider(chatId, profileId))
             .requireValue;
         expect(state.status, 'blocked');
       },
@@ -226,30 +226,33 @@ void main() {
 
         // Use listen to keep provider alive
         final subscription = container.listen(
-          chattingAsyncControllerProvider(chatId, profileId),
+          chattingControllerProvider(chatId, profileId),
           (previous, next) {},
         );
 
         final controller = container.read(
-          chattingAsyncControllerProvider(chatId, profileId).notifier,
+          chattingControllerProvider(chatId, profileId).notifier,
         );
-        
+
         await container.read(
-          chattingAsyncControllerProvider(chatId, profileId).future,
+          chattingControllerProvider(chatId, profileId).future,
         );
-        
+
         // Wait for the stream update
         await Future.delayed(Duration.zero);
 
         await controller.selectMessage('m1');
 
         final state = container
-            .read(chattingAsyncControllerProvider(chatId, profileId))
+            .read(chattingControllerProvider(chatId, profileId))
             .requireValue;
-            
+
         expect(state.isSelectMode, true);
-        expect(state.messages.any((m) => m.messageId == 'm1' && m.isSelected), true);
-        
+        expect(
+          state.messages.any((m) => m.messageId == 'm1' && m.isSelected),
+          true,
+        );
+
         subscription.close();
       },
     );
@@ -275,10 +278,10 @@ void main() {
       ).thenAnswer((_) async => 'fake_token');
 
       final controller = container.read(
-        chattingAsyncControllerProvider(chatId, profileId).notifier,
+        chattingControllerProvider(chatId, profileId).notifier,
       );
       await container.read(
-        chattingAsyncControllerProvider(chatId, profileId).future,
+        chattingControllerProvider(chatId, profileId).future,
       );
 
       final token = await controller.createCallConversation(

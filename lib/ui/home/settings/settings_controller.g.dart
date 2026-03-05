@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'settings_provider.dart';
+part of 'settings_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,33 +9,34 @@ part of 'settings_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(SettingsProvider)
-const settingsProviderProvider = SettingsProviderProvider._();
+@ProviderFor(SettingsController)
+const settingsControllerProvider = SettingsControllerProvider._();
 
-final class SettingsProviderProvider
-    extends $AsyncNotifierProvider<SettingsProvider, SettingsState> {
-  const SettingsProviderProvider._()
+final class SettingsControllerProvider
+    extends $AsyncNotifierProvider<SettingsController, SettingsState> {
+  const SettingsControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'settingsProviderProvider',
+        name: r'settingsControllerProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$settingsProviderHash();
+  String debugGetCreateSourceHash() => _$settingsControllerHash();
 
   @$internal
   @override
-  SettingsProvider create() => SettingsProvider();
+  SettingsController create() => SettingsController();
 }
 
-String _$settingsProviderHash() => r'94f27040c63f99560043e7faf4264f182effaef3';
+String _$settingsControllerHash() =>
+    r'5e9db5a51247c1072eceed8c1b0620072f4df54a';
 
-abstract class _$SettingsProvider extends $AsyncNotifier<SettingsState> {
+abstract class _$SettingsController extends $AsyncNotifier<SettingsState> {
   FutureOr<SettingsState> build();
   @$mustCallSuper
   @override

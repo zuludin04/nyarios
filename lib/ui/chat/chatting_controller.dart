@@ -8,10 +8,10 @@ import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/chat/chatting_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'chatting_provider.g.dart';
+part 'chatting_controller.g.dart';
 
 @riverpod
-class ChattingAsyncController extends _$ChattingAsyncController {
+class ChattingController extends _$ChattingController {
   late final ChatRepository chatRepo;
   late final ContactRepository contactRepo;
   late final SharedLocalRepository localRepo;

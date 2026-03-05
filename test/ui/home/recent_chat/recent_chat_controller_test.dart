@@ -5,9 +5,9 @@ import 'package:mockito/mockito.dart';
 import 'package:nyarios/data/repositories/chat_repository.dart';
 import 'package:nyarios/domain/model/recent_chat.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/ui/home/recent_chat/recent_chat_provider.dart';
+import 'package:nyarios/ui/home/recent_chat/recent_chat_controller.dart';
 
-import 'recent_chat_provider_test.mocks.dart';
+import 'recent_chat_controller_test.mocks.dart';
 
 @GenerateMocks([ChatRepository])
 void main() {
@@ -17,9 +17,7 @@ void main() {
   setUp(() {
     mockChatRepo = MockChatRepository();
     container = ProviderContainer(
-      overrides: [
-        chatRepositoryProvider.overrideWithValue(mockChatRepo),
-      ],
+      overrides: [chatRepositoryProvider.overrideWithValue(mockChatRepo)],
     );
   });
 
@@ -43,16 +41,17 @@ void main() {
         ),
       ];
 
-      when(mockChatRepo.streamRecentChats())
-          .thenAnswer((_) => Stream.value(recentChats));
+      when(
+        mockChatRepo.streamRecentChats(),
+      ).thenAnswer((_) => Stream.value(recentChats));
 
       // Use listen to keep the autoDispose provider alive during the test
       final subscription = container.listen(
-        recentChatProviderProvider,
+        recentChatControllerProvider,
         (previous, next) {},
       );
 
-      final result = await container.read(recentChatProviderProvider.future);
+      final result = await container.read(recentChatControllerProvider.future);
 
       expect(result, recentChats);
       verify(mockChatRepo.streamRecentChats()).called(1);

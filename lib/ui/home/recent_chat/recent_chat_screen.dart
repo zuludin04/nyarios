@@ -5,7 +5,7 @@ import 'package:nyarios/core/widgets/custom_indicator.dart';
 import 'package:nyarios/core/widgets/image_asset.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/routes/app_routes.dart';
-import 'package:nyarios/ui/home/recent_chat/recent_chat_provider.dart';
+import 'package:nyarios/ui/home/recent_chat/recent_chat_controller.dart';
 import 'package:nyarios/ui/home/recent_chat/recent_chat_item.dart';
 
 class RecentChatScreen extends ConsumerWidget {
@@ -13,7 +13,7 @@ class RecentChatScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var provider = ref.watch(recentChatProviderProvider);
+    var provider = ref.watch(recentChatControllerProvider);
 
     return SafeArea(
       child: CustomScrollView(

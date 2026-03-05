@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'call_history_provider.dart';
+part of 'call_history_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,34 +9,34 @@ part of 'call_history_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(CallHistoryProvider)
-const callHistoryProviderProvider = CallHistoryProviderProvider._();
+@ProviderFor(CallHistoryController)
+const callHistoryControllerProvider = CallHistoryControllerProvider._();
 
-final class CallHistoryProviderProvider
-    extends $StreamNotifierProvider<CallHistoryProvider, List<Call>> {
-  const CallHistoryProviderProvider._()
+final class CallHistoryControllerProvider
+    extends $StreamNotifierProvider<CallHistoryController, List<Call>> {
+  const CallHistoryControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'callHistoryProviderProvider',
+        name: r'callHistoryControllerProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$callHistoryProviderHash();
+  String debugGetCreateSourceHash() => _$callHistoryControllerHash();
 
   @$internal
   @override
-  CallHistoryProvider create() => CallHistoryProvider();
+  CallHistoryController create() => CallHistoryController();
 }
 
-String _$callHistoryProviderHash() =>
-    r'25dccdf44f64194b99efdc3fec085f4c384c97ec';
+String _$callHistoryControllerHash() =>
+    r'a3093a6449de26fa1a37b004e9b06cdcc2042710';
 
-abstract class _$CallHistoryProvider extends $StreamNotifier<List<Call>> {
+abstract class _$CallHistoryController extends $StreamNotifier<List<Call>> {
   Stream<List<Call>> build();
   @$mustCallSuper
   @override

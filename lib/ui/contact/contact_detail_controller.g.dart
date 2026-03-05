@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'contact_detail_provider.dart';
+part of 'contact_detail_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,39 +9,41 @@ part of 'contact_detail_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(ContactDetailProvider)
-const contactDetailProviderProvider = ContactDetailProviderFamily._();
+@ProviderFor(ContactDetailController)
+const contactDetailControllerProvider = ContactDetailControllerFamily._();
 
-final class ContactDetailProviderProvider
-    extends $AsyncNotifierProvider<ContactDetailProvider, ContactDetailState> {
-  const ContactDetailProviderProvider._({
-    required ContactDetailProviderFamily super.from,
+final class ContactDetailControllerProvider
+    extends
+        $AsyncNotifierProvider<ContactDetailController, ContactDetailState> {
+  const ContactDetailControllerProvider._({
+    required ContactDetailControllerFamily super.from,
     required (String, String) super.argument,
   }) : super(
          retry: null,
-         name: r'contactDetailProviderProvider',
+         name: r'contactDetailControllerProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$contactDetailProviderHash();
+  String debugGetCreateSourceHash() => _$contactDetailControllerHash();
 
   @override
   String toString() {
-    return r'contactDetailProviderProvider'
+    return r'contactDetailControllerProvider'
         ''
         '$argument';
   }
 
   @$internal
   @override
-  ContactDetailProvider create() => ContactDetailProvider();
+  ContactDetailController create() => ContactDetailController();
 
   @override
   bool operator ==(Object other) {
-    return other is ContactDetailProviderProvider && other.argument == argument;
+    return other is ContactDetailControllerProvider &&
+        other.argument == argument;
   }
 
   @override
@@ -50,38 +52,38 @@ final class ContactDetailProviderProvider
   }
 }
 
-String _$contactDetailProviderHash() =>
-    r'bcfe599d8f13da515a84f4acc737066f3ad86fa4';
+String _$contactDetailControllerHash() =>
+    r'400ebb443b0272c9fb4c11e2d99c276deae4821a';
 
-final class ContactDetailProviderFamily extends $Family
+final class ContactDetailControllerFamily extends $Family
     with
         $ClassFamilyOverride<
-          ContactDetailProvider,
+          ContactDetailController,
           AsyncValue<ContactDetailState>,
           ContactDetailState,
           FutureOr<ContactDetailState>,
           (String, String)
         > {
-  const ContactDetailProviderFamily._()
+  const ContactDetailControllerFamily._()
     : super(
         retry: null,
-        name: r'contactDetailProviderProvider',
+        name: r'contactDetailControllerProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  ContactDetailProviderProvider call(String chatId, String profileId) =>
-      ContactDetailProviderProvider._(
+  ContactDetailControllerProvider call(String chatId, String profileId) =>
+      ContactDetailControllerProvider._(
         argument: (chatId, profileId),
         from: this,
       );
 
   @override
-  String toString() => r'contactDetailProviderProvider';
+  String toString() => r'contactDetailControllerProvider';
 }
 
-abstract class _$ContactDetailProvider
+abstract class _$ContactDetailController
     extends $AsyncNotifier<ContactDetailState> {
   late final _$args = ref.$arg as (String, String);
   String get chatId => _$args.$1;

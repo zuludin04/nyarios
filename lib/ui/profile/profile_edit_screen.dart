@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nyarios/core/l10n/app_localizations.dart';
 import 'package:nyarios/core/widgets/toolbar.dart';
-import 'package:nyarios/ui/profile/profile_edit_provider.dart';
+import 'package:nyarios/ui/profile/profile_edit_controller.dart';
 import 'package:nyarios/ui/profile/widgets/profile_info_widget.dart';
 
 class ProfileEditScreen extends ConsumerStatefulWidget {
@@ -15,7 +15,7 @@ class ProfileEditScreen extends ConsumerStatefulWidget {
 class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   @override
   Widget build(BuildContext context) {
-    final provider = ref.watch(profileEditProviderProvider);
+    final provider = ref.watch(profileEditControllerProvider);
 
     return Scaffold(
       appBar: Toolbar.defaultToolbar(
@@ -38,7 +38,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     data: data.name ?? "-",
                     onUpdateProfile: (value) {
                       ref
-                          .read(profileEditProviderProvider.notifier)
+                          .read(profileEditControllerProvider.notifier)
                           .updateProfileName(value);
                     },
                   ),
@@ -48,7 +48,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                     data: data.status ?? "-",
                     onUpdateProfile: (value) {
                       ref
-                          .read(profileEditProviderProvider.notifier)
+                          .read(profileEditControllerProvider.notifier)
                           .updateProfileStatus(value);
                     },
                   ),

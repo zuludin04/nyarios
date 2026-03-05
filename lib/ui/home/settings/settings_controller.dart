@@ -7,10 +7,10 @@ import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/home/settings/settings_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'settings_provider.g.dart';
+part 'settings_controller.g.dart';
 
 @riverpod
-class SettingsProvider extends _$SettingsProvider {
+class SettingsController extends _$SettingsController {
   StreamSubscription<Profile>? profileSub;
 
   @override

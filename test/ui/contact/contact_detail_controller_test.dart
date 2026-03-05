@@ -7,10 +7,10 @@ import 'package:nyarios/data/repositories/profile_repository.dart';
 import 'package:nyarios/domain/model/message.dart';
 import 'package:nyarios/domain/model/profile.dart';
 import 'package:nyarios/domain/providers/repository_providers.dart';
-import 'package:nyarios/ui/contact/contact_detail_provider.dart';
+import 'package:nyarios/ui/contact/contact_detail_controller.dart';
 import 'package:nyarios/ui/contact/contact_detail_state.dart';
 
-import 'contact_detail_provider_test.mocks.dart';
+import 'contact_detail_controller_test.mocks.dart';
 
 @GenerateMocks([ProfileRepository, ChatRepository])
 void main() {
@@ -62,15 +62,17 @@ void main() {
       ];
 
       when(mockChatRepo.loadMessages(chatId)).thenAnswer((_) async => messages);
-      when(mockProfileRepo.loadSingleProfile(profileId))
-          .thenAnswer((_) async => profile);
-      when(mockProfileRepo.getOnlineStatus(profileId))
-          .thenAnswer((_) => Stream.value(true));
+      when(
+        mockProfileRepo.loadSingleProfile(profileId),
+      ).thenAnswer((_) async => profile);
+      when(
+        mockProfileRepo.getOnlineStatus(profileId),
+      ).thenAnswer((_) => Stream.value(true));
 
       // Use a listener to capture state updates
       final states = <AsyncValue<ContactDetailState>>[];
       final subscription = container.listen(
-        contactDetailProviderProvider(chatId, profileId),
+        contactDetailControllerProvider(chatId, profileId),
         (previous, next) {
           states.add(next);
         },
@@ -78,12 +80,16 @@ void main() {
       );
 
       // Wait for the provider to finish its build and emit the first state
-      await container.read(contactDetailProviderProvider(chatId, profileId).future);
-      
+      await container.read(
+        contactDetailControllerProvider(chatId, profileId).future,
+      );
+
       // Wait a bit more for the stream update to propagate
       await Future.delayed(Duration.zero);
 
-      final state = container.read(contactDetailProviderProvider(chatId, profileId)).requireValue;
+      final state = container
+          .read(contactDetailControllerProvider(chatId, profileId))
+          .requireValue;
 
       expect(state.profile, profile);
       expect(state.mediaMessages.length, 1);

@@ -2,10 +2,10 @@ import 'package:nyarios/domain/providers/repository_providers.dart';
 import 'package:nyarios/ui/profile/profile_edit_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'profile_edit_provider.g.dart';
+part 'profile_edit_controller.g.dart';
 
 @riverpod
-class ProfileEditProvider extends _$ProfileEditProvider {
+class ProfileEditController extends _$ProfileEditController {
   late final profileRepo = ref.watch(profileRepositoryProvider);
 
   @override
